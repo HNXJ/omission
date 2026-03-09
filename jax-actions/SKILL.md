@@ -33,7 +33,14 @@ The `net_eig` model is a three-population biophysical network:
 - **Power Spectral Density (PSD)**: Analyze population-level oscillations and Beta/Gamma power shifts during stimulus.
 - **Saving Traces**: Use `.pkl` or `.npy` format for raw voltage recordings.
 
+## 4. Optimization Workflow (GSDR)
+The `AAE.gsdr` package provides formal tools for evolutionary biophysical tuning.
+- **Optimizers**: `GSDR` (Genetic-Stochastic Delta Rule) wrapped around `optax.adam`.
+- **Targeting**: Optimize for specific PSD peaks (e.g., 40Hz Gamma) and minimize synchrony (Kappa) using custom loss functions.
+- **MCDP**: Model-Contrastive Data Processing factors are used to normalize gradients across excitatory and inhibitory synapses.
+
 ## Key Parameters
 - **`gAMPA` / `gGABAa`**: Synaptic conductances.
 - **`tau`**: Synaptic time constants.
 - **Stimulus Parameters**: Amplitude and noise level for the simulated task.
+- **GSDR Parameters**: `a_init` (self-supervision), `checkpoint_n`, and `kappa_weight`.
