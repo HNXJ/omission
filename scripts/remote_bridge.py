@@ -67,9 +67,14 @@ def save_bus(bus):
         json.dump(bus, f, indent=4)
 
 def push_results():
-    subprocess.run(["git", "-C", REPO_DIR, "add", "COMMAND_BUS.json"], capture_output=True)
-    subprocess.run(["git", "-C", REPO_DIR, "commit", "-m", "Remote execution update"], capture_output=True)
-    subprocess.run(["git", "-C", REPO_DIR, "push", "origin", "main"], capture_output=True)
+    hostname = get_hostname()
+    branch = "W" if hostname == "WindowsPC" else "main"
+    
+    # Ensure we are on the correct branch before pushing
+    subprocess.run(["git", "-C", REPO_DIR, "checkout", branch], capture_output=True)
+    subprocess.run(["git", "-C", REPO_DIR, "add", "."], capture_output=True)
+    subprocess.run(["git", "-C", REPO_DIR, "commit", "-m", f"Update from {hostname}"], capture_output=True)
+    subprocess.run(["git", "-C", REPO_DIR, "push", "origin", branch], capture_output=True)
 
 if __name__ == "__main__":
     poll_commands()
