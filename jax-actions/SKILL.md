@@ -36,11 +36,12 @@ The `net_eig` model is a three-population biophysical network:
 ## 4. Optimization Workflow (GSDR)
 The `AAE.gsdr` package provides formal tools for evolutionary biophysical tuning.
 - **Optimizers**: `GSDR` (Genetic-Stochastic Delta Rule) wrapped around `optax.adam`.
-- **Targeting**: Optimize for specific PSD peaks (e.g., 40Hz Gamma) and minimize synchrony (Kappa) using custom loss functions.
-- **MCDP**: Model-Contrastive Data Processing factors are used to normalize gradients across excitatory and inhibitory synapses.
+- **Targeting**: Optimize for specific PSD peaks (e.g., 38Hz Gamma) and minimize synchrony (Kappa) using custom multi-window loss functions.
+- **MCDP (Mutual-correlation dependent plasticity)**: Synaptic parameters' activity (correlation between pre- and post-synaptic traces) shapes their changes across trials, acting as a biophysical weight-update scaling factor.
 
 ## Key Parameters
 - **`gAMPA` / `gGABAa`**: Synaptic conductances.
 - **`tau`**: Synaptic time constants.
 - **Stimulus Parameters**: Amplitude and noise level for the simulated task.
 - **GSDR Parameters**: `a_init` (self-supervision), `checkpoint_n`, and `kappa_weight`.
+- **MCDP**: Ensures that synaptic changes are driven by the mutual-correlation of the neurons they connect.
