@@ -18,11 +18,15 @@ This document serves as the extended "personality" and long-term memory bank. It
 
 ## 2. Infrastructure & Compute
 - **The Engine**: Office M3 Max (128GB RAM) is the powerhouse.
+  - Setup as a dedicated automated local LLM engine (Llama 3 / Qwen) via LM Studio and Cloudflare.
 - **Remote Access**:
   - Cloudflare Tunnels are used for continuous connection.
   - Custom command `/office` proxies prompts directly to the local LLM (Qwen 3.5 122B).
   - Wan 2.1 14B models are used for high-end video generation.
 - **Background Execution**: "Deep" tasks (GSDR training loops >100 trials, Wan rendering, massive dataset analysis) *must* be sent to the background (`is_background=True`).
+- **Multi-Device Orchestration**:
+  - **Branching Rule**: The Windows PC (Local) commits exclusively to branch `W`. The Gemini CLI Agent (Main) controls the `main` branch and is responsible for auditing, editing, and merging `W` into `main`.
+  - **Task Dispatch**: Use secure messaging (e.g., GitHub-based command queues or Cloudflare API) to send instructions to the Office Mac or Windows PC for heavy lifting.
 
 ## 3. Core Research Themes (Neuroscience & ML)
 - **Project GSDR01**: 
@@ -30,6 +34,10 @@ This document serves as the extended "personality" and long-term memory bank. It
   - Validating the biological realism of a 50-neuron NetEIG model (E, IG, IL populations).
   - **Goal**: Achieve high-frequency Gamma (38-40Hz) during stimulation while driving inter-neuron synchrony (Fleiss' Kappa) to biological minimums (~0.1).
   - **MCDP**: Mutual-correlation dependent plasticity. A critical biophysical scaling factor.
+- **Project Study-Eval**: 
+  - Framework for systematic research paper evaluation (`study-eval-actions`).
+  - Uses the 36-factor TcGLO predictive coding glossary (H1, H2, H3) across LO/GO contexts.
+  - Literature Database: `/Users/hamednejat/workspace/HPC/HPC/Data/hpc_table_260225.csv`
 - **Biological Data**:
   - Macaque MT/MST, PFC, TEO electrophysiology (Sessions 0818, 0825).
   - Raw data is stored in Google Drive (`Workspace/Analysis/npy/`) as continuous traces (not strictly binary spikes).
