@@ -10,9 +10,10 @@ LOCAL_LLM_URL = "https://plugin-primarily-donald-www.trycloudflare.com/v1"
 LOCAL_LLM_API_KEY = "sk-lm-F2VX005K:WVPz8lWIzTUD4hVnLzKK"
 # -----------------------------------------------
 
-# Path to the private command bus in the hnxj-gemini repo
-BUS_PATH = "/Users/hamednejat/workspace/HNXJ/hnxj-gemini/COMMAND_BUS.json"
-REPO_DIR = "/Users/hamednejat/workspace/HNXJ/hnxj-gemini"
+# Portability: Define paths relative to this script
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_DIR = os.path.dirname(SCRIPT_DIR)
+BUS_PATH = os.path.join(REPO_DIR, "COMMAND_BUS.json")
 
 def get_hostname():
     # Detect if we are OfficeMac or Windows
