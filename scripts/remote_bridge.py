@@ -33,17 +33,19 @@ def get_branch():
 def poll_commands():
     hostname = get_hostname()
     branch = get_branch()
-    print(f"📡 {hostname} Task Runner Started on branch '{branch}'. Polling {BUS_PATH}...")
+    print(f"📡 {hostname} Chat Active. Polling {BUS_PATH}...")
     
-    # Export LLM keys for any subprocesses
+    # Export LLM keys
     os.environ["CLAUDE_BASE_URL"] = LOCAL_LLM_URL
     os.environ["CLAUDE_API_KEY"] = LOCAL_LLM_API_KEY
     
     while True:
         try:
-            # 1. Sync repo to get latest commands from all branches
+            # 1. Update Heartbeat (Idle status)
+            update_presence(hostname, "idle")
+            
+            # Sync repo
             subprocess.run(["git", "-C", REPO_DIR, "fetch", "origin"], capture_output=True)
-            # We always pull from main to get instructions, but push to our own branch
             subprocess.run(["git", "-C", REPO_DIR, "merge", "origin/main"], capture_output=True)
             
             if not os.path.exists(BUS_PATH):
@@ -53,15 +55,15 @@ def poll_commands():
             with open(BUS_PATH, "r") as f:
                 bus = json.load(f)
             
-            # 2. Check for tasks assigned to this host
+            # 2. Check for tasks
             pending_tasks = [t for t in bus.get("tasks", []) if t["target"] == hostname and t["status"] == "pending"]
             
             for task in pending_tasks:
-                print(f"🚀 Executing Task [{task['id']}]: {task['command']}")
+                print(f"💬 {hostname} is typing... (Executing: {task['command']})")
+                update_presence(hostname, "busy")
+                
                 task["status"] = "running"
                 task["start_time"] = datetime.now().isoformat()
-                
-                # Update status immediately
                 save_bus(bus)
                 push_results()
                 
@@ -70,22 +72,32 @@ def poll_commands():
                     result = subprocess.run(task["command"], shell=True, capture_output=True, text=True)
                     task["status"] = "completed"
                     task["output"] = result.stdout + result.stderr
-                    task["exit_code"] = result.returncode
                 except Exception as e:
                     task["status"] = "failed"
                     task["error"] = str(e)
                 
                 task["end_time"] = datetime.now().isoformat()
-                print(f"✅ Task [{task['id']}] finished.")
-                
-                # 4. Save and Push
                 save_bus(bus)
                 push_results()
+                print(f"✅ {hostname} sent a response.")
                 
         except Exception as e:
-            print(f"❌ Error in poll loop: {e}")
+            print(f"❌ Connection error: {e}")
             
         time.sleep(30)
+
+def update_presence(hostname, status):
+    if not os.path.exists(BUS_PATH): return
+    with open(BUS_PATH, "r") as f:
+        bus = json.load(f)
+    
+    if "presence" not in bus: bus["presence"] = {}
+    bus["presence"][hostname] = {
+        "status": status,
+        "last_seen": datetime.now().isoformat()
+    }
+    save_bus(bus)
+    push_results()
 
 def save_bus(bus):
     with open(BUS_PATH, "w") as f:
