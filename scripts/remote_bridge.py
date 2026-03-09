@@ -4,6 +4,12 @@ import time
 import subprocess
 from datetime import datetime
 
+# --- LOCAL LLM CONFIGURATION (Office Mac M3) ---
+# Use this to start: claude --model "local model"
+LOCAL_LLM_URL = "https://plugin-primarily-donald-www.trycloudflare.com/v1"
+LOCAL_LLM_API_KEY = "sk-lm-F2VX005K:WVPz8lWIzTUD4hVnLzKK"
+# -----------------------------------------------
+
 # Path to the private command bus in the hnxj-gemini repo
 BUS_PATH = "/Users/hamednejat/workspace/HNXJ/hnxj-gemini/COMMAND_BUS.json"
 REPO_DIR = "/Users/hamednejat/workspace/HNXJ/hnxj-gemini"
@@ -11,16 +17,34 @@ REPO_DIR = "/Users/hamednejat/workspace/HNXJ/hnxj-gemini"
 def get_hostname():
     # Detect if we are OfficeMac or Windows
     import platform
-    return "OfficeMac" if platform.system() == "Darwin" else "WindowsPC"
+    if platform.system() == "Darwin":
+        return "OfficeMac"
+    elif platform.system() == "Windows":
+        return "WindowsPC"
+    else:
+        return "MainAgent"
+
+def get_branch():
+    hostname = get_hostname()
+    if hostname == "OfficeMac": return "M"
+    if hostname == "WindowsPC": return "W"
+    return "main"
 
 def poll_commands():
     hostname = get_hostname()
-    print(f"📡 {hostname} Task Runner Started. Polling {BUS_PATH}...")
+    branch = get_branch()
+    print(f"📡 {hostname} Task Runner Started on branch '{branch}'. Polling {BUS_PATH}...")
+    
+    # Export LLM keys for any subprocesses
+    os.environ["CLAUDE_BASE_URL"] = LOCAL_LLM_URL
+    os.environ["CLAUDE_API_KEY"] = LOCAL_LLM_API_KEY
     
     while True:
         try:
-            # 1. Sync repo to get latest commands
-            subprocess.run(["git", "-C", REPO_DIR, "pull", "origin", "main"], capture_output=True)
+            # 1. Sync repo to get latest commands from all branches
+            subprocess.run(["git", "-C", REPO_DIR, "fetch", "origin"], capture_output=True)
+            # We always pull from main to get instructions, but push to our own branch
+            subprocess.run(["git", "-C", REPO_DIR, "merge", "origin/main"], capture_output=True)
             
             if not os.path.exists(BUS_PATH):
                 time.sleep(30)
@@ -39,6 +63,7 @@ def poll_commands():
                 
                 # Update status immediately
                 save_bus(bus)
+                push_results()
                 
                 # 3. Execute
                 try:
@@ -68,9 +93,8 @@ def save_bus(bus):
 
 def push_results():
     hostname = get_hostname()
-    branch = "W" if hostname == "WindowsPC" else "main"
+    branch = get_branch()
     
-    # Ensure we are on the correct branch before pushing
     subprocess.run(["git", "-C", REPO_DIR, "checkout", branch], capture_output=True)
     subprocess.run(["git", "-C", REPO_DIR, "add", "."], capture_output=True)
     subprocess.run(["git", "-C", REPO_DIR, "commit", "-m", f"Update from {hostname}"], capture_output=True)
