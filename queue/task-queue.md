@@ -6,6 +6,7 @@
 3. [Study-Eval](./study-eval.md) - [STATUS: IDLE]
 4. [GSDR01-Manuscript](./gsdr01-manuscript.md) - [STATUS: ONGOING]
 5. [Optimizer-Benchmarking](./optimizer-benchmarking.md) - [STATUS: ONGOING]
+6. [Multi-Agent-Eval-Paper](./multi-agent-eval.md) - [STATUS: ONGOING]
 
 ---
 *Note: Agents should claim sub-tasks by marking them as "UNDER PROCESS".*
