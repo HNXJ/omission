@@ -7,8 +7,9 @@ description: Long-term personality, project history, and architectural vault.
 
 ## 1. Project History & Milestones
 - **Modularization (March 2026)**: Successfully refactored monolithic `jnwb.py` and `gsdr` package into modular, function-per-file structures in the `AAE` repository.
-- **AGSDR Development**: Implemented the Adaptive Genetic Stochastic Delta Rule, featuring dynamic alpha weighting based on update variance.
+- **AGSDR Development**: Implemented the Adaptive Genetic Stochastic Delta Rule, featuring dynamic alpha weighting based on update variance and EMA smoothing.
 - **Physical Realisticity Barrier**: Established the NaN/Inf dampening protocol for `float32` stability on Metal acceleration.
+- **NWB vFLIP2 Mapping**: Identified spectrolaminar motifs across FEF, MT/MST, V4/TEO, PFC, and V1/V2 for sessions 230831, 230901, and 230720.
 
 ## 2. Research Roadmap & Future Ideas
 - **Modular Network Merging**: Develop a robust script to load pre-trained area weights and connect them into a "super-network."
