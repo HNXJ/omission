@@ -21,11 +21,8 @@ To ensure independent realizations, **never use constant seeds** in production s
 - **Realization Handling**: When running multiple trials, pass a unique seed (e.g., `base_seed + trial_index`) to ensure distinct network wiring and noise states.
 
 ## 3. Network Construction: `net_eig` & Cell Subtypes
-The `net_eig` model is a multi-population biophysical network featuring specifically tuned Hodgkin-Huxley compartments:
-- **Pyramidal (Pyr)**: Multi-compartment (Soma + Distal Dendrite), high M-current adaptation.
-- **Parvalbumin (PV)**: Fast-spiking (FS), low capacitance, targets E-soma for Gamma generation.
-- **Somatostatin (SST)**: Low-threshold spiking (LTS), targets E-dendrites for Beta resonance.
-- **Vasoactive Intestinal Polypeptide (VIP)**: Irregular/bursting, targets SST for disinhibition.
+For detailed connectivity rules and indexing lessons (e.g., `fully_connect` vs `connect`), refer to:
+- [Jaxley Connectivity Grammar](./jaxley-connect.md)
 
 ### Connection Dynamics
 - **E -> All**: `GradedAMPA`.
@@ -34,10 +31,12 @@ The `net_eig` model is a multi-population biophysical network featuring specific
 - **Standard Time Constants**: `tauDAMPA = 2.0ms`, `tauDGABAa = 5.0ms`, `tauDGABAb = 50.0ms`.
 
 ## 4. Float32 Physical Realisticity Barrier
-When using Apple Silicon (Metal MPS) to accelerate JAX, the platform often prefers `float32`. This can cause stiffness and resulting `NaN` or `Inf` values in differential equations.
-- **Implementation**: Protect custom channels and synapses (in `gsdr/models.py`) by wrapping the updated state in a dampening barrier:
-  `new_val = jnp.where(jnp.isnan(new_val) | jnp.isinf(new_val), old_val, new_val)`
-- **Concept**: This acts as a physical barrier. Nature does not have infinite voltages; if a computation explodes, physics simply dampens it, preserving the last stable state.
+- **Stability Protocol**: Always use `jnp.where(jnp.isnan(v) | jnp.isinf(v), old_v, v)` in state updates.
+
+## 5. Numerical Stability & Deadlock Prevention (Optimizer)
+- **Cold-Start Fix**: Initialize EMA variances to **1.0** (not 0.0) to ensure a balanced starting alpha ($\alpha=0.5$).
+- **Stochastic Floor**: Enforce `alpha_min = 0.1`. This ensures the network always retains a baseline level of stochastic exploration, preventing deadlocks during gradient plateaus.
+- **Efficient Reset**: Return `(params_opt - current_params) + optimized_step` during resets to maintain forward momentum.
 
 ## 5. Modular Network Merging (Inter-Area Connectivity)
 To simulate dysfunction (e.g., disrupted E/I balance) across multiple areas:

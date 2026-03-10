@@ -17,5 +17,6 @@ Rules for speed, stability, and generalization:
 3. **Pure JAX Logic**: No `numpy` calls inside simulation loops or `jit` segments. Use `jnp` and `jax.random` exclusively.
 4. **PyTree Standard**: Parameters must be handled as PyTrees. Use `jax.tree.map` for scaling and updates.
 5. **Auto-Seed**: All stochastic functions must default to `seed=None` and generate random seeds internally unless explicitly overridden.
+6. **Knowledge Recirculation**: Every technical error, numerical deadlock, or API discovery MUST be documented in the relevant skill (e.g., `jax-actions/`) to prevent regression.
 
 **Refer to `/Users/hamednejat/.gemini/VMEMORY.md` for architectural details, project history, and research roadmap.**
