@@ -47,7 +47,7 @@ This document serves as the extended "personality" and long-term memory bank. It
     - **Session 230720**: probe_0 (V1/V2), probe_1 (V3d/V3a).
   - Parameters: Sampling Rate = 1000Hz (LFP/MUAe), Electrode Spacing = 40um (0.04mm).
 - **Spectrolaminar Motif Identification**:
-  - Tool: `vFLIP2` class in `AAE/NWB/jnwb.py`.
+  - Tool: `vFLIP2` class in `AAE/jnwb` (formerly `AAE/NWB/jnwb.py`).
   - Analyzes the spectral crossover between Deep (Alpha/Beta) and Superficial (Gamma) layers.
 
 

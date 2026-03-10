@@ -26,7 +26,7 @@ When processing biological signals, ensure they are placed in the correct NWB co
 See [signals.md](references/signals.md) for a detailed breakdown of signal types and PyNWB objects.
 
 ### 3. Spectrolaminar Analysis (vFLIP2)
-Use the `vFLIP2` class in `AAE/NWB/jnwb.py` to identify putative cortical layers based on the **spectrolaminar motif** (spectral crossover).
+Use the `vFLIP2` class in `AAE/jnwb` to identify putative cortical layers based on the **spectrolaminar motif** (spectral crossover).
 
 **Key Parameters**:
 - `intdist`: Inter-channel distance (standard: 0.04 mm / 40um).
