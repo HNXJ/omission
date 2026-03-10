@@ -7,7 +7,12 @@ description: Comprehensive skill for biophysical neural network modeling using J
 
 This skill guides the construction, simulation, and optimization of biophysical E-I networks using **Jaxley**, **JAX**, and the modular **`gsdr`** package.
 
-## 1. Modular Framework: `AAE.gsdr`
+## 1. Official Documentation Modules
+For deep technical API details and best practices, refer to:
+- [JAX Core Documentation](./docs/jax-core.md)
+- [Jaxley Advanced Documentation](./docs/jaxley-advanced.md)
+
+## 2. Modular Framework: `AAE.gsdr`
 Always use the modular `gsdr` package for biophysical modeling.
 - **`gsdr.models`**: `build_net_eig`, `Inoise`, `GradedAMPA`, `GradedGABAa`, `GradedGABAb`.
 - **`gsdr.optimizers`**: `GSDR`, `SDR`, `ClampTransform`.
