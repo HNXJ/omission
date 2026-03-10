@@ -43,6 +43,8 @@ This document serves as the extended "personality" and long-term memory bank. It
   - Core Interneurons: PV (Fast-spiking, perisomatic inhibition), SST (Low-threshold, dendritic inhibition), VIP (Bursting, disinhibitory).
   - Optimizer: AGSDR (Adaptive GSDR) dynamically weights supervised vs unsupervised updates based on inverse variance ratio.
   - Multi-area model: V1 -> Mid -> PFC columns.
+  - **Modular Network Merging**: Train areas separately, save parameter PyTrees, instantiate a combined super-network, and map parameters back for interconnected simulation.
+  - **Physical Realisticity Barrier**: When using `float32` on Apple Silicon (Metal MPS), protect custom ODEs from NaN/Inf explosion using `jnp.where(jnp.isnan(new_val) | jnp.isinf(new_val), old_val, new_val)`.
 - **Biological Data Highlights**:
   - Macaque MT/MST, PFC, FEF, V4 electrophysiology (Sessions 0818, 0825, 0831, 0901, 0720).
   - Raw data stored in `workspace/Analysis/nwb/nwbdata/` as large NWB files (90-200GB).
