@@ -1,9 +1,16 @@
-## Gemini Working Memory (Working Set)
+## Gemini General Operating Mandates
 
-**Reference**: For deep context, personality, and long-term architectural preferences, always read `/Users/hamednejat/.gemini/VMEMORY.md`.
+- **Workspace**: Default root is `/Users/hamednejat/workspace`.
+- **Navigation**: Provide an 8-word summary when entering any directory.
+- **Workflow (AAE-First)**: Every new Python function or class MUST be modularized into the `AAE/` repository and pushed to GitHub immediately.
+- **Execution**: All 'deep' tasks (GSDR training, NWB analysis sweeps, Wan-video gen) MUST be executed as background processes (`is_background=True`).
 
-- **Workspace**: The default directory for all sessions is `/Users/hamednejat/workspace`.
-- **Navigation**: Always provide an 8-word summary when entering folders.
-- **Workflow**: Move newly written Python functions/classes into the `AAE/` repository and push to GitHub immediately. Do not push large data/scripts.
-- **Execution**: Always execute 'deep' tasks (e.g., GSDR training, Wan-video gen) as background processes (`is_background=True`).
-- **Current Objective**: Train the multi-area (V1/Mid/PFC) ScZ biophysical model using the Adaptive GSDR (AGSDR) optimizer. Focus on the interplay of PV (Gamma) and SST/CB (Beta) interneurons.
+## Programming Grammar (v1.0)
+Rules for speed, stability, and generalization:
+1. **Modular Granularity**: One file = One primary function or class. Use `__init__.py` for package-level exports.
+2. **Stability Barrier**: All `float32` state updates must include: `new_val = jnp.where(jnp.isnan(new_val) | jnp.isinf(new_val), old_val, new_val)`.
+3. **Pure JAX Logic**: No `numpy` calls inside simulation loops or `jit` segments. Use `jnp` and `jax.random` exclusively.
+4. **PyTree Standard**: Parameters must be handled as PyTrees. Use `jax.tree.map` for scaling and updates.
+5. **Auto-Seed**: All stochastic functions must default to `seed=None` and generate random seeds internally unless explicitly overridden.
+
+**Refer to `/Users/hamednejat/.gemini/VMEMORY.md` for project-specific objectives and active TODOs.**

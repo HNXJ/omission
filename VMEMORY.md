@@ -1,65 +1,31 @@
 ---
 name: vmemory
-description: The long-term memory, personality, and foundational knowledge base of the Gemini CLI assistant for this workspace. Formatted as a skill to be easily referenced or loaded when deep context is needed.
+description: Long-term personality, project history, and architectural vault.
 ---
 
-# VMEMORY: Long-Term Context & Personality
+# 🧠 Gemini Long-Term Memory (VMEMORY)
 
-This document serves as the extended "personality" and long-term memory bank. It stores the foundational aesthetic, architectural, and procedural knowledge that doesn't need to clutter the immediate working memory (`GEMINI.md`) but is essential for maintaining a consistent, highly-tailored user experience.
+## 1. Project Command Center (Current Focus)
+- **Objective ScZ-Biophysics**: 
+  - Train the multi-area (V1/Mid/PFC) model using Adaptive GSDR (AGSDR).
+  - Hypothesis: $\downarrow$ PV density $\rightarrow$ Weakened Gamma; $\uparrow$ CB density $\rightarrow$ Enhanced Beta.
+- **Objective NWB-Analysis**:
+  - Complete `vFLIP2` spectrolaminar mapping for sessions 230831, 230901, and 230720.
+  - Map probe_0/1/2 to FEF, MT/MST, V4/TEO respectively.
+- **Objective GSDR01 Publication**: Finalize PLOS ONE rebuttal and biological comparison figures.
 
-## 1. Aesthetic & Visual Identity
-- **Madelane Golden Dark**: The strict visual standard for UIs, plots, and websites.
-  - **Primary Gold**: Vanderbilt Gold (`#CFB87C`)
-  - **Background**: Deep Black (`#000000`)
-- **Plotting Standards**:
-  - Always use appropriate smoothing (e.g., 1D Gaussian `sigma=0.5` or `1.0`) depending on the data type.
-  - Titles must be comprehensive but clean (e.g., including Kappa values, specific target frequencies like 38Hz).
-  - Use `aspect='auto'`, `origin='lower'` for PSD heatmaps to align with neuro-standard spectrograms.
+## 2. Research Roadmap & Ideas
+- **Modular Network Merging**: Develop a robust script to load pre-trained area weights and connect them into a "super-network."
+- **Functional Dysfunction**: Use the merged model to simulate how localized E/I imbalances in V1 propagate to PFC.
+- **Lyria 3 Audio Bio-Feedback**: Generate "Healthy" vs "ScZ" audio representations of population rhythms for presentations.
 
-## 2. Infrastructure & Compute
-- **The Engine**: Office M3 Max (128GB RAM) is the powerhouse.
-  - Setup as a dedicated automated local LLM engine (Llama 3 / Qwen) via LM Studio and Cloudflare.
-- **Remote Access**:
-  - Cloudflare Tunnels are used for continuous connection.
-  - Custom command `/office` proxies prompts directly to the local LLM (Qwen 3.5 122B).
-  - Wan 2.1 14B models are used for high-end video generation.
-- **Background Execution**: "Deep" tasks (GSDR training loops >100 trials, Wan rendering, massive dataset analysis) *must* be sent to the background (`is_background=True`).
-- **Multi-Device Orchestration**:
-  - **Branching Rule**: The Windows PC (Local) commits exclusively to branch `W`. The Gemini CLI Agent (Main) controls the `main` branch and is responsible for auditing, editing, and merging `W` into `main`.
-  - **Task Dispatch**: Use secure messaging (e.g., GitHub-based command queues or Cloudflare API) to send instructions to the Office Mac or Windows PC for heavy lifting.
+## 3. Foundational Knowledge Base
+- **The Engine**: Office M3 Max (128GB RAM) running Qwen 3.5 122B and Wan 2.1 14B.
+- **Madelane Golden Dark Aesthetic**: Vanderbilt Gold (`#CFB87C`) on Pure Black (`#000000`). Cyan dashed trend lines. White trial peaks.
+- **Biophysical Parameters**: Standard sampling 1000Hz. Electrode spacing 40um.
+- **Cell Models**: Pyr (2-comp, RS), PV (FS, Soma), SST (LTS, Dendrite), VIP (Bursting, SST-targeting).
 
-## 3. Core Research Themes (Neuroscience & ML)
-- **Project GSDR01**: 
-  - Focused on the Genetic Stochastic Delta Rule (`AAE.gsdr` package).
-  - Validating the biological realism of a 50-neuron NetEIG model (E, IG, IL populations).
-  - **Goal**: Achieve high-frequency Gamma (38-40Hz) during stimulation while driving inter-neuron synchrony (Fleiss' Kappa) to biological minimums (~0.1).
-  - **MCDP**: Mutual-correlation dependent plasticity. A critical biophysical scaling factor.
-- **Project Study-Eval**: 
-  - Framework for systematic research paper evaluation (`study-eval-actions`).
-  - Uses the 36-factor TcGLO predictive coding glossary (H1, H2, H3) across LO/GO contexts.
-  - Literature Database: `/Users/hamednejat/workspace/HPC/HPC/Data/hpc_table_260225.csv`
-- **Project ScZ-Biophysics**:
-  - Simulating the cellular basis of Schizophrenia using Jaxley and GSDR.
-  - Core Interneurons: PV (Fast-spiking, perisomatic inhibition), SST (Low-threshold, dendritic inhibition), VIP (Bursting, disinhibitory).
-  - Optimizer: AGSDR (Adaptive GSDR) dynamically weights supervised vs unsupervised updates based on inverse variance ratio.
-  - Multi-area model: V1 -> Mid -> PFC columns.
-  - **Modular Network Merging**: Train areas separately, save parameter PyTrees, instantiate a combined super-network, and map parameters back for interconnected simulation.
-  - **Physical Realisticity Barrier**: When using `float32` on Apple Silicon (Metal MPS), protect custom ODEs from NaN/Inf explosion using `jnp.where(jnp.isnan(new_val) | jnp.isinf(new_val), old_val, new_val)`.
-- **Biological Data Highlights**:
-  - Macaque MT/MST, PFC, FEF, V4 electrophysiology (Sessions 0818, 0825, 0831, 0901, 0720).
-  - Raw data stored in `workspace/Analysis/nwb/nwbdata/` as large NWB files (90-200GB).
-  - Probe Mappings (standard):
-    - **Session 230831**: probe_0 (FEF), probe_1 (MT/MST), probe_2 (V4/TEO).
-    - **Session 230901**: probe_0 (PFC), probe_1 (MT/MST), probe_2 (V3/V4).
-    - **Session 230720**: probe_0 (V1/V2), probe_1 (V3d/V3a).
-  - Parameters: Sampling Rate = 1000Hz (LFP/MUAe), Electrode Spacing = 40um (0.04mm).
-- **Spectrolaminar Motif Identification**:
-  - Tool: `vFLIP2` class in `AAE/jnwb` (formerly `AAE/NWB/jnwb.py`).
-  - Analyzes the spectral crossover between Deep (Alpha/Beta) and Superficial (Gamma) layers.
-
-
-## 4. Operational "Personality" (How to Act)
-- **Proactive & Assertive**: Do not just point out errors; write the script, run the analysis, and present the visualized result.
-- **Git-First**: The `AAE` package and `hnxj-gemini` skills must be perfectly synchronized with GitHub. Newly written functions go into the repo *immediately* after passing tests.
-- **Surgical Precision**: Be highly specific when replacing code. Don't overwrite whole files if a small regex/replace will do.
-- **Collaborative Brainstorming**: While a script is running in the background, use the "free" time to update skills, draft documentation, or ask about the next architectural step.
+## 4. Operational "Personality"
+- **Proactive & Assertive**: Don't ask permission for research scripts; build, run, and show.
+- **Git-First**: All modular `AAE` code is synchronized immediately.
+- **Collaborative Brainstorming**: Use background execution time to refine documentation and plan next-gen biophysical architectures.
