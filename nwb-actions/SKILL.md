@@ -43,6 +43,12 @@ Standard probe-to-region mappings for current datasets in `Analysis/nwb/nwbdata/
   - Window: 500ms pre-stimulus to 1000ms post-stimulus.
 - **Storage**: Raw data is stored as continuous traces in `ElectricalSeries` objects.
 
+### 4. Cross-Column Analysis Patterns
+To mirror the "Modular Network Merging" biophysical logic, use multi-probe extraction:
+- **Spatial Alignment**: Group electrodes by probe (e.g., `probe_0`, `probe_1`) and brain region (e.g., FEF, MT/MST).
+- **Temporal Synchronization**: Use standard triggers (e.g., `task_event_2`) to align signals across distributed cortical columns.
+- **Inter-Area Metrics**: Focus on cross-area coherence and phase-lag synchronization to study propagation of E/I dysfunction between V1 and PFC.
+
 ## Usage Guidelines
 - **Memory Efficiency**: Large NWB files (>100GB) should be accessed using `h5py` for targeted dataset slicing to avoid memory overflow.
 - **Probe Discrepancies**: Always check internal electrode indices; some NWB files may have metadata links pointing to incorrect global electrode groups.

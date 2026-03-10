@@ -22,15 +22,17 @@ For complex, multi-panel figures (e.g., PSD maps + Stats tables):
 - **Consolidated Tables**: Use `ax.table` spanning the full figure width for statistical summaries.
 - **Export**: Always save in **SVG** format for resolution-independent scaling.
 
-## 2. Interactive Dashboards (Streamlit)
+### 2. Interactive Dashboards (Streamlit)
 Building real-time analysis tools for biophysics and NWB data.
 
-### Standard UI Components
-- **Sidebar**: Simulation parameter control (`gAMPA`, `gGABAa`, `noise_amp`).
-- **Main Panel**: Real-time raster plots and stimulus-aligned PSDs.
-- **File Navigator**: Integrated local file system navigation for rapid NWB file selection.
+### Comparative Dashboard Layouts
+For benchmarking algorithms (e.g., GSDR vs. AGSDR):
+- **Primary Metrics**: Stack loss trajectories and mixing parameter ($\alpha$) adaptation in the first row.
+- **Biophysical Validation**: Place Average Firing Rate (AFR) and synchrony (Kappa) plots in the second row to ensure biological realism.
+- **Sidebars**: Use sidebar sliders for dynamic control of EMA momentum, learning rates, and noise standard deviations.
 
 ## 3. Portfolio Management (hnxj.github.io)
+
 Maintain the HNXJ portfolio by adding new projects and updating educational milestones.
 
 ### Common Workflows

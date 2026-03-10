@@ -46,15 +46,25 @@ To simulate dysfunction (e.g., disrupted E/I balance) across multiple areas:
 3. **Load Parameters**: Use `jax.tree.map` or dictionary merging logic to map the saved parameters of the individual areas back into the combined network's PyTree structure.
 4. **Connect Areas**: Define specific inter-area synapses (e.g., V1 E -> PFC E) to study multi-area interactions.
 
-## 6. Optimization: AGSDR
-The **Adaptive Genetic Stochastic Delta Rule (AGSDR)** is used to tune synaptic conductances. AGSDR dynamically calculates the mixing parameter $\alpha$ as the inverse ratio of the variance of updates from supervised vs unsupervised pathways.
+## 6. Optimization: AGSDR v2 & Efficient Reset
+The **Adaptive Genetic Stochastic Delta Rule (AGSDR)** has been upgraded for enhanced stability and recovery speed.
 
-### Workflow
-1. **Define Loss**: Targets include peak frequency power and Kappa minimization. Use axial current ($I_a = (V_d - V_s) / r_a$) as the MEG forward model.
-2. **Optimizer**: Initialize `AGSDR` via `AAE.gsdr.optimizers.AGSDR`.
-3. **Train**: Ensure `seed` randomization for the optimizer's `PRNGKey`.
+### Adaptive Mixing (AGSDR v2)
+- **EMA Variance**: Alpha ($\alpha$) is now determined by the **Exponential Moving Average (EMA)** of the supervised vs. unsupervised update variances. This prevents high-variance batches from causing jittery convergence.
+- **Dampening**: Adaptive weights are protected by the `float32` realisticity barrier to prevent NaN/Inf propagation.
 
-## 7. Analysis Tools
+### Efficient Reset ('Reset + Step')
+When a model hit a deselection threshold or checkpoint timeout:
+- **Logic**: The update returns `(params_opt - current_params) + optimized_step`.
+- **Outcome**: The network doesn't just jump back to the best state; it immediately attempts a new optimized step from that position, ensuring continuous forward motion during recovery.
+
+## 7. Biophysical Validation Standards
+To ensure simulations remain biologically and numerically plausible:
+- **Firing Rate Lower Bound**: All neurons should maintain a firing rate of at least **0.5 spikes/sec**. This prevents unrealistic charge accumulation in the dendrites and ensures active steady states.
+- **Physiological Voltage**: Membrane potential must stay within **-100mV to +50mV**. Values outside this range should trigger the *Physical Realisticity Barrier*.
+- **Synchrony Target**: Production-level models should target **Kappa < 0.1** during stimulation to match observed physiological asynchrony.
+
+## 8. Analysis Tools
 - **Synchrony (Kappa)**: Measure population-level synchrony. Target asynchronous states (< 0.1) for biological validity.
 - **MCDP**: Mutual-correlation dependent plasticity analysis.
 - **Spectrograms**: Use `hot` or `magma` colormaps for PSD maps, desaturating for publication (`vmax=1.5`).
