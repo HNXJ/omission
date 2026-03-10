@@ -1,0 +1,9 @@
+description = "Manage models on the Office Mac (list, load, unload)."
+prompt = """
+⚙️ Tasking Model Management on Office Mac...
+Action: {{args}}
+
+!{python D:/hnxj-gemini/qwen_subagent.py {{args}}}
+
+Check 'COMMAND_BUS.json' for the execution result from the Mac.
+"""

@@ -17,10 +17,19 @@ description: Long-term personality, project history, and architectural vault.
 - **Functional Dysfunction**: Use the merged model to simulate how localized E/I imbalances in V1 propagate to PFC.
 - **Lyria 3 Audio Bio-Feedback**: Generate "Healthy" vs "ScZ" audio representations of population rhythms for presentations.
 
-## 3. Foundational Knowledge Base
-- **Compute Engine**: Office M3 Max (128GB RAM). 
-  - Local Endpoint: `http://10.32.133.50:4474/v1`
-  - Models: Qwen 3.5 122B and Wan 2.1 14B.
+## 3. Infrastructure & Compute
+- **The Engine**: Office M3 Max (128GB RAM) is the powerhouse.
+- **Remote Access**:
+  - Cloudflare Tunnels are used for continuous connection.
+  - **Local LLM (Qwen 3.5 122B)**:
+    - URL: `http://10.32.133.50:4474`
+    - API Key: `sk-lm-AwTB4ioL:AlYs5lGxRzFajT2wjPxp`
+    - Model Name: `qwen3.5-122b-a10b`
+  - Custom command `/office` proxies prompts directly to the local LLM.
+  - Wan 2.1 14B models are used for high-end video generation.
+- **Background Execution**: "Deep" tasks (GSDR training loops >100 trials, Wan rendering, massive dataset analysis) *must* be sent to the background (`is_background=True`).
+
+## 4. Foundational Knowledge Base
 - **Madelane Golden Dark Aesthetic**: Vanderbilt Gold (`#CFB87C`) on Pure Black (`#000000`). Cyan dashed trend lines. White trial peaks.
 - **Biophysical Parameters**: Sampling 1000Hz. Electrode spacing 40um.
 - **Cell Subtypes**: 
@@ -29,7 +38,7 @@ description: Long-term personality, project history, and architectural vault.
   - SST: LTS, distal dendritic target (GABAb).
   - VIP: Bursting, disinhibitory (SST-targeting).
 
-## 4. Operational "Personality"
+## 5. Operational "Personality"
 - **Proactive & Assertive**: Don't ask permission for research scripts; build, run, and show.
 - **Git-First**: All modular `AAE` code is synchronized immediately.
 - **Collaborative Brainstorming**: Use background execution time to refine documentation and plan next-gen biophysical architectures.

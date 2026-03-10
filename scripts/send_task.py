@@ -5,14 +5,15 @@ import subprocess
 import argparse
 from datetime import datetime
 
-# --- LOCAL LLM CONFIGURATION (Office Mac M3) ---
+# --- CONFIGURATION ---
 # Use this to start: claude --model "local model"
-LOCAL_LLM_URL = "https://plugin-primarily-donald-www.trycloudflare.com/v1"
+LOCAL_LLM_URL = "http://10.32.133.50:4474/v1"
 LOCAL_LLM_API_KEY = "sk-lm-F2VX005K:WVPz8lWIzTUD4hVnLzKK"
-# -----------------------------------------------
 
-BUS_PATH = "/Users/hamednejat/workspace/HNXJ/hnxj-gemini/COMMAND_BUS.json"
-REPO_DIR = "/Users/hamednejat/workspace/HNXJ/hnxj-gemini"
+# Dynamic Path Resolution
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_DIR = os.path.dirname(SCRIPT_DIR)
+BUS_PATH = os.path.join(REPO_DIR, "COMMAND_BUS.json")
 
 def get_hostname():
     import platform
@@ -31,10 +32,13 @@ def get_branch():
 
 def send_task(target, command):
     if not os.path.exists(BUS_PATH):
-        bus = {"last_updated": "", "tasks": []}
+        bus = {"last_updated": "", "tasks": [], "presence": {}}
     else:
-        with open(BUS_PATH, "r") as f:
-            bus = json.load(f)
+        try:
+            with open(BUS_PATH, "r") as f:
+                bus = json.load(f)
+        except Exception:
+            bus = {"last_updated": "", "tasks": [], "presence": {}}
     
     task_id = str(uuid.uuid4())[:8]
     new_task = {
@@ -56,11 +60,12 @@ def send_task(target, command):
     hostname = get_hostname()
     branch = get_branch()
     
+    print(f"Pushing task {task_id} to GitHub branch '{branch}'...")
     subprocess.run(["git", "-C", REPO_DIR, "add", "COMMAND_BUS.json"], capture_output=True)
     subprocess.run(["git", "-C", REPO_DIR, "commit", "-m", f"New task from {hostname}: {task_id}"], capture_output=True)
     subprocess.run(["git", "-C", REPO_DIR, "push", "origin", branch], capture_output=True)
     
-    print(f"🚀 Task {task_id} sent from {hostname} (branch {branch}) to {target}!")
+    print(f"🚀 Task {task_id} sent from {hostname} to {target}!")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Send a task to another PC via the GitHub message bus.")

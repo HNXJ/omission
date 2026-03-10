@@ -10,3 +10,6 @@ Despite its theoretical dominance, empirical evidence for PC is scattered across
 
 ## 3. Our Solution: Multi-Agent AI Synthesis
 We present a novel, AI-driven meta-analytical framework. By deploying an ensemble of Large Language Models (LLMs) to score 200+ studies against the unified TcGLO Glossary, we quantify the field's consensus. This approach allows us to map the "Certainty Landscape" of Predictive Coding with unprecedented resolution.
+
+## 4. Related Works: The Rise of Agentic Meta-Analysis
+Recent advancements have demonstrated the efficacy of multi-agent LLM systems in automating systematic reviews. Frameworks like **otto-SR** and **LatteReview** have achieved extraction sensitivities exceeding 96%, often surpassing human performance in large-scale screening tasks. Furthermore, the **CollabEval** protocol has established that multi-agent debate and adjudication significantly mitigate the biases inherent in single-model evaluations. Our work builds upon these foundations by introducing the **TcGLO (Neuroscience Predictive Coding) Glossary**, transitioning the field from simple text categorization to high-dimensional biophysical theory validation.

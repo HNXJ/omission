@@ -1,0 +1,9 @@
+description = "Sends a shell command to the Office Mac via the GitHub message bus."
+prompt = """
+🚀 Tasking Office Mac...
+Input: {{args}}
+
+!{python D:/hnxj-gemini/scripts/send_task.py "OfficeMac" "{{args}}"}
+
+Check 'COMMAND_BUS.json' or run 'remote_bridge.py' to see results.
+"""
