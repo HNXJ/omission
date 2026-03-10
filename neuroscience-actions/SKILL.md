@@ -23,7 +23,13 @@ This skill guides the intersection of biological neuroscience research and compu
 - **Lichtenfeld2024N**: Advanced laminar mapping protocols.
 - **jaxley_paper_2025_nn**: Differentiable biophysical simulations at scale.
 
-## 4. Paper Management Pipeline (PDF to MD/Media)
+## 4. Signal Processing & Variability
+- **Neural Variability Quenching**: The significant reduction in cross-trial variance observed immediately after stimulus onset. High quenching is often a signature of robust sensory processing.
+- **Lead/Lag Analysis (Cross-Correlation)**: 
+    - Used to study temporal precedence between areas (e.g., V1 leads PFC during feedforward visual processing).
+    - **Formula**: $R_{xy}(\tau) = \sum x(t) y(t+\tau)$. Peak at $\tau > 0$ implies $x$ leads $y$.
+
+## 5. Paper Management Pipeline (PDF to MD/Media)
 Use the automated extraction tool to separate text and images for analysis.
 - **Path**: `AAE/utils/pdf_extractor.py`
 - **Output**: 

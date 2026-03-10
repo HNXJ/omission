@@ -49,6 +49,21 @@ To mirror the "Modular Network Merging" biophysical logic, use multi-probe extra
 - **Temporal Synchronization**: Use standard triggers (e.g., `task_event_2`) to align signals across distributed cortical columns.
 - **Inter-Area Metrics**: Focus on cross-area coherence and phase-lag synchronization to study propagation of E/I dysfunction between V1 and PFC.
 
-## Usage Guidelines
+### 5. Signal Normalization & Variability
+For continuous signals (MUAe, LFP Envelopes), use baseline Z-scoring and quantify cross-trial quenching.
+
+**MUAe Z-Scoring**:
+```python
+import numpy as np
+def zscore_signal(data, baseline_indices):
+    baseline = data[baseline_indices[0]:baseline_indices[1]]
+    return (data - np.mean(baseline)) / (np.std(baseline) + 1e-6)
+```
+
+**Variance Quenching**:
+Neural variability (across trials) typically drops upon stimulus onset.
+- **Metric**: `np.var(trial_stack, axis=0)` where `trial_stack` is `(Num_Trials, Timepoints)`.
+
+## 6. Usage Guidelines
+- **Task Reference**: See [Global Omission Task](./references/global_omission_task.md) for sequence logic and event codes.
 - **Memory Efficiency**: Large NWB files (>100GB) should be accessed using `h5py` for targeted dataset slicing to avoid memory overflow.
-- **Probe Discrepancies**: Always check internal electrode indices; some NWB files may have metadata links pointing to incorrect global electrode groups.
