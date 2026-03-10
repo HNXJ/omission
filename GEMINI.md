@@ -5,6 +5,11 @@
 - **Workflow (AAE-First)**: Every new Python function or class MUST be modularized into the `AAE/` repository and pushed to GitHub immediately.
 - **Execution**: All 'deep' tasks (GSDR training, NWB analysis sweeps, Wan-video gen) MUST be executed as background processes (`is_background=True`).
 
+## Current Objectives (Active Working Set)
+- **Objective ScZ-Biophysics**: Train multi-area (V1/Mid/PFC) model using Adaptive GSDR (AGSDR). Target: $\downarrow$ PV density $\rightarrow$ Weak Gamma; $\uparrow$ CB density $\rightarrow$ Enhanced Beta.
+- **Objective NWB-Analysis**: Complete `vFLIP2` spectrolaminar mapping for sessions 230831, 230901, and 230720. Map Probes A/B/C to assigned regions.
+- **Objective GSDR01 Publication**: Finalize PLOS ONE rebuttal and biological comparison figures for 0818/0825.
+
 ## Programming Grammar (v1.0)
 Rules for speed, stability, and generalization:
 1. **Modular Granularity**: One file = One primary function or class. Use `__init__.py` for package-level exports.
@@ -13,4 +18,4 @@ Rules for speed, stability, and generalization:
 4. **PyTree Standard**: Parameters must be handled as PyTrees. Use `jax.tree.map` for scaling and updates.
 5. **Auto-Seed**: All stochastic functions must default to `seed=None` and generate random seeds internally unless explicitly overridden.
 
-**Refer to `/Users/hamednejat/.gemini/VMEMORY.md` for project-specific objectives and active TODOs.**
+**Refer to `/Users/hamednejat/.gemini/VMEMORY.md` for architectural details, project history, and research roadmap.**
