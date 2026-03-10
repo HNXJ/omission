@@ -1,0 +1,38 @@
+{
+  "PV mRNA/GAD67 Reduction": {
+    "id": 1,
+    "def": "Significant reduction in PV mRNA and the GABA-synthesizing enzyme GAD67, particularly in superficial L2/3.",
+    "theory_group": "H1",
+    "tag": "Quantitative"
+  },
+  "SST/CB mRNA Deficit": {
+    "id": 2,
+    "def": "Reduced expression of Somatostatin/Calbindin, leading to weakened dendritic inhibition of Pyramidal cells.",
+    "theory_group": "H1",
+    "tag": "Quantitative"
+  },
+  "NMDAR Hypofunction (PV)": {
+    "id": 13,
+    "def": "Hypofunction of NMDA receptors specifically on PV+ interneurons, reducing their excitatory drive.",
+    "theory_group": "H2",
+    "tag": "Quantitative"
+  },
+  "Reduced L3 Spine Density": {
+    "id": 14,
+    "def": "Loss of dendritic spines on Layer 3 Pyramidal cells, reducing excitatory recurrent connectivity.",
+    "theory_group": "H2",
+    "tag": "Quantitative"
+  },
+  "Reduced Task-Evoked Gamma": {
+    "id": 25,
+    "def": "Weakened gamma-band (30-80Hz) power during cognitive tasks, driven by PV interneuron dysfunction.",
+    "theory_group": "H3",
+    "tag": "Quantitative"
+  },
+  "Enhanced Baseline Beta": {
+    "id": 26,
+    "def": "Increase in low-frequency beta-band (15-25Hz) power, associated with SST/CB interneuron pathology.",
+    "theory_group": "H3",
+    "tag": "Quantitative"
+  }
+}
