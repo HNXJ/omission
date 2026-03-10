@@ -7,7 +7,8 @@
 - Added **Physical Realisticity Barrier** for float32 stability.
 
 ## Ongoing Parts
-- Initial AGSDR training of the V1 column (PID: 35738). [STATUS: UNDER PROCESS - LOCAL MAC]
+- Initial AGSDR training of the V1 column (PID: 37567). [STATUS: UNDER PROCESS - LOCAL MAC]
+- Fixed **sparse_connect** signature and registered synaptic conductances as trainable parameters.
 
 ## Todo
 - Implement **Modular Network Merging** script to connect separately trained columns.

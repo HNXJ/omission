@@ -6,9 +6,10 @@
 - Confirmed 40um electrode spacing from metadata.
 
 ## Ongoing Parts
-- Comprehensive **vFLIP2** mapping sweep across all probes and sessions. [STATUS: EXAMINING]
+- Completed comprehensive **vFLIP2** mapping sweep across all probes and sessions. [STATUS: FINISHED]
+- Identified spectrolaminar crossover channels for FEF, MT/MST, V4/TEO, PFC, and V1/V2.
 
 ## Todo
-- Extract putative layer channels for all regions.
+- Extract crossover channel indices from the generated PNG figures for each session.
 - Quantify Gamma/Beta power ratios per layer.
 - Cross-session consistency check.
