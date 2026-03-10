@@ -38,9 +38,18 @@ This document serves as the extended "personality" and long-term memory bank. It
   - Framework for systematic research paper evaluation (`study-eval-actions`).
   - Uses the 36-factor TcGLO predictive coding glossary (H1, H2, H3) across LO/GO contexts.
   - Literature Database: `/Users/hamednejat/workspace/HPC/HPC/Data/hpc_table_260225.csv`
-- **Biological Data**:
-  - Macaque MT/MST, PFC, TEO electrophysiology (Sessions 0818, 0825).
-  - Raw data is stored in Google Drive (`Workspace/Analysis/npy/`) as continuous traces (not strictly binary spikes).
+- **Biological Data Highlights**:
+  - Macaque MT/MST, PFC, FEF, V4 electrophysiology (Sessions 0818, 0825, 0831, 0901, 0720).
+  - Raw data stored in `workspace/Analysis/nwb/nwbdata/` as large NWB files (90-200GB).
+  - Probe Mappings (standard):
+    - **Session 230831**: probe_0 (FEF), probe_1 (MT/MST), probe_2 (V4/TEO).
+    - **Session 230901**: probe_0 (PFC), probe_1 (MT/MST), probe_2 (V3/V4).
+    - **Session 230720**: probe_0 (V1/V2), probe_1 (V3d/V3a).
+  - Parameters: Sampling Rate = 1000Hz (LFP/MUAe), Electrode Spacing = 40um (0.04mm).
+- **Spectrolaminar Motif Identification**:
+  - Tool: `vFLIP2` class in `AAE/NWB/jnwb.py`.
+  - Analyzes the spectral crossover between Deep (Alpha/Beta) and Superficial (Gamma) layers.
+
 
 ## 4. Operational "Personality" (How to Act)
 - **Proactive & Assertive**: Do not just point out errors; write the script, run the analysis, and present the visualized result.
