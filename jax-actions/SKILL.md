@@ -46,16 +46,22 @@ To simulate dysfunction (e.g., disrupted E/I balance) across multiple areas:
 4. **Connect Areas**: Define specific inter-area synapses (e.g., V1 E -> PFC E) to study multi-area interactions.
 
 ## 6. Optimization: AGSDR v2 & Efficient Reset
-The **Adaptive Genetic Stochastic Delta Rule (AGSDR)** has been upgraded for enhanced stability and recovery speed.
+The **Adaptive Genetic Stochastic Delta Rule (AGSDR)** has been upgraded for enhanced stability, recovery speed, and real-time observability.
 
 ### Adaptive Mixing (AGSDR v2)
 - **EMA Variance**: Alpha ($\alpha$) is now determined by the **Exponential Moving Average (EMA)** of the supervised vs. unsupervised update variances. This prevents high-variance batches from causing jittery convergence.
 - **Dampening**: Adaptive weights are protected by the `float32` realisticity barrier to prevent NaN/Inf propagation.
 
 ### Efficient Reset ('Reset + Step')
-When a model hit a deselection threshold or checkpoint timeout:
+When a model hits a deselection threshold or checkpoint timeout:
 - **Logic**: The update returns `(params_opt - current_params) + optimized_step`.
 - **Outcome**: The network doesn't just jump back to the best state; it immediately attempts a new optimized step from that position, ensuring continuous forward motion during recovery.
+
+### Verbose Status Monitoring
+Optimizers now include real-time warnings via `jax.debug.print` to aid in debugging "stuck" networks:
+- **Stuck Warning**: Triggers when the model hasn't improved for `checkpoint_n` epochs. Indicates a need for increased exploration.
+- **Alpha Floor Warning**: Triggers in AGSDR when the supervised gradient variance is too low, causing the mixer to lock at the stochastic floor ($\alpha_{min}=0.1$).
+- **Numerical Warning**: Always check logs for "analysis returned nans/zeros" or "network is off" reports during the analysis phase.
 
 ## 7. Biophysical Validation Standards
 To ensure simulations remain biologically and numerically plausible:
