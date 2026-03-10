@@ -6,7 +6,7 @@ from datetime import datetime
 
 # --- LOCAL LLM CONFIGURATION (Office Mac M3) ---
 # Use this to start: claude --model "local model"
-LOCAL_LLM_URL = "https://plugin-primarily-donald-www.trycloudflare.com/v1"
+LOCAL_LLM_URL = "http://10.32.133.50:4474/v1"
 LOCAL_LLM_API_KEY = "sk-lm-F2VX005K:WVPz8lWIzTUD4hVnLzKK"
 # -----------------------------------------------
 

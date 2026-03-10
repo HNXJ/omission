@@ -17,7 +17,9 @@ description: Long-term personality, project history, and architectural vault.
 - **Lyria 3 Audio Bio-Feedback**: Generate "Healthy" vs "ScZ" audio representations of population rhythms for presentations.
 
 ## 3. Foundational Knowledge Base
-- **Compute Engine**: Office M3 Max (128GB RAM) running Qwen 3.5 122B and Wan 2.1 14B.
+- **Compute Engine**: Office M3 Max (128GB RAM). 
+  - Local Endpoint: `http://10.32.133.50:4474/v1`
+  - Models: Qwen 3.5 122B and Wan 2.1 14B.
 - **Madelane Golden Dark Aesthetic**: Vanderbilt Gold (`#CFB87C`) on Pure Black (`#000000`). Cyan dashed trend lines. White trial peaks.
 - **Biophysical Parameters**: Sampling 1000Hz. Electrode spacing 40um.
 - **Cell Subtypes**: 
