@@ -6,4 +6,4 @@
 - **Navigation**: Always provide an 8-word summary when entering folders.
 - **Workflow**: Move newly written Python functions/classes into the `AAE/` repository and push to GitHub immediately. Do not push large data/scripts.
 - **Execution**: Always execute 'deep' tasks (e.g., GSDR training, Wan-video gen) as background processes (`is_background=True`).
-- **Current Objective**: Finalize PLOS ONE rebuttal for GSDR01. Perform comprehensive vFLIP2 spectrolaminar analysis across NWB sessions (230831, 230901, 230720) to identify putative cortical layers.
+- **Current Objective**: Train the multi-area (V1/Mid/PFC) ScZ biophysical model using the Adaptive GSDR (AGSDR) optimizer. Focus on the interplay of PV (Gamma) and SST/CB (Beta) interneurons.

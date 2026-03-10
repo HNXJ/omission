@@ -20,25 +20,26 @@ To ensure independent realizations, **never use constant seeds** in production s
 - **Dynamic Seeds**: All `build_net_eig` and noise functions now default to `seed=None`. They generate a high-entropy integer internally if no seed is provided.
 - **Realization Handling**: When running multiple trials, pass a unique seed (e.g., `base_seed + trial_index`) to ensure distinct network wiring and noise states.
 
-## 3. Network Construction: `net_eig`
-The `net_eig` model is a three-population biophysical network:
-- **Ne (Excitatory)**: Primary signal-carrying neurons.
-- **Nig (Global Inhibitory)**: Slow interneurons for global feedback (SST-like).
-- **Nil (Local Inhibitory)**: Fast interneurons for local feedback (PV-like).
+## 3. Network Construction: `net_eig` & Cell Subtypes
+The `net_eig` model is a multi-population biophysical network featuring specifically tuned Hodgkin-Huxley compartments:
+- **Pyramidal (Pyr)**: Multi-compartment (Soma + Distal Dendrite), high M-current adaptation.
+- **Parvalbumin (PV)**: Fast-spiking (FS), low capacitance, targets E-soma for Gamma generation.
+- **Somatostatin (SST)**: Low-threshold spiking (LTS), targets E-dendrites for Beta resonance.
+- **Vasoactive Intestinal Polypeptide (VIP)**: Irregular/bursting, targets SST for disinhibition.
 
 ### Connection Dynamics
 - **E -> All**: `GradedAMPA`.
-- **IG -> All**: `GradedGABAa` (Fast inhibition).
-- **IL -> Subset**: `GradedGABAb` (Slow inhibition) or `GradedGABAa`.
-- **Standard Time Constants**: `tauDAMPA = 2.0ms`, `tauDGABAa = 5.0ms`.
+- **PV -> E (Soma)**: `GradedGABAa` (Fast inhibition).
+- **SST -> E (Dendrite)**: `GradedGABAb` (Slow inhibition) or `GradedGABAa`.
+- **Standard Time Constants**: `tauDAMPA = 2.0ms`, `tauDGABAa = 5.0ms`, `tauDGABAb = 50.0ms`.
 
-## 4. Optimization: GSDR
-The **Genetic Stochastic Delta Rule (GSDR)** is used to tune synaptic conductances to target specific spectral motifs (e.g., 38Hz Gamma) while minimizing synchrony (Kappa < 0.1).
+## 4. Optimization: AGSDR
+The **Adaptive Genetic Stochastic Delta Rule (AGSDR)** is used to tune synaptic conductances. AGSDR dynamically calculates the mixing parameter $\alpha$ as the inverse ratio of the variance of updates from supervised vs unsupervised pathways.
 
 ### Workflow
-1. **Define Loss**: Targets include peak frequency power and Kappa minimization.
-2. **Transform**: Use `ClampTransform` to keep conductances within biophysical bounds.
-3. **Train**: Use `train_net` from the pipeline, ensuring `seed` randomization for the optimizer's `PRNGKey`.
+1. **Define Loss**: Targets include peak frequency power and Kappa minimization. Use axial current ($I_a = (V_d - V_s) / r_a$) as the MEG forward model.
+2. **Optimizer**: Initialize `AGSDR` via `AAE.gsdr.optimizers.AGSDR`.
+3. **Train**: Ensure `seed` randomization for the optimizer's `PRNGKey`.
 
 ## 5. Analysis Tools
 - **Synchrony (Kappa)**: Measure population-level synchrony. Target asynchronous states (< 0.1) for biological validity.

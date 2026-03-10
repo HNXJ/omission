@@ -38,6 +38,11 @@ This document serves as the extended "personality" and long-term memory bank. It
   - Framework for systematic research paper evaluation (`study-eval-actions`).
   - Uses the 36-factor TcGLO predictive coding glossary (H1, H2, H3) across LO/GO contexts.
   - Literature Database: `/Users/hamednejat/workspace/HPC/HPC/Data/hpc_table_260225.csv`
+- **Project ScZ-Biophysics**:
+  - Simulating the cellular basis of Schizophrenia using Jaxley and GSDR.
+  - Core Interneurons: PV (Fast-spiking, perisomatic inhibition), SST (Low-threshold, dendritic inhibition), VIP (Bursting, disinhibitory).
+  - Optimizer: AGSDR (Adaptive GSDR) dynamically weights supervised vs unsupervised updates based on inverse variance ratio.
+  - Multi-area model: V1 -> Mid -> PFC columns.
 - **Biological Data Highlights**:
   - Macaque MT/MST, PFC, FEF, V4 electrophysiology (Sessions 0818, 0825, 0831, 0901, 0720).
   - Raw data stored in `workspace/Analysis/nwb/nwbdata/` as large NWB files (90-200GB).
