@@ -12,15 +12,18 @@ For deep technical API details and best practices, refer to:
 - [JAX Core Documentation](./docs/jax-core.md)
 - [Jaxley Advanced Documentation](./docs/jaxley-advanced.md)
 
-## 2. Modular Framework: `AAE.gsdr`
-Always use the modular `gsdr` package for biophysical modeling.
-- **`gsdr.models`**: `build_net_eig`, `Inoise`, `GradedAMPA`, `GradedGABAa`, `GradedGABAb`.
-- **`gsdr.optimizers`**: `GSDR`, `SDR`, `ClampTransform`.
-- **`gsdr.simulation`**: `noise_current`, `noise_current_ac`, `step_current`.
-- **`gsdr.analysis`**: `compute_kappa`, `compute_psd`, `calculate_firing_rates`, `calculate_mcdp`.
-- **`gsdr.pipeline`**: `train_net`, `get_loss_fn`.
+## 2. Modular Framework: `jbiophys`
+Always use the modular `jbiophys` atomic repository for biophysical modeling.
+The repository is split into:
+- **`core/`**: `optimizers`, `mechanisms`, `neurons` (atomic building blocks).
+- **`systems/`**: `networks`, `visualizers`, `actions` (orchestration, pipelines, plotting).
 
-## 2. Mandatory Randomization (Stochasticity)
+### Experimental Workflows
+When writing temporary scripts or performing new optimizations (e.g., baseline parameter tuning):
+- Write scripts inside `systems/actions/`.
+- Commit these changes to a `dev` branch to keep the `main` branch clean and purely functional.
+
+## 3. Network Construction: `net_eig` & Cell Subtypes
 To ensure independent realizations, **never use constant seeds** in production simulations or training loops.
 - **Dynamic Seeds**: All `build_net_eig` and noise functions now default to `seed=None`. They generate a high-entropy integer internally if no seed is provided.
 - **Realization Handling**: When running multiple trials, pass a unique seed (e.g., `base_seed + trial_index`) to ensure distinct network wiring and noise states.
