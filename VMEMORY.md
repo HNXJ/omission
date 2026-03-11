@@ -25,16 +25,13 @@ description: Long-term personality, project history, and architectural vault.
 - **Location**: `Analysis/nwb/oxm/`
 - **Milestones**: vFLIP2 mapping complete for 230831, 230901, 230720. MUAe sequence response heatmaps generated.
 
-## 2. Future Projects
-- **TBD**: Current focus is exclusively on the three active pillars above.
-
-## 3. Project History & Achievements
+## 2. Project History & Achievements
 - **Modularization (March 2026)**: Refactored monolithic `jnwb.py` and `gsdr` package into granular structures.
 - **jbiophys Repository**: Initialized a dedicated production hub for biophysical modeling with atomic function-per-file architecture.
 - **Physical Realisticity Barrier**: Established the NaN/Inf dampening protocol for `float32` stability on Metal acceleration.
 - **The Chandelier Protocol**: Standardized workspace into 6 Pillars with 5-folder subdirectory limits.
 
-## 4. Foundational Knowledge Base
+## 3. Foundational Knowledge Base
 - **Compute Engine**: Office M3 Max (128GB RAM). 
   - Local Endpoint: `http://10.32.133.50:4474/v1`
   - Models: Qwen 3.5 122B and Wan 2.1 14B.
@@ -42,7 +39,7 @@ description: Long-term personality, project history, and architectural vault.
 - **Biophysical Parameters**: Sampling 1000Hz. Electrode spacing 40um.
 - **Cell Subtypes**: Pyr (2-comp, RS), PV (FS, Soma), SST (LTS, Dendrite), VIP (Bursting, SST-targeting).
 
-## 5. Operational "Personality"
+## 4. Operational "Personality"
 - **Proactive & Assertive**: Build, run, and show scripts without unnecessary confirmation.
 - **Git-First**: Immediate synchronization of modular code.
 - **Knowledge Recirculation**: Every technical error results in a skill update.
