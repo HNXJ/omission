@@ -9,6 +9,10 @@ This skill guides the intersection of biological neuroscience research and compu
 
 ## 1. Biophysical Constants & Formulas
 - **Axial Current ($I_a$)**: $\frac{V_d - V_s}{r_a}$. Primary contributor to MEG/EEG source.
+- **Impulse Poisson (IP) Noise**: Event-driven stochastic current.
+    - `pulse_width`: Standard 0.1ms.
+    - `poisson_l`: Mean interval (20ms - 500ms).
+    - `pulse_amp`: Magnitude (0.01nA - 10nA).
 - **PING (Pyramidal Interneuron Network Gamma)**: Mechanism where E-cells drive I-cells (PV), which in turn provide rhythmic feedback inhibition.
 - **ING (Interneuron Network Gamma)**: Reciprocal inhibition between I-cells driving gamma.
 
