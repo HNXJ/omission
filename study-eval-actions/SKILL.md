@@ -1,44 +1,33 @@
 ---
 name: study-eval-actions
-description: Framework for evaluating research papers against a structured factor glossary. Includes the 36-factor TcGLO predictive coding glossary, AI-driven scoring, and multi-dimensional visualizations (3D scatter, 2D comparison).
+description: Framework for evaluating research papers against the 36-factor TcGLO Predictive Coding glossary. Includes AI-driven scoring and consensus mapping.
 ---
 
-# Study Evaluation Actions Skill
+# Study Eval Actions Skill
 
-Consolidated framework for systematic research paper evaluation and comparative analysis.
+This skill guides the systematic evaluation of neuroscience literature using the **TcGLO (Predictive Coding) Glossary**.
 
-## 1. Evaluation Domain: TcGLO Predictive Coding
-Evaluates predictive coding mechanisms across three primary hypotheses (H1, H2, H3) and two contexts (LO, GO).
+## 1. The TcGLO Glossary (36 Factors)
+Evaluations are performed across three core biophysical hypotheses:
 
-### Contexts
-- **LO (Local Oddball)**: Short-term sensory deviance (adaptation-heavy).
-- **GO (Global Oddball)**: Long-term/Sequence deviance (expectation-driven).
+### H1: Predictive Suppression (Mechanisms of Expectation)
+- Focus: How predictable stimuli are dampened via inhibition.
+- Key IDs: 1 (SST), 2 (PV), 6 (Activity Suppression), 12 (Omission Response).
 
-### Theory Groups (Hypotheses)
-- **H1 — Suppression**: Predictive inhibition of surprise.
-- **H2 — Propagation**: Feedforward error signal transmission.
-- **H3 — Ubiquitousness**: Cross-scale and cross-area conservation.
+### H2: Feedforward Error Propagation (Surprise Transmission)
+- Focus: The generation and ascending flow of prediction errors.
+- Key IDs: 14 (AMPA), 16 (Ascending Gamma), 18 (L2/3 Activity), 22 (Latency Shift).
 
-## 2. Core Workflows
+### H3: Ubiquity (Universal Motifs)
+- Focus: Consistency across areas, modalities, and species.
+- Key IDs: 25 (Canonical Microcircuit), 30-32 (V1/V4/PFC Presence), 33 (Cross-Modal).
 
-### A. Evaluating a Research Paper
-1. **Extract Text**: Use `PyPDF2` or similar to extract full text from the PDF.
-2. **Score Factors**: Map text evidence to the 36-factor glossary using AI scoring (-1.0 to +1.0, or NaN).
-3. **Log Reasoning**: Capture the qualitative logic behind each score.
+## 2. Multi-Agent Scoring Workflow
+1. **Extraction**: Extract text evidence from PDFs (via `neuroscience-actions`).
+2. **Evaluation**: Deploy an ensemble of LLMs (DeepSeek, Qwen, Gemini) to score the paper (0.0 to 1.0) against each of the 36 factors.
+3. **Consensus**: Calculate the mean score across agents to determine the "Consensus Score."
+4. **Certainty**: Calculate the variance between agents to determine the "Certainty Index."
 
-### B. Visualization & Analysis
-- **3D Scatter Plot**: Visualize studies in the H1-H2-H3 space for a specific context.
-- **2D Hypothesis Comparison**: Stacked subplots comparing LO vs. GO scores for each hypothesis.
-- **Study-to-Study MSE**: Compare a target paper against the existing literature database using Mean Squared Error.
-- **Agent Agreement**: Analyze consensus between different AI models (Agents).
-
-## 3. Key Resources
-- **Literature Database**: `/Users/hamednejat/workspace/HPC/HPC/Data/hpc_table_260225.csv`
-- **Glossary Definition**: [glossary.json](references/glossary.json)
-- **Detailed Reference**: [glossary-reference.md](references/glossary-reference.md)
-- **Main Analysis Notebook**: `/Users/hamednejat/General/Works/4thYear/HPC/HPC/GLO_HPC_A.ipynb`
-
-## 4. Usage Guidelines
-- Always ensure context independence: Score LO and GO factors separately based on distinct evidence.
-- Maintain standardized column naming: `{context}_{factor_name}`.
-- Use `np.nan` for factors not addressed in the study.
+## 3. Reference Data
+- **Dataset**: `General/Works/4thYear/HPC/HPC/hpc_table_260225.csv`.
+- **Glossary Details**: See `HPC/Skills/study-eval-neuro/glossary-reference.md`.
