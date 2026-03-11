@@ -1,13 +1,13 @@
 # 🏺 Workspace Chandelier (Structural Overview)
 
 ## 1. Root Architecture (6 Pillars)
-The workspace is organized into 6 primary categories to maximize navigation speed and structural clarity.
+The workspace is organized into 6 primary pillars to maximize navigation speed and structural clarity.
 
-- **Analysis/**: Empirical data processing (NWB, EEG, MEG, etc.)
-- **Computational/**: Biophysical modeling, library core, and ScZ project.
-- **HNXJ/**: Administrative vault, portfolio (hnxj_gio), and Gemini bridge.
-- **Repositories/**: Local mirrors of GitHub projects (AAE, GSDR).
-- **Research_Assets/**: Publication drafts, media (figures/pdfs), and data exports.
+- **Analysis/**: Empirical data processing and research assets.
+- **Computational/**: Biophysical modeling and ScZ project.
+- **drive/**: Synced Google Drive (ReadOnly and Workspace folders).
+- **HNXJ/**: Administrative vault, portfolio, media, and Gemini bridge.
+- **Repositories/**: Local mirrors of GitHub projects (AAE, GSDR, jbiophys).
 - **misc/**: Temporary vault for root-level files.
 
 ## 2. Hierarchical Tree (Level 2)
@@ -16,36 +16,28 @@ workspace/
 ├── Analysis/
 │   ├── ecog/
 │   ├── eeg/
-│   ├── HPC/
 │   ├── meg/
-│   ├── misc/
-│   └── nwb/
+│   ├── nwb/
+│   └── Research_Assets/
 ├── Computational/
-│   ├── core_tools/ (jlmlx, lib)
+│   ├── core_tools/
 │   ├── jbiophysics/
 │   ├── jschizophrenia/
-│   ├── media/
-│   ├── misc/
-│   ├── ScZ_Modeling/
+│   ├── mllm/
+│   ├── mscz/
 │   └── src/
+├── drive/ (Google Drive)
 ├── HNXJ/
-│   ├── admin/ (docs, archive, office_mac_files)
+│   ├── admin/
 │   ├── hnxj_gio/
 │   ├── hnxj-gemini/ [EXEMPT]
-│   ├── misc/
-│   ├── new_skills/
+│   ├── media/
 │   └── skills/
 ├── Repositories/
 │   ├── AAE/
 │   ├── GSDR_repo/
-│   ├── drive/
-│   └── misc/
-├── Research_Assets/
-│   ├── _figures/
-│   ├── drafts/
-│   ├── media/
-│   └── misc/
+│   └── jbiophys/
 └── misc/
 ```
 
-*Note: Every directory follows the 5-folder limit (excluding hnxj-gemini) and contains a 'misc/' vault.*
+*Note: Every directory follows the 5-folder limit (excluding hnxj-gemini and root) and contains a 'misc/' vault.*
