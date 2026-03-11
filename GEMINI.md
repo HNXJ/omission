@@ -6,9 +6,9 @@
 - **Execution**: All 'deep' tasks (GSDR training, NWB analysis sweeps, Wan-video gen) MUST be executed as background processes (`is_background=True`).
 
 ## Current Objectives (Active Working Set)
-- **Objective mscz**: Train multi-area (V1/Mid/PFC) model using Adaptive GSDR (AGSDR). Target: $\downarrow$ PV density $\rightarrow$ Weak Gamma; $\uparrow$ CB density $\rightarrow$ Enhanced Beta.
-- **Objective oxm**: Finalize `vFLIP2` spectrolaminar mapping for sessions 230831, 230901, and 230720. 
-- **Objective mllm**: Draft "Wisdom of Crowd" paper. Finalize Figure 2 (Consensus Heatmap).
+- **Objective mscz**: Complete the two-area (Low -> High Cortex) parameter sweep using `IPnoise`. Target: 5-15Hz AFR in high-order column.
+- **Objective oxm**: Finalize cortical column map by cross-validating `vFLIP2` crossover points with MUAe sequence responses.
+- **Objective mllm**: Perform multi-agent scoring of the ScZ literature batch using the **ScZ-40 Glossary**.
 - **Objective GSDR01 Publication**: Finalize PLOS ONE rebuttal and biological comparison figures for 0818/0825.
 
 ## Programming Grammar (v1.0)
