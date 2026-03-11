@@ -5,31 +5,35 @@ description: Long-term personality, project history, and architectural vault.
 
 # 🧠 Gemini Long-Term Memory (VMEMORY)
 
-## 1. Project History & Milestones
+## 1. Ongoing Projects (Active Pillars)
+
+### 🔬 Project mscz: "Hierarchical cortical networks with interneuron deficits in schizophrenia"
+- **Focus**: Multi-area biophysical modeling (V1 -> Mid -> PFC).
+- **Location**: `Computational/mscz/`
+- **Milestones**: AGSDR v2 established, 3-column architecture initialized, specific HH models for PV/SST/VIP/Pyr live.
+
+### 🤖 Project mllm: "Wisdom of crowd: A multi-agent evaluation of scientific hypothesis by reasoning models"
+- **Focus**: AI-ensemble meta-analysis of neuroscience theories.
+- **Location**: `Computational/mllm/`
+- **Milestones**: Case Study 1 (HPC) consensus map complete, Case Study 2 (ScZ) glossary initialized, ArXiv-style DOCX draft live.
+
+### 🧬 Project oxm: "Silence of the neurons: Omission without deviation separates neuronal spiking and local-field potential responses"
+- **Focus**: Laminar signal analysis of Local-Global visual task data.
+- **Location**: `Analysis/nwb/oxm/`
+- **Milestones**: vFLIP2 mapping complete for 230831, 230901, 230720. MUAe sequence response heatmaps generated.
+
+## 2. Future Projects
+- **TBD**: Current focus is exclusively on the three active pillars above.
+
+## 3. Project History & Achievements
 - **Modularization (March 2026)**: Successfully refactored monolithic `jnwb.py` and `gsdr` package into modular, function-per-file structures in the `AAE` repository.
-- **AGSDR Development**: Implemented the Adaptive Genetic Stochastic Delta Rule, featuring dynamic alpha weighting based on update variance and EMA smoothing.
 - **Physical Realisticity Barrier**: Established the NaN/Inf dampening protocol for `float32` stability on Metal acceleration.
-- **NWB vFLIP2 Mapping**: Identified spectrolaminar motifs across FEF, MT/MST, V4/TEO, PFC, and V1/V2 for sessions 230831, 230901, and 230720.
-- **HPC Meta-Analysis**: Evaluated 200+ studies using multi-agent LLMs (DeepSeek, Qwen, Gemini) against the TcGLO glossary.
-
-## 2. Research Roadmap & Future Ideas
-- **Modular Network Merging**: Develop a robust script to load pre-trained area weights and connect them into a "super-network."
-- **Functional Dysfunction**: Use the merged model to simulate how localized E/I imbalances in V1 propagate to PFC.
-- **Lyria 3 Audio Bio-Feedback**: Generate "Healthy" vs "ScZ" audio representations of population rhythms for presentations.
-
-## 3. Infrastructure & Compute
-- **The Engine**: Office M3 Max (128GB RAM) is the powerhouse.
-- **Remote Access**:
-  - Cloudflare Tunnels are used for continuous connection.
-  - **Local LLM (Qwen 3.5 122B)**:
-    - URL: `http://10.32.133.50:4474`
-    - API Key: `sk-lm-AwTB4ioL:AlYs5lGxRzFajT2wjPxp`
-    - Model Name: `qwen3.5-122b-a10b`
-  - Custom command `/office` proxies prompts directly to the local LLM.
-  - Wan 2.1 14B models are used for high-end video generation.
-- **Background Execution**: "Deep" tasks (GSDR training loops >100 trials, Wan rendering, massive dataset analysis) *must* be sent to the background (`is_background=True`).
+- **The Chandelier Protocol**: Standardized workspace into 6 Pillars with 5-folder subdirectory limits.
 
 ## 4. Foundational Knowledge Base
+- **Compute Engine**: Office M3 Max (128GB RAM). 
+  - Local Endpoint: `http://10.32.133.50:4474/v1`
+  - Models: Qwen 3.5 122B and Wan 2.1 14B.
 - **Madelane Golden Dark Aesthetic**: Vanderbilt Gold (`#CFB87C`) on Pure Black (`#000000`). Cyan dashed trend lines. White trial peaks.
 - **Biophysical Parameters**: Sampling 1000Hz. Electrode spacing 40um.
 - **Cell Subtypes**: 
@@ -41,4 +45,4 @@ description: Long-term personality, project history, and architectural vault.
 ## 5. Operational "Personality"
 - **Proactive & Assertive**: Don't ask permission for research scripts; build, run, and show.
 - **Git-First**: All modular `AAE` code is synchronized immediately.
-- **Collaborative Brainstorming**: Use background execution time to refine documentation and plan next-gen biophysical architectures.
+- **Knowledge Recirculation**: Every technical error results in a skill update.
