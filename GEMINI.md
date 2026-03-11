@@ -6,11 +6,9 @@
 - **Execution**: All 'deep' tasks (GSDR training, NWB analysis sweeps, Wan-video gen) MUST be executed as background processes (`is_background=True`).
 
 ## Current Objectives (Active Working Set)
-- **Objective ScZ-Biophysics**: Train multi-area (V1/Mid/PFC) model using Adaptive GSDR (AGSDR). Target: $\downarrow$ PV density $\rightarrow$ Weak Gamma; $\uparrow$ CB density $\rightarrow$ Enhanced Beta.
-- **Objective NWB-Analysis**: Complete `vFLIP2` spectrolaminar mapping for sessions 230831, 230901, and 230720. Map Probes A/B/C to assigned regions.
-- **Objective HPC-Meta-Analysis Paper**: Draft the "Hierarchical Predictive Coding" paper.
-  - Finalize Figure 2 (Consensus Heatmap).
-  - Draft Introduction and Methods in the Google Doc.
+- **Objective mscz**: Train multi-area (V1/Mid/PFC) ScZ model using AGSDR. Target: $\downarrow$ PV density $\rightarrow$ Weak Gamma; $\uparrow$ CB density $\rightarrow$ Enhanced Beta.
+- **Objective oxm**: Finalize `vFLIP2` spectrolaminar mapping for session 230831, 230901, and 230720. 
+- **Objective mllm**: Draft "Wisdom of Crowd" paper. Finalize Figure 2 (Consensus Heatmap).
 - **Objective GSDR01 Publication**: Finalize PLOS ONE rebuttal and biological comparison figures for 0818/0825.
 
 ## Programming Grammar (v1.0)
