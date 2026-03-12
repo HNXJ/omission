@@ -11,12 +11,12 @@ This skill guides the construction, simulation, and optimization of biophysical 
 For deep technical API details and best practices, refer to:
 - [JAX Core Documentation](./docs/jax-core.md)
 - [Jaxley Advanced Documentation](./docs/jaxley-advanced.md)
+- [Biophysical Stability & Synchrony](./biophys-facts.md)
 
 ## 2. Modular Framework: `jbiophys`
-Always use the modular `jbiophys` atomic repository for biophysical modeling.
-The repository is split into:
-- **`core/`**: `optimizers`, `mechanisms`, `neurons` (atomic building blocks).
-- **`systems/`**: `networks`, `visualizers`, `actions` (orchestration, pipelines, plotting).
+The `jbiophys` repository is our production engine for granular biophysical modeling.
+- **`core/`**: `optimizers`, `mechanisms` (Inoise, IPnoise, GradedAMPA), `neurons`.
+- **`systems/`**: `networks` (LaminarColumn, InterArea), `visualizers`, `actions`.
 
 ### Experimental Workflows
 When writing temporary scripts or performing new optimizations (e.g., baseline parameter tuning):

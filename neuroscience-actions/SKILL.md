@@ -25,10 +25,11 @@ This skill guides the intersection of biological neuroscience research and compu
 - **VIP**: Disinhibitory interneurons targeting SST cells.
 - **Spectrolaminar Motif**: The spectral crossover between Alpha/Beta (Deep) and Gamma (Superficial) layers.
 
-## 3. Study Summaries (March 2026 Batch)
-- **Scz_AM2025_ing**: Investigates cellular basis of ScZ. Key finding: $\downarrow$ PV density $\rightarrow$ Weak Gamma; $\uparrow$ CB density $\rightarrow$ Enhanced Beta.
-- **Lichtenfeld2024N**: Advanced laminar mapping protocols.
-- **jaxley_paper_2025_nn**: Differentiable biophysical simulations at scale.
+## 3. Theory Evaluation Frameworks (Glossaries)
+Use these structured grids for multi-agent literature evaluation:
+- [ScZ-40: Schizophrenia Biophysics](./references/scz-glossary-reference.md)
+- [EMO-36: Electromagnetic Oscillations](./references/emo-glossary.md)
+- [TcGLO: Predictive Coding](./references/global_omission_task.md)
 
 ## 4. Signal Processing & Variability
 - **Neural Variability Quenching**: The significant reduction in cross-trial variance observed immediately after stimulus onset. High quenching is often a signature of robust sensory processing.
