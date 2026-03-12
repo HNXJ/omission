@@ -7,14 +7,12 @@ def organize_chandelier(root_dir):
     Enforces the 'Chandelier' organization rule:
     - Max 5 subfolders per directory (6 for root).
     - Every directory gets a 'misc' folder for loose files.
-    - 'hnxj-gemini' is exempt.
+    - IGNORES .py files to preserve Python package structures.
     """
-    print(f"📐 Enforcing Chandelier Structure on: {root_dir}")
-    
-    # Standard Pillars for root
     ROOT_LIMIT = 6
     SUB_LIMIT = 5
-    EXEMPT = ["hnxj-gemini", ".git", "__pycache__"]
+    EXEMPT_DIRS = ["hnxj-gemini", ".git", "__pycache__", ".gemini", "Repositories"] # Exclude git repos
+    EXEMPT_EXTS = [".py"] # Protect Python source code
 
     def process_dir(current_path, is_root=False):
         # 1. Ensure 'misc' exists
@@ -26,37 +24,39 @@ def organize_chandelier(root_dir):
         for item in os.listdir(current_path):
             item_path = os.path.join(current_path, item)
             if os.path.isfile(item_path):
-                # Don't move hidden files or the content map
-                if not item.startswith('.') and item != "workspace_content.md":
-                    shutil.move(item_path, os.path.join(misc_path, item))
+                ext = os.path.splitext(item)[1].lower()
+                # Don't move hidden files, the content map, or protected extensions
+                if not item.startswith('.') and item != "workspace_content.md" and ext not in EXEMPT_EXTS:
+                    try:
+                        shutil.move(item_path, os.path.join(misc_path, item))
+                    except Exception: pass
 
         # 3. Handle folder limit
         folders = [f for f in os.listdir(current_path) 
                    if os.path.isdir(os.path.join(current_path, f)) 
                    and f != "misc" 
-                   and f not in EXEMPT]
+                   and f not in EXEMPT_DIRS]
         
         limit = ROOT_LIMIT if is_root else SUB_LIMIT
         
         if len(folders) > limit:
-            print(f"  ⚠️ Folder limit exceeded in {current_path} ({len(folders)} folders). Merging excess into misc/...")
-            # Sort folders to keep the first 'limit' ones
             folders.sort()
             excess_folders = folders[limit:]
             for f in excess_folders:
-                shutil.move(os.path.join(current_path, f), os.path.join(misc_path, f))
+                try:
+                    shutil.move(os.path.join(current_path, f), os.path.join(misc_path, f))
+                except Exception: pass
 
         # 4. Recursively process subfolders (except misc and exempt)
         remaining_folders = [f for f in os.listdir(current_path) 
                              if os.path.isdir(os.path.join(current_path, f)) 
                              and f != "misc" 
-                             and f not in EXEMPT]
+                             and f not in EXEMPT_DIRS]
         
         for f in remaining_folders:
             process_dir(os.path.join(current_path, f), is_root=False)
 
     process_dir(root_dir, is_root=True)
-    print("✨ Chandelier reorganization complete.")
 
 if __name__ == "__main__":
     target = "/Users/hamednejat/workspace"
