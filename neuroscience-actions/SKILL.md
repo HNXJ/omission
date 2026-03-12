@@ -13,6 +13,9 @@ This skill guides the intersection of biological neuroscience research and compu
     - `pulse_width`: Standard 0.1ms.
     - `poisson_l`: Mean interval (20ms - 500ms).
     - `pulse_amp`: Magnitude (0.01nA - 10nA).
+- **Stochastic Implementation Lessons**:
+    - **Vectorization**: Custom stochastic mechanisms must handle batched seeds using `jax.vmap(jax.random.PRNGKey)` within `update_states` to support multi-neuron networks.
+    - **Mechanism Insertion**: In modular networks, mechanisms must be inserted *after* combining cells into the final `jx.Network` to ensure global visibility across all view attributes.
 - **PING (Pyramidal Interneuron Network Gamma)**: Mechanism where E-cells drive I-cells (PV), which in turn provide rhythmic feedback inhibition.
 - **ING (Interneuron Network Gamma)**: Reciprocal inhibition between I-cells driving gamma.
 
