@@ -1,6 +1,6 @@
 # Neuroscience Predictive Coding Factors -- Glossary Reference
 
-This document provides a human-readable reference of all 36 neuroscience predictive coding factors, organized by hypothesis group. Each factor includes its unique ID, name, definition, measurement tag, and the experimental contexts in which it applies.
+This document provides a human-readable reference of all 34 neuroscience predictive coding factors, organized by hypothesis group. Each factor includes its unique ID, name, definition, measurement tag, and the experimental contexts in which it applies.
 
 **Tag Legend**
 
@@ -57,7 +57,7 @@ Factors in this group address how prediction-error signals are generated and tra
 
 ---
 
-## H3: Ubiquity (IDs 25--36)
+## H3: Ubiquity (IDs 25--34)
 
 Factors in this group address whether the predictive coding mechanism is a universal, consistent feature across cortical areas, hierarchical levels, modalities, and species.
 
@@ -68,13 +68,11 @@ Factors in this group address whether the predictive coding mechanism is a unive
 | 27 | Hierarchical Activity Consistency | Prediction-error related activity is present across all of the cortical hierarchy. | Quantitative | LO+GO |
 | 28 | Hierarchical CSD Consistency | Laminar cortex current source density profiles match across levels. | Quantitative | LO+GO |
 | 29 | Hierarchical Cross-Scale Consistency | Effects observable in both single units and population LFP. | Methodological | LO+GO |
-| 30 | Low-Level Presence (V1) | Mechanism is also robustly detectable in primary sensory cortex. | Qualitative | LO+GO |
-| 31 | Mid-Level Presence (V2/V4) | Mechanism is also robustly detectable in mid-level association areas. | Qualitative | LO+GO |
-| 32 | High-Level Presence (PFC) | Mechanism is also robustly detectable in executive/frontal areas. | Qualitative | LO+GO |
-| 33 | Cross-Modal Generality | Mechanism is present across cortical hierarchy for sensory modalities (visual, auditory, somatosensory). | Qualitative | LO+GO |
-| 34 | Species Hierarchical Generality | Mechanism is conserved across the cortical hierarchy of species (e.g., mouse vs. primate). | Qualitative | LO+GO |
-| 35 | Temporal Stability (Hierarchical) | Effect is stable over long recording sessions across the cortical hierarchy (not transient). | Quantitative | LO+GO |
-| 36 | Hierarchical Order | Effect is not driven solely in one hierarchical pole. | Qualitative | LO+GO |
+| 30 | Hierarchical Distribution | Mechanism is robustly detectable across low-level (V1), mid-level (V4), and high-level (PFC) cortical areas. | Qualitative | LO+GO |
+| 31 | Cross-modal Generality | Mechanism is present across cortical hierarchy for sensory modalities (visual, auditory, somatosensory). | Qualitative | LO+GO |
+| 32 | Species Generality | Mechanism is conserved across the cortical hierarchy of species (e.g., mouse vs. primate). | Qualitative | LO+GO |
+| 33 | Temporal Stability | Effect is stable over long recording sessions across the cortical hierarchy (not transient). | Quantitative | LO+GO |
+| 34 | Hierarchical Pole Independence | Effect is not driven solely in one hierarchical pole. | Qualitative | LO+GO |
 
 ---
 
@@ -84,5 +82,5 @@ Factors in this group address whether the predictive coding mechanism is a unive
 |------------------|----------|---------------|--------------|-------------|----------------|
 | H1: Predictive Suppression | 1--12 | 12 | 10 | 2 | 0 |
 | H2: Feedforward Error Propagation | 13--24 | 12 | 10 | 2 | 0 |
-| H3: Ubiquity | 25--36 | 12 | 4 | 7 | 1 |
-| **Total** | **1--36** | **36** | **24** | **11** | **1** |
+| H3: Ubiquity | 25--34 | 10 | 2 | 7 | 1 |
+| **Total** | **1--34** | **34** | **22** | **11** | **1** |
