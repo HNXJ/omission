@@ -4,6 +4,7 @@
 - **Navigation**: Provide an 8-word summary when entering any directory.
 - **Workflow (AAE-First)**: Every new Python function or class MUST be modularized into the `AAE/` repository and pushed to GitHub immediately.
 - **Execution**: All 'deep' tasks (GSDR training, NWB analysis sweeps, Wan-video gen) MUST be executed as background processes (`is_background=True`).
+- **Repo-Workspace Separation**: Every project MUST maintain a strict separation between version-controlled general-use code (`Repositories/`) and local-use scripts/data (`Computational/` or `Analysis/`).
 
 ## Current Objectives (Active Working Set)
 - **Objective mscz**: Complete the two-area (Low -> High Cortex) parameter sweep using `IPnoise`. Target: 5-15Hz AFR in high-order column.
