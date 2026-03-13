@@ -76,11 +76,17 @@ For complex biophysical models, use the `robust_pipeline` in `jbiophys` to autom
 4. **Pretraining Checkup:** A 10-epoch dry run to validate learning rate and update stability.
 5. **Stability Hardwires:** Internal voltage clipping ([-100, 100]mV) and NaN-to-zero mapping.
 6. **64-bit precision:** Automatic or forced switch to `jax_enable_x64` for numerical robustness.
-7. **Visualization:** Generates a standardized suite of 7-8 figures (rasters, Vm, Kappa).
+7. **Visualization:** Generates a standardized suite of 7-8 figures (rasters, Vm, Kappa, Spectrograms, 3D structure) using `jbiophys.systems.visualizers`.
 
 ```python
 from systems.actions.robust_pipeline import execute_robust_training
-execute_robust_training(net, epochs=200, lr=1e-3, target_fr=15.0, force_x64=True)
+from systems.visualizers.plot_full_simulation_summary import plot_full_simulation_summary
+
+# Train
+params = execute_robust_training(net, epochs=200, lr=1e-3, force_x64=True)
+
+# Visualize (Standard Report)
+plot_full_simulation_summary(traces, time_axis, dt_global, save=True, savename="report.svg")
 ```
 
 ## Best Practices for Gemini CLI Skills
