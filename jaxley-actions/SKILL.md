@@ -66,6 +66,23 @@ A typical JAXley workflow involves:
 *   **Gradient-Based Fitting:** `jx.integrate` is JAX-compatible, facilitating parameter fitting using libraries like Optax.
 *   **Ion Dynamics:** Includes built-in support for calcium buffering, diffusion, and pumps.
 
+## Standardized Robust Pipeline (`jbiophys`)
+
+For complex biophysical models, use the `robust_pipeline` in `jbiophys` to automate the following 7-step process:
+
+1. **Initialize Network:** Builds the `jx.Network` and enforces parameter independence (e.g., individual synapse conductances).
+2. **Plausibility Sweep:** A coarse loop to find initial parameters yielding stable firing rates (1Hz - 100Hz).
+3. **Training Setup:** Configures the loss function with metabolic cost (quadratic parameter penalty) and stability hardwires.
+4. **Pretraining Checkup:** A 10-epoch dry run to validate learning rate and update stability.
+5. **Stability Hardwires:** Internal voltage clipping ([-100, 100]mV) and NaN-to-zero mapping.
+6. **64-bit precision:** Automatic or forced switch to `jax_enable_x64` for numerical robustness.
+7. **Visualization:** Generates a standardized suite of 7-8 figures (rasters, Vm, Kappa).
+
+```python
+from systems.actions.robust_pipeline import execute_robust_training
+execute_robust_training(net, epochs=200, lr=1e-3, target_fr=15.0, force_x64=True)
+```
+
 ## Best Practices for Gemini CLI Skills
 
 When using JAXley, adhere to these practices:

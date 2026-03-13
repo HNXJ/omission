@@ -27,18 +27,30 @@ When writing temporary scripts or performing new optimizations (e.g., baseline p
 To ensure independent realizations, **never use constant seeds** in production simulations or training loops.
 - **Dynamic Seeds**: All `build_net_eig` and noise functions now default to `seed=None`. They generate a high-entropy integer internally if no seed is provided.
 - **Realization Handling**: When running multiple trials, pass a unique seed (e.g., `base_seed + trial_index`) to ensure distinct network wiring and noise states.
+- **Independent Synapses:** To make every synapse independently trainable (crucial for large networks), use the following pattern before optimization:
+  ```python
+  net.select(edges="all").make_trainable("gAMPA")
+  # Or use jbiophys utility
+  from core.mechanisms.models import make_synapses_independent
+  make_synapses_independent(net, "gAMPA")
+  ```
 
-## 3. Network Construction: `net_eig` & Cell Subtypes
-For detailed connectivity rules and indexing lessons (e.g., `fully_connect` vs `connect`), refer to:
-- [Jaxley Connectivity Grammar](./jaxley-connect.md)
+## 4. Robust 7-Step Modeling Pipeline (`jbiophys`)
+For production-grade biophysical models, use the `robust_pipeline` actions:
+1. **Initialize:** Build network and enforce parameter independence.
+2. **Sweep:** Verify baseline firing (1Hz - 100Hz).
+3. **Setup:** Quadratic metabolic penalty + stability hardwires.
+4. **Checkup:** 10-epoch dry run for LR/update stability.
+5. **Stability:** Clip voltage [-100, 100] and map NaN to 0.
+6. **Precision:** Force 64-bit precision via `jax_enable_x64`.
+7. **Visualize:** Standard 7-8 figure automated report.
 
-### Connection Dynamics
-- **E -> All**: `GradedAMPA`.
-- **PV -> E (Soma)**: `GradedGABAa` (Fast inhibition).
-- **SST -> E (Dendrite)**: `GradedGABAb` (Slow inhibition) or `GradedGABAa`.
-- **Standard Time Constants**: `tauDAMPA = 2.0ms`, `tauDGABAa = 5.0ms`, `tauDGABAb = 50.0ms`.
+```python
+from systems.actions.robust_pipeline import execute_robust_training
+params = execute_robust_training(net, epochs=200, lr=1e-3, force_x64=True)
+```
 
-## 4. Float32 Physical Realisticity Barrier
+## 5. Float32 Physical Realisticity Barrier
 - **Stability Protocol**: Always use `jnp.where(jnp.isnan(v) | jnp.isinf(v), old_v, v)` in state updates.
 
 ## 5. Numerical Stability & Deadlock Prevention (Optimizer)
