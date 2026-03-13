@@ -9,9 +9,16 @@ This skill guides the process of "surfing" technical documentation to expand and
 
 ## 1. Surfing Workflow
 1. **Identify URLs**: Locate official documentation, advanced tutorials, or API references.
-2. **Execute Surf**: Use the `AAE/utils/doc_surfer.py` grammar to structure the extraction.
+2. **Execute Surf**: Use `AAE/utils/doc_surfer.py` to extract clean Markdown.
+   - **Command:** `python AAE/utils/doc_surfer.py "URL" -o path/to/output.md`
 3. **Analyze**: Identify core patterns, signatures, and biophysical relevance.
-4. **Enrich**: Update existing skills (e.g., `jax-actions`) with new sub-sections or create specialized sub-skills.
+4. **Enrich**: Update existing skills (e.g., `jax-actions`, `jaxley-actions`) with new sub-sections or specialized sub-skills.
+
+### Case Study: JAXley Enrichment
+To optimize individual synapse trainability, the JAXley documentation was surfed:
+- **Challenge:** Default `make_trainable` often shares parameters globally.
+- **Discovery:** Using `net.select(edges="all").make_trainable("param")` ensures independent parameters for every synapse.
+- **Outcome:** The `jaxley-actions` skill was updated with "Advanced Parameter Management" logic.
 
 ## 2. Enrichment Rules
 - **Modular First**: Extracted code snippets must follow the "Programming Grammar v1.0" (One file per class/function).

@@ -15,6 +15,26 @@ This skill empowers you to build, simulate, and optimize biophysical neural netw
 -   **Numerical Stability:** Employs backward-Euler solvers for robust simulation of complex neuron models.
 -   **Flexibility:** Supports parameter sharing and handles diverse neural components (channels, synapses, pumps).
 
+## Advanced Parameter Management
+
+### Independent vs. Shared Parameters
+
+By default, JAXley parameters can be either shared globally across a network or assigned individually to each component.
+
+- **Global Sharing:** Calling `net.make_trainable("param")` on the entire network often results in a single shared parameter for all instances of that component.
+- **Independent Parameters:** To make every instance (e.g., every synapse) independently trainable, use `select()` before `make_trainable()`:
+  ```python
+  # Every synapse has its own trainable conductance
+  net.select(edges="all").make_trainable("gAMPA")
+  ```
+- **Custom Sharing (Group-based):** Use the `controlled_by_param` column in the `.edges` or `.nodes` DataFrames to group components that should share a parameter value.
+  ```python
+  # Share conductances based on presynaptic cell index
+  net.copy_node_property_to_edges("global_cell_index")
+  net.edges["controlled_by_param"] = net.edges["pre_global_cell_index"]
+  net.select(edges="all").make_trainable("gAMPA")
+  ```
+
 ## API Structure & Key Classes
 
 JAXley's API is structured hierarchically for building neural models:
