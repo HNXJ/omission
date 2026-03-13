@@ -66,27 +66,38 @@ A typical JAXley workflow involves:
 *   **Gradient-Based Fitting:** `jx.integrate` is JAX-compatible, facilitating parameter fitting using libraries like Optax.
 *   **Ion Dynamics:** Includes built-in support for calcium buffering, diffusion, and pumps.
 
-## Standardized Robust Pipeline (`jbiophys`)
+## Integrated Robust MSCZ Pipeline (`jbiophys`)
 
-For complex biophysical models, use the `robust_pipeline` in `jbiophys` to automate the following 7-step process:
+For advanced biophysical modeling and hierarchical optimization, use the modular three-part pipeline in `jbiophys`:
 
-1. **Initialize Network:** Builds the `jx.Network` and enforces parameter independence (e.g., individual synapse conductances).
-2. **Plausibility Sweep:** A coarse loop to find initial parameters yielding stable firing rates (1Hz - 100Hz).
-3. **Training Setup:** Configures the loss function with metabolic cost (quadratic parameter penalty) and stability hardwires.
-4. **Pretraining Checkup:** A 10-epoch dry run to validate learning rate and update stability.
-5. **Stability Hardwires:** Internal voltage clipping ([-100, 100]mV) and NaN-to-zero mapping.
-6. **64-bit precision:** Automatic or forced switch to `jax_enable_x64` for numerical robustness.
-7. **Visualization:** Generates a standardized suite of 7-8 figures (rasters, Vm, Kappa, Spectrograms, 3D structure) using `jbiophys.systems.visualizers`.
+### 1. The Constructor Pipeline (`systems.actions.constructor`)
+- **Purpose:** Initialization and baseline tuning.
+- **Actions:** 
+    - `build_hierarchical_mscz()`: Constructs multi-area networks with 3D biophysics.
+    - `run_pre_tuning_sweep()`: Verifies physiological baseline (1Hz - 100Hz).
+    - **Independent Parameters:** Automatically ensures independent trainable synaptic conductances.
+
+### 2. The Trainer Pipeline (`systems.actions.trainer`)
+- **Purpose:** Robust and pausable optimization.
+- **Actions:**
+    - `run_pausable_training()`: Manages the optimization loop with per-epoch state saving.
+    - **Stability Hardwires:** Implements internal voltage/parameter clipping and NaN-to-zero mapping.
+    - **Checkups:** Performs a 10-trial pretraining check to validate stability.
+
+### 3. The Visualizer Pipeline (`systems.actions.visualizer`)
+- **Purpose:** High-fidelity reporting.
+- **Actions:**
+    - `run_visualizer_pipeline()`: Generates a 10-figure report (Rasters, Spectrograms, 3D Architecture, Weight Distributions, LFP).
 
 ```python
-from systems.actions.robust_pipeline import execute_robust_training
-from systems.visualizers.plot_full_simulation_summary import plot_full_simulation_summary
+# Full Orchestration Example
+from systems.actions.constructor import build_hierarchical_mscz
+from systems.actions.trainer import run_pausable_training
+from systems.actions.visualizer import run_visualizer_pipeline
 
-# Train
-params = execute_robust_training(net, epochs=200, lr=1e-3, force_x64=True)
-
-# Visualize (Standard Report)
-plot_full_simulation_summary(traces, time_axis, dt_global, save=True, savename="report.svg")
+net, info = build_hierarchical_mscz()
+params = run_pausable_training(net, net.get_parameters(), epochs=200)
+run_visualizer_pipeline(net, params, info['meta'])
 ```
 
 ## Best Practices for Gemini CLI Skills
