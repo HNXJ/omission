@@ -85,9 +85,11 @@ For advanced biophysical modeling and hierarchical optimization, use the modular
     - **Checkups:** Performs a 10-trial pretraining check to validate stability.
 
 ### 3. The Visualizer Pipeline (`systems.actions.visualizer`)
-- **Purpose:** High-fidelity reporting.
-- **Actions:**
-    - `run_visualizer_pipeline()`: Generates a 10-figure report (Rasters, Spectrograms, 3D Architecture, Weight Distributions, LFP).
+- **Purpose:** High-fidelity reporting and visual analysis.
+- **Actions:** 
+    - `run_visualizer_pipeline()`: Generates a 10-figure interactive report saved as HTML files in the `mscz/figures/` directory.
+    - **Interactive Reports:** Outputs include `simulation_summary.html` (Rasters/Spectrograms), `network_3d.html` (3D Architecture), and `biophysical_suite.html` (Vm, LFP, Weight distributions).
+    - **Optional SVG:** Can optionally save static SVG versions of the dynamics summary.
 
 ```python
 # Full Orchestration Example
@@ -97,7 +99,7 @@ from systems.actions.visualizer import run_visualizer_pipeline
 
 net, info = build_hierarchical_mscz()
 params = run_pausable_training(net, net.get_parameters(), epochs=200)
-run_visualizer_pipeline(net, params, info['meta'])
+run_visualizer_pipeline(net, params, info['meta'], output_dir="figures")
 ```
 
 ## Best Practices for Gemini CLI Skills
