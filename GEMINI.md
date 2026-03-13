@@ -6,6 +6,7 @@
 - **Execution**: All 'deep' tasks (GSDR training, NWB analysis sweeps, Wan-video gen) MUST be executed as background processes (`is_background=True`).
 - **Repo-Workspace Separation**: Every project MUST maintain a strict separation between version-controlled general-use code (`Repositories/`) and local-use scripts/data (`Computational/` or `Analysis/`).
 - **Background Execution for Long Tasks**: Code-run tasks involving 'simulation', 'training', or 'optimization' should always be put into background processes (`is_background=True`) as they are expected to take longer than 20 seconds on average.
+- **GitHub PR Management**: Automatically accept PRs consisting of 'edit' or 'add' operations only. Manually verify any PRs containing 'delete' or 'replace' operations one-by-one.
 
 ## Current Objectives (Active Working Set)
 - **Objective mscz**: Complete the two-area (Low -> High Cortex) parameter sweep using `IPnoise`. Target: 5-15Hz AFR in high-order column.
@@ -22,3 +23,6 @@ Rules for speed, stability, and generalization:
 5. **Auto-Seed**: All stochastic functions must default to `seed=None` and generate random seeds internally unless explicitly overridden.
 
 **Refer to `/Users/hamednejat/.gemini/VMEMORY.md` for architectural details, project history, and research roadmap.**
+
+## Gemini Added Memories
+- On this machine, GitHub Merge/Pull Requests should only be automatically accepted if they consist of 'edit' or 'add' operations. Requests involving 'delete' or 'replace' must be manually checked one-by-one before acceptance.
