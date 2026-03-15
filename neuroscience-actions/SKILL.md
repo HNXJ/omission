@@ -47,4 +47,20 @@ Use the automated extraction tool to separate text and images for analysis.
 ## 5. Paper Writing & Reference Skills
 - **DOI Mapping**: Use `google_web_search` to find missing DOIs.
 - **Publication Aesthetic**: "Madelane Golden Dark" theme for all figures.
-- **Validation**: Always verify models against biological Kappa and PSD motifs.
+- ## 6. Multi-Area Cortical Connectivity (Markov 2014)
+Hierarchical interactions are governed by laminar-specific projection rules:
+- **Feedforward (FF)**:
+    - Origin: Superficial layers (L2/3).
+    - Target: Layer 4 (L4) or Soma of E and PV cells.
+    - Path: V1 $\rightarrow$ V2 $\rightarrow$ V4.
+- **Feedback (FB)**:
+    - Origin: Deep layers (L5/6).
+    - Target: Layer 1 (L1) or distal dendrites of E cells.
+    - Path: V4 $\rightarrow$ V2 $\rightarrow$ V1.
+
+## 7. Cortical Synaptic Ratios
+- **EI Balance**: 75% Excitatory (RS Pyramidal), 25% Inhibitory (PV, SST, VIP).
+- **Excitatory Synapses**: Combination of AMPA (Fast) and NMDA (Slow, Voltage-dependent).
+- **NMDA Rule**: Typically restricted to a 10% subset of excitatory neurons for specific recursive dynamics.
+
+**Validation**: Always verify models against biological Kappa and PSD motifs.

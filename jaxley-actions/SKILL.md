@@ -102,6 +102,26 @@ params = run_pausable_training(net, net.get_parameters(), epochs=200)
 run_visualizer_pipeline(net, params, info['meta'], output_dir="figures")
 ```
 
+### 4. The Cortical Column Pipeline (V1, V2, V4)
+- **Purpose:** Building and pretraining realistic cortical areas.
+- **Actions:**
+    - `build_biophysical_cells()`: Generates 200 neurons per area with a 75% EI balance and bimodal Pyr distribution.
+    - `apply_cortical_internal_connectivity()`: Wires columns with AMPA, NMDA (10% subset), and GABAa/b.
+    - `build_v1_v2_v4_hierarchy()`: Merges areas and establishes hierarchical wiring (Markov 2014 rules).
+- **Optimization Strategy:**
+    1. Pretrain V1, V2, V4 columns separately to area-specific baselines (e.g., 10Hz, 8Hz).
+    2. Merge into a 600-neuron hierarchy.
+    3. Jointly optimize for global baseline stability (e.g., 7Hz).
+
+### 5. Multi-Area Hierarchy Construction (V1, V2, V4)
+- **Goal:** Connect multiple 200-neuron columns using anatomical rules.
+- **Wiring Logic (Markov 2014):**
+    - **FF:** Connect Superficial Pyramidal cells (L2/3) to target area L4/Soma.
+    - **FB:** Connect Deep Pyramidal cells (L5/6) to target area L1/2 distal dendrites.
+- **Synaptic Diversity:**
+    - Include `GradedNMDA` with magnesium block for excitatory recurrence.
+    - **Constraint:** NMDA output is restricted to a random 10% subset of excitatory neurons.
+
 ## Best Practices for Gemini CLI Skills
 
 When using JAXley, adhere to these practices:
