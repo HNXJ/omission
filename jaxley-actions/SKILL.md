@@ -122,6 +122,17 @@ run_visualizer_pipeline(net, params, info['meta'], output_dir="figures")
     - Include `GradedNMDA` with magnesium block for excitatory recurrence.
     - **Constraint:** NMDA output is restricted to a random 10% subset of excitatory neurons.
 
+### 6. Memory-Efficient Large Network Optimization
+When optimizing large networks (e.g., >200 neurons) for long durations (e.g., 10,000ms), use these patterns to prevent RAM exhaustion:
+
+- **Neuron Subset Recording**: Instead of recording voltage from all neurons for the loss function, record from a representative subset (e.g., 100 neurons).
+  ```python
+  subset_indices = np.random.choice(num_neurons, size=100, replace=False).tolist()
+  network.cell(subset_indices).branch(0).loc(0.0).record('v')
+  ```
+- **Temporal Decimation for Visualization**: For long simulations, downsample the voltage traces (e.g., 10x decimation) before generating interactive HTML reports to reduce figure size and RAM usage.
+- **Gradient Checkpointing**: Trade computation for memory during the backward pass by wrapping the simulation logic in `jax.checkpoint`. (Note: Ensure JAXley compatibility with internal tracers).
+
 ## Best Practices for Gemini CLI Skills
 
 When using JAXley, adhere to these practices:
