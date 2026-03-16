@@ -3,10 +3,25 @@
 - **Workspace**: Default root is `/Users/hamednejat/workspace`.
 - **Navigation**: Provide an 8-word summary when entering any directory.
 - **Workflow (AAE-First)**: Every new Python function or class MUST be modularized into the `AAE/` repository and pushed to GitHub immediately.
-- **Execution**: All 'deep' tasks (GSDR training, NWB analysis sweeps, Wan-video gen) MUST be executed as background processes (`is_background=True`).
-- **Repo-Workspace Separation**: Every project MUST maintain a strict separation between version-controlled general-use code (`Repositories/`) and local-use scripts/data (`Computational/` or `Analysis/`).
-- **Background Execution for Long Tasks**: Code-run tasks involving 'simulation', 'training', or 'optimization' should always be put into background processes (`is_background=True`) as they are expected to take longer than 20 seconds on average.
-- **GitHub PR Management**: Automatically accept PRs consisting of 'edit' or 'add' operations only. Manually verify any PRs containing 'delete' or 'replace' operations one-by-one.
+- **Execution**: All tasks involving 'simulation', 'training', or 'optimization' MUST be executed as background processes (`is_background=True`).
+- **Repo-Workspace Separation**: Maintain strict separation between version-controlled code (`Repositories/`) and local scripts/data (`Computational/` or `Analysis/`).
+- **GitHub PR Management**: Automatically accept PRs consisting of 'edit' or 'add' only. Manually verify 'delete' or 'replace' operations.
+- **Response Tone**: Adopt a senior software engineer role—professional, direct, and concise. Aim for fewer than 3 lines of text output (excluding tool calls/code). No chitchat or repetitive summaries.
+
+## Standardized Research Pipelines
+All modeling pipelines MUST follow the **Data-Handoff Standard**:
+1. **Independence**: Constructor, Trainer, and Visualizer must remain decoupled.
+2. **Standard Return**: Trainers MUST return the tuple `(ParamsList, Labels, TrainingLog)`.
+3. **Labels**: Snapshots should use clear identifiers (e.g., `t-0`, `t-50`).
+4. **Interactive First**: Visualizers should prioritize interactive HTML Plotly reports over static SVGs.
+
+## Programming Grammar (v1.1)
+1. **Modular Granularity**: One file = One primary function or class. Use `__init__.py` for package-level exports.
+2. **Stability Barrier**: All state updates MUST include: `new_val = jnp.where(jnp.isnan(new_val) | jnp.isinf(new_val), old_val, new_val)`.
+3. **Pure JAX Logic**: No `numpy` calls inside simulation loops or `jit` segments. Use `jnp` and `jax.random` exclusively.
+4. **PyTree Standard**: Parameters must be handled as PyTrees. Use `jax.tree.map` for scaling and updates.
+5. **Auto-Seed**: All stochastic functions must default to `seed=None` and generate random seeds internally.
+6. **Hardwire Stability**: Mandatory voltage clipping ([-100, 100]mV) and parameter range constraints within the loss function.
 
 ## Current Objectives (Active Working Set)
 - **Objective mscz**: Complete the two-area (Low -> High Cortex) parameter sweep using `IPnoise`. Target: 5-15Hz AFR in high-order column.
@@ -14,15 +29,4 @@
 - **Objective mllm**: Perform multi-agent scoring of the ScZ literature batch using the **ScZ-40 Glossary**.
 - **Objective GSDR01 Publication**: Finalize PLOS ONE rebuttal and biological comparison figures for 0818/0825.
 
-## Programming Grammar (v1.0)
-Rules for speed, stability, and generalization:
-1. **Modular Granularity**: One file = One primary function or class. Use `__init__.py` for package-level exports.
-2. **Stability Barrier**: All `float32` state updates must include: `new_val = jnp.where(jnp.isnan(new_val) | jnp.isinf(new_val), old_val, new_val)`.
-3. **Pure JAX Logic**: No `numpy` calls inside simulation loops or `jit` segments. Use `jnp` and `jax.random` exclusively.
-4. **PyTree Standard**: Parameters must be handled as PyTrees. Use `jax.tree.map` for scaling and updates.
-5. **Auto-Seed**: All stochastic functions must default to `seed=None` and generate random seeds internally unless explicitly overridden.
-
 **Refer to `/Users/hamednejat/.gemini/VMEMORY.md` for architectural details, project history, and research roadmap.**
-
-## Gemini Added Memories
-- On this machine, GitHub Merge/Pull Requests should only be automatically accepted if they consist of 'edit' or 'add' operations. Requests involving 'delete' or 'replace' must be manually checked one-by-one before acceptance.
