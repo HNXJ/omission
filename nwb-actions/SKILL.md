@@ -30,10 +30,12 @@ Classifies neurons into mutually exclusive groups:
 - **Fix**: Selective activity during the fixation window (>50% drop during stimulus).
 - **Stim+ / Stim-**: Robust positive or negative stimulus responses.
 
-### 3. Refined Neural Variability
-Computes cross-trial variance with:
+### 3. Refined Neural Variability (MMFF)
+Computes the Mean-Matched Fano Factor (Churchland 2010) with optimized smoothing to navigate the bias-variance tradeoff:
+- **Sliding Window ($W$)**: Use $W=100$ms (instead of 50ms) to increase the mean spike count per bin and reduce sampling error.
+- **Step Size ($\Delta t$)**: Use $\Delta t=5$ms (instead of 10ms) to increase sampling density and temporal resolution.
+- **Post-hoc Smoothing**: Apply a 1D Gaussian filter ($\sigma \approx 2-5$ units) to the *final* Fano factor trace. This preserves the raw statistical distributions required for Mean-Matching while providing a visually smooth result.
 - **Baselining**: Hard-aligned to 0 during the -500ms to 0ms fixation window.
-- **Filtering**: Median filtering (artifact rejection) and Gaussian smoothing.
 
 ### 4. Directionality & Connectivity
 Formal testing of regional interactions (e.g., V1 vs. PFC):
