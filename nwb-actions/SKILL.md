@@ -1,69 +1,46 @@
 ---
-name: nwb-actions
-description: Tool for creating, inspecting, and analyzing Neurodata Without Borders (NWB) files using PyNWB and the modular jnwb package. Focuses on electrophysiology (LFP, MUAe, Spikes) and spectrolaminar analysis.
+name: nwb-analysis
+description: Enriched neurophysiology analysis suite for visual omission paradigms, including manifolds, variability, and connectivity.
+version: 2.0.0
 ---
 
-# NWB Actions Skill
+# SKILL: Enriched NWB Analysis Suite (nwb-actions)
 
-This skill guides the inspection, signal extraction, and spectrolaminar analysis of **NWB** files using the modular **`AAE.jnwb`** package.
+This skill provides a unified codebase for high-fidelity neuro-analysis of the Visual Omission Oddball paradigm.
 
-## 1. Modular Package: `AAE.jnwb`
-Always use the modular `jnwb` package for working with NWB data.
-- **`jnwb.vflip2`**: `vFLIP2` class for spectrolaminar motif identification.
-- **`jnwb.get_signal_array`**: Extract stimulus-aligned LFP, MUAe, Pupil, or Eye signals.
-- **`jnwb.get_binary_events_for_code`**: Filter trial events by numeric codes.
-- **`jnwb.get_unit_ids_for_area`**: Map single units to specific brain regions.
-- **`jnwb.inspect_h5py_raw_structure`**: Low-level inspection using `h5py`.
-- **`jnwb.reconstruct_nwb_inspected`**: Rebuild NWB files while verifying internal links.
+## ⏱️ Task Timing & Alignment (1000Hz)
+Standard alignment is to the **onset of P1 (Code 101.0)**.
+- **Fixation (`fx`)**: 0 to 1000ms.
+- **Stimulus Window**: 531ms duration (e.g., p1: 1000-1531ms).
+- **Delay Window**: 500ms duration (e.g., d1: 1531-2031ms).
+- **Omission Windows**: 
+    - `p2`: 2031-2562ms (RXRR)
+    - `p3`: 3062-3593ms (RRXR)
+    - `p4`: 4093-4624ms (AAAX)
 
-## 2. Spectrolaminar Motif Analysis (vFLIP2)
-Identify putative cortical layers using the spectral crossover between Deep and Superficial power profiles.
+## 🔬 Core Analysis Modules
 
-### Analysis Logic
-- **Deep Layers (5/6)**: Characterized by Alpha/Beta power peaks (8-30Hz).
-- **Superficial Layers (2/3)**: Characterized by Gamma power peaks (> 35Hz).
-- **Layer 4 (Input)**: Pinpointed at the **crossover point** where high-frequency power begins to dominate.
+### 1. Population Manifolds (48-Factor Matrix)
+Extracts a high-dimensional feature vector per neuron across 12 intervals and 4 metrics (Mean FR, Regularity, Mean Variability, Variability Volatility).
+- **Usage**: Dimensionality reduction (PCA/UMAP) to visualize population state trajectories.
 
-### Parameters for Standard Probes
-- `intdist`: **0.04 mm** (40um electrode spacing).
-- `DataType`: `raw_cut` (aligned to stimulus onset).
-- `orientation`: `both`.
+### 2. Functional Categorization
+Classifies neurons into mutually exclusive groups:
+- **Omit**: Selective peak during omission windows (>2 SD above baseline).
+- **Fix**: Selective activity during the fixation window (>50% drop during stimulus).
+- **Stim+ / Stim-**: Robust positive or negative stimulus responses.
 
-## 3. Dataset Knowledge: Probe Mapping
-Standard probe-to-region mappings for current datasets in `Analysis/nwb/nwbdata/`:
+### 3. Refined Neural Variability
+Computes cross-trial variance with:
+- **Baselining**: Hard-aligned to 0 during the -500ms to 0ms fixation window.
+- **Filtering**: Median filtering (artifact rejection) and Gaussian smoothing.
 
-- **Session 230831**: probe_0 (FEF), probe_1 (MT/MST), probe_2 (V4/TEO).
-- **Session 230901**: probe_0 (PFC), probe_1 (MT/MST), probe_2 (V3/V4).
-- **Session 230720**: probe_0 (V1/V2), probe_1 (V3d/V3a).
+### 4. Directionality & Connectivity
+Formal testing of regional interactions (e.g., V1 vs. PFC):
+- **Lag Analysis**: Spike-spike cross-correlation to determine lead/lag timing.
+- **Spectral Coordination**: LFP phase-lag and Granger Causality to dissociate FF (Gamma) from FB (Beta) signals.
 
-## 4. Signal Extraction Patterns
-- **Sampling Rate**: Always verify via timestamps; standard is **1000 Hz** for LFP and MUAe.
-- **Trial Alignment**: 
-  - Standard trigger: `task_event_2` (Stimulus Onset).
-  - Window: 500ms pre-stimulus to 1000ms post-stimulus.
-- **Storage**: Raw data is stored as continuous traces in `ElectricalSeries` objects.
-
-### 4. Cross-Column Analysis Patterns
-To mirror the "Modular Network Merging" biophysical logic, use multi-probe extraction:
-- **Spatial Alignment**: Group electrodes by probe (e.g., `probe_0`, `probe_1`) and brain region (e.g., FEF, MT/MST).
-- **Temporal Synchronization**: Use standard triggers (e.g., `task_event_2`) to align signals across distributed cortical columns.
-- **Inter-Area Metrics**: Focus on cross-area coherence and phase-lag synchronization to study propagation of E/I dysfunction between V1 and PFC.
-
-### 5. Signal Normalization & Variability
-For continuous signals (MUAe, LFP Envelopes), use baseline Z-scoring and quantify cross-trial quenching.
-
-**MUAe Z-Scoring**:
-```python
-import numpy as np
-def zscore_signal(data, baseline_indices):
-    baseline = data[baseline_indices[0]:baseline_indices[1]]
-    return (data - np.mean(baseline)) / (np.std(baseline) + 1e-6)
-```
-
-**Variance Quenching**:
-Neural variability (across trials) typically drops upon stimulus onset.
-- **Metric**: `np.var(trial_stack, axis=0)` where `trial_stack` is `(Num_Trials, Timepoints)`.
-
-## 6. Usage Guidelines
-- **Task Reference**: See [Global Omission Task](./references/global_omission_task.md) for sequence logic and event codes.
-- **Memory Efficiency**: Large NWB files (>100GB) should be accessed using `h5py` for targeted dataset slicing to avoid memory overflow.
+## 🧬 Metadata Standards
+- **Probe Rule**: 128 channels per probe.
+- **Mapping**: DP -> V4; V3 -> V3d/V3a (50/50 split).
+- **Indexing**: Handles NWB Global to .npy Local index translation.
