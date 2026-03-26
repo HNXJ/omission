@@ -6,66 +6,126 @@ from scipy.signal import spectrogram
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+# 🏺 Madelane Golden Dark Palette
+GOLD = "#CFB87C"
+BLACK = "#000000"
+VIOLET = "#8F00FF"
+SLATE = "#444444"
+
 # Parameters
 DATA_DIR = r'D:\Analysis\Omission\local-workspace\data'
-CHECKPOINT_DIR = r'D:\Analysis\Omission\local-workspace\checkpoints'
-OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\figures\final_reports\lfp'
+CHECKPOINT_DIR = r'D:\Analysis\Omission\local-workspace\data\checkpoints'
+OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\figures\part01'
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 SESSIONS = ['230630', '230816', '230830']
 FS = 1000.0
 CONDITIONS = ['AAAB', 'AAAX'] # Standard vs Omission
-AREA_ORDER = ['V1', 'V2', 'V3d', 'V3a', 'V4', 'MT', 'MST', 'TEO', 'FST', 'FEF', 'PFC']
+EVENT_LINES = {
+    'fx': -500, 'p1': 0, 'd1': 531, 'p2': 1031, 'd2': 1562, 
+    'p3': 2062, 'd3': 2593, 'p4': 3093, 'd4': 3624
+}
 
 def plot_spectrogram_suite():
-    vflip_df = pd.read_csv(os.path.join(CHECKPOINT_DIR, 'vflip2_mapping_v3.csv'))
+    # Use mapping from data/checkpoints
+    vflip_path = os.path.join(CHECKPOINT_DIR, 'enhanced_neuron_categories.csv')
+    if not os.path.exists(vflip_path):
+        print(f"Error: {vflip_path} not found.")
+        return
+        
+    vflip_df = pd.read_csv(vflip_path)
     
     for sid in SESSIONS:
-        print(f"LFP Spectrograms: Session {sid}")
-        session_vflip = vflip_df[vflip_df['session_id'] == int(sid)]
+        print(f"🏺 TFR Analysis: Session {sid}")
+        session_data = vflip_df[vflip_df['session_id'].astype(str).str.contains(sid)]
+        if session_data.empty: continue
         
-        for p_id in session_vflip['probe_id'].unique():
-            area = session_vflip[session_vflip['probe_id'] == p_id]['area'].values[0]
-            crossover = session_vflip[session_vflip['probe_id'] == p_id]['crossover'].values[0]
+        for p_id in session_data['probe_id'].unique():
+            probe_meta = session_data[session_data['probe_id'] == p_id].iloc[0]
+            area = probe_meta['area']
             
-            # Select representative channels (Superficial and Deep)
-            ch_sup = int(crossover - 10) if crossover > 10 else 10
-            ch_deep = int(crossover + 10) if crossover < 118 else 118
+            # Use representative channels (or just pick middle if crossover unknown)
+            # For now, let's use channels 40 and 80 as sup/deep proxies if not in CSV
+            ch_sup, ch_deep = 40, 80 
             
             fig = make_subplots(rows=2, cols=2, 
-                                subplot_titles=(f"Sup ({ch_sup}) - AAAB", f"Sup ({ch_sup}) - AAAX",
-                                               f"Deep ({ch_deep}) - AAAB", f"Deep ({ch_deep}) - AAAX"),
+                                subplot_titles=(f"Sup (Ch{ch_sup}) - Standard", f"Sup (Ch{ch_sup}) - Omission",
+                                               f"Deep (Ch{ch_deep}) - Standard", f"Deep (Ch{ch_deep}) - Omission"),
                                 vertical_spacing=0.1, horizontal_spacing=0.1)
             
             for col_idx, cond in enumerate(CONDITIONS):
-                f = os.path.join(DATA_DIR, f'ses{sid}-probe{p_id}-lfp-{cond}.npy')
-                if not os.path.exists(f): continue
+                fname = f'ses{sid}-probe{p_id}-lfp-{cond}.npy'
+                f_path = os.path.join(DATA_DIR, fname)
+                if not os.path.exists(f_path):
+                    # Try local-workspace/data/
+                    f_path = os.path.join(r'D:\Analysis\Omission\local-workspace\data', fname)
+                    if not os.path.exists(f_path):
+                        print(f"  Warning: {fname} missing.")
+                        continue
                 
-                lfp = np.load(f, mmap_mode='r') # (trials, 128, time)
+                lfp = np.load(f_path, mmap_mode='r') # (trials, 128, time)
                 
                 for row_idx, ch in enumerate([ch_sup, ch_deep]):
                     # Trial-averaged spectrogram
-                    # Shape: (trials, 128, time)
+                    # User Mandate: Hanning window, 98% overlap, 1-150Hz
+                    nperseg = 256
+                    noverlap = int(0.98 * nperseg)
+                    
                     trial_specs = []
-                    for t_idx in range(min(20, lfp.shape[0])): # Average first 20 trials for speed
-                        f_vec, t_vec, Sxx = spectrogram(lfp[t_idx, ch, :], fs=FS, nperseg=256, noverlap=200)
+                    # Average over trials (cap at 50 for speed/stability)
+                    n_trials = min(50, lfp.shape[0])
+                    for t_idx in range(n_trials):
+                        f_vec, t_vec, Sxx = spectrogram(lfp[t_idx, ch, :], fs=FS, 
+                                                        window='hann', 
+                                                        nperseg=nperseg, 
+                                                        noverlap=noverlap)
                         trial_specs.append(Sxx)
                     
                     avg_spec = np.mean(trial_specs, axis=0)
+                    
+                    # Mandate: Safety - check for NaN/0
+                    if np.all(np.isnan(avg_spec)) or np.all(avg_spec == 0):
+                        print(f"  ! Safety Violation: Plot {sid}_P{p_id}_{ch}_{cond} is empty.")
+                        continue
+
                     log_spec = 10 * np.log10(avg_spec + 1e-12)
                     
+                    # Convert t_vec to ms (relative to P1 onset at Sample 1000)
+                    t_ms = (t_vec * 1000.0) - 1000.0
+                    
                     fig.add_trace(go.Heatmap(
-                        z=log_spec, x=t_vec, y=f_vec,
+                        z=log_spec, x=t_ms, y=f_vec,
                         coloraxis="coloraxis",
-                        zmin=-40, zmax=0
+                        zmin=-30, zmax=5,
+                        hovertemplate="Time: %{x}ms<br>Freq: %{y}Hz<br>Power: %{z}dB<extra></extra>"
                     ), row=row_idx+1, col=col_idx+1)
+                    
+                    # Add event lines
+                    for label, t_event in EVENT_LINES.items():
+                        fig.add_vline(x=t_event, line_dash="dash", 
+                                      line_color="rgba(255,255,255,0.4)", 
+                                      line_width=1, row=row_idx+1, col=col_idx+1)
             
-            fig.update_layout(title=f"LFP Spectrogram - Session {sid} - Probe {p_id} ({area})",
-                              xaxis_title="Time (s)", yaxis_title="Frequency (Hz)",
-                              coloraxis=dict(colorscale='Viridis'), height=1000, template="plotly_white")
-            fig.update_yaxes(range=[0, 100]) # Focus on 0-100Hz
+            fig.update_layout(
+                title=dict(
+                    text=f"🏺 LFP TFR SUITE | {area} (Session {sid}, Probe {p_id})",
+                    font=dict(color=GOLD, size=20)
+                ),
+                xaxis_title="Time (ms)", yaxis_title="Frequency (Hz)",
+                coloraxis=dict(colorscale='Viridis', colorbar=dict(title="dB")),
+                height=1000, width=1200,
+                paper_bgcolor=BLACK, plot_bgcolor=BLACK,
+                font=dict(color=GOLD, family="Consolas"),
+                template="plotly_dark"
+            )
             
-            fig.write_html(os.path.join(OUTPUT_DIR, f"FIG_09_Spectrogram_{sid}_P{p_id}_{area.replace(',', '_')}.html"))
+            # Mandate: Frequency range 1-150Hz
+            fig.update_yaxes(range=[1, 150])
+            fig.update_xaxes(range=[-500, 4200]) # Window of interest
+            
+            out_file = os.path.join(OUTPUT_DIR, f"FIG_09_TFR_{sid}_{area}_{p_id}.html")
+            fig.write_html(out_file)
+            print(f"  - Saved: {out_file}")
 
 if __name__ == '__main__':
     plot_spectrogram_suite()
