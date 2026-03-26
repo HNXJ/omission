@@ -22,6 +22,7 @@ This document maps all figures and key analytical checkpoints to the Python scri
 | **FIG_05** | PCA/UMAP/tSNE Manifolds | `scripts/plot_manifold_suite.py` |
 | **FIG_05_V2** | Manifolds with Centroids | `scripts/plot_manifold_suite.py` |
 | **Latencies** | Surprise Latency Hierarchy | `scripts/run_surprise_latency_hierarchy.py` |
+| **FIG_09** | Individual Decoding Hubs (Units/LFP) | `scripts/plot_decoding_hubs.py` |
 
 ## 🔗 Multi-Scale Connectivity (Step 4)
 | Artifact | Description | Generating Script |
@@ -30,6 +31,15 @@ This document maps all figures and key analytical checkpoints to the Python scri
 | **FIG_09** | LFP Spectrograms | `scripts/run_lfp_spectrograms.py` |
 | **FIG_10** | Theta-Gamma PAC | `scripts/run_lfp_pac.py` |
 | **FIG_11** | Inter-Area Gamma Coherence | `scripts/run_lfp_coherence.py` |
+| **FIG_14** | Network Adjacency Matrices | `scripts/run_network_adjacency_matrices.py` |
+| **FIG_Eye** | Identity Decoding (Eye) | `scripts/run_behavioral_decoding_suite.py` |
+| **FIG_Content** | Content Decoding (Eye/Pupil) | `scripts/run_behavioral_content_decoding.py` |
+| **FIG_Eye_Dir** | Eye Directionality (Rose Plots) | `scripts/run_eye_direction_analysis.py` |
+| **FIG_18** | Multi-Condition Behavioral Decoding | `scripts/run_multi_condition_decoding.py` |
+| **FIG_Eye_DVA** | DVA-Calibrated Eye Directionality | `scripts/run_eye_directionality_dva.py` |
+| **FIG_Eye_Det** | Saccade/Microsaccade Directions | `scripts/run_eye_detailed_analysis.py` |
+| **FIG_19** | Consolidated Eye Directionality Suite | `scripts/run_eye_consolidated_report.py` |
+| **FIG_20** | Temporal Oculomotor Traces (A vs B) | `scripts/plot_eye_trajectories_dva.py` |
 
 ## 🛠️ Core Utilities & Metadata
 | Artifact | Description | Generating Script |

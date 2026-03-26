@@ -1,31 +1,43 @@
 """
-summarize_neuron_data.py: Aggregates omission neuron data by area, layer, and response strength.
-Handles potential NaNs in latency.
+summarize_neuron_data.py: Aggregates neuron data (counts, r_fix, latency) by area, layer, and signal strength.
+Handles NaNs and uses latest CSVs. Uses simple string formatting for prints.
 """
 import os
 import pandas as pd
 import numpy as np
 
 # Paths
-UNITS_LAYERED_PATH = r'D:\Analysis\Omission\local-workspace\checkpointseal_omission_units_layered_v3.csv'
-LATENCY_PATH = r'D:\Analysis\Omission\local-workspace\checkpoints\omission_latencies_v2.csv'
-OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\summary_stats'
+UNITS_LAYERED_PATH = 'D:/Analysis/Omission/local-workspace/checkpoints/real_omission_units_layered_v3.csv'
+LATENCY_PATH = 'D:/Analysis/Omission/local-workspace/checkpoints/omission_latencies_v2.csv'
+OUTPUT_DIR = 'D:/Analysis/Omission/local-workspace/summary_stats'
 
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     
-    # Load data
-    df_units = pd.read_csv(LAYERED_UNITS_PATH)
-    df_lat = pd.read_csv(LATENCY_PATH)
+    if not os.path.exists(UNITS_LAYERED_PATH):
+        print('Error: Units layered file not found at {}'.format(UNITS_LAYERED_PATH))
+        return
+    if not os.path.exists(LATENCY_PATH):
+        print('Warning: Latency file not found at {}. Latency stats will be NaN.'.format(LATENCY_PATH))
+        df_lat = pd.DataFrame() # Empty dataframe if file not found
+    else:
+        df_lat = pd.read_csv(LATENCY_PATH)
+    
+    df_units = pd.read_csv(UNITS_LAYERED_PATH)
+    
+    # Standardize column names for merging
+    df_units = df_units.rename(columns={'session_id': 'session_id', 'probe_id': 'probe_id', 'unit_idx': 'unit_idx'})
+    df_units['session_id'] = df_units['session_id'].astype(str)
+    df_units['probe_id'] = df_units['probe_id'].astype(str)
+    df_units['unit_idx'] = df_units['unit_idx'].astype(int)
+    
+    if not df_lat.empty:
+        df_lat = df_lat.rename(columns={'session_id': 'session_id', 'probe_id': 'probe_id', 'unit_idx': 'unit_idx'})
+        df_lat['session_id'] = df_lat['session_id'].astype(str)
+        df_lat['probe_id'] = df_lat['probe_id'].astype(str)
+        df_lat['unit_idx'] = df_lat['unit_idx'].astype(int)
     
     # Merge unit data with latency data
-    # Ensure columns are compatible for merge
-    df_units = df_units.rename(columns={'session_id': 'session_id', 'probe_id': 'probe_id', 'unit_idx': 'unit_idx'})
-    df_lat = df_lat.rename(columns={'session_id': 'session_id', 'probe_id': 'probe_id', 'unit_idx': 'unit_idx'})
-    
-    # Merge, but be careful with potential duplicates or missing units if only top N were used for latency
-    # For now, assume direct merge is okay, or aggregate separately. Let's merge for now.
-    # Handle potential missing latency data (NaNs) during aggregation.
     merged_df = pd.merge(df_units, df_lat, on=['session_id', 'area', 'layer', 'unit_idx', 'probe_id'], how='left')
     
     # --- Aggregations ---
@@ -49,10 +61,12 @@ def main():
     print("Saved neuron summary by layer.")
 
     # 3. Summary by Signal Strength (r_fix bins)
-    strength_bins = [-np.inf, 1.5, 2.0, 5.0, np.inf] # Adjusted bins based on findings
+    strength_bins = [-np.inf, 1.5, 2.0, 5.0, np.inf]
     strength_labels = ['Low (<1.5x)', 'Baseline-like (1.5-2x)', 'Medium (2-5x)', 'High (>5x)']
     merged_df['strength_bin'] = pd.cut(merged_df['r_fix'], bins=strength_bins, labels=strength_labels, right=False)
     
+    merged_df['strength_bin'] = merged_df['strength_bin'].astype(str).replace('nan', 'Unknown')
+
     strength_area_summary = merged_df.groupby(['strength_bin', 'area']).agg(
         neuron_count=('unit_idx', 'size')
     ).reset_index()

@@ -1,6 +1,6 @@
 
 """
-vflip2_mapping_v3.py: Improved spectro-laminar mapping based on vFLIP2 logic for ALL sessions.
+vflip2_mapping.py: Improved spectro-laminar mapping based on vFLIP2 logic for ALL sessions.
 Uses Alpha/Beta vs Gamma power crossover as Layer 4 marker.
 Improves robustness by:
 1. Dynamic session/probe discovery.
@@ -160,21 +160,22 @@ def main():
             plt.gca().invert_yaxis()
             plt.title(f"vFLIP2 v3: {sid} P{pid} ({area})")
             plt.legend()
-            plt.savefig(os.path.join(OUTPUT_DIR, f"vflip2_{sid}_p{pid}_v3.png"))
+            plt.savefig(os.path.join(OUTPUT_DIR, f"vflip2_{sid}_p{pid}.png"))
             plt.close()
         except Exception as e:
             print(f"  Error {sid} P{pid}: {e}")
                 
     # Save Summary
-    with open(os.path.join(OUTPUT_DIR, "vflip2_summary_v3.txt"), "w") as f:
-        f.write("\n".join(summary))
+    with open(os.path.join(OUTPUT_DIR, "vflip2_summary.txt"), "w") as f:
+        f.write("
+".join(summary))
     
     # Save CSV
     df = pd.DataFrame(results_list)
-    df.to_csv(os.path.join(CHECKPOINT_DIR, "vflip2_mapping_v3.csv"), index=False)
+    df.to_csv(os.path.join(CHECKPOINT_DIR, "vflip2_mapping.csv"), index=False)
     
-    print(f"Summary saved to {OUTPUT_DIR}/vflip2_summary_v3.txt")
-    print(f"CSV saved to {CHECKPOINT_DIR}/vflip2_mapping_v3.csv")
+    print(f"Summary saved to {OUTPUT_DIR}/vflip2_summary.txt")
+    print(f"CSV saved to {CHECKPOINT_DIR}/vflip2_mapping.csv")
     print(f"NaN count: {df['crossover'].isna().sum()}")
 
 if __name__ == "__main__":

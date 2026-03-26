@@ -1,64 +1,76 @@
 """
-visualize_omission_summary.py: Generates multi-panel plots for omission neurons across layers and brain areas.
+visualize_omission_summary.py: Final multi-panel summary of omission signaling.
+Includes Layer Distribution, Response Strength, LFP PEV, and Robust Onset Latency.
 """
 import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-LAYERED_UNITS_PATH = r'D:\Analysis\Omission\local-workspace\checkpoints\real_omission_units_layered.csv'
-PEV_PATH = r'D:\Analysis\Omission\local-workspace\LFP_Extractions\omission_lfp_pev.npz'
+# Paths
+LAYERED_UNITS_PATH = r'D:\Analysis\Omission\local-workspace\checkpointseal_omission_units_layered_v3.csv'
+PEV_PATH = r'D:\Analysis\Omission\local-workspace\LFP_Extractions\omission_lfp_pev_v2.npz'
+LATENCY_PATH = r'D:\Analysis\Omission\local-workspace\checkpoints\area_population_latencies.csv'
 OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\figures'
 
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
-    if not os.path.exists(LAYERED_UNITS_PATH): return
-    df = pd.read_csv(LAYERED_UNITS_PATH)
-    
-    # Filter for "Real" - ensure ratio is high enough
-    # User said "Real" omission neurons only fire for omission.
-    # So r_fix and r_seq should both be > 2.0 ideally.
-    df = df[(df['r_fix'] > 2.0) & (df['r_seq'] > 2.0)]
+    df_units = pd.read_csv(LAYERED_UNITS_PATH)
+    df_lat = pd.read_csv(LATENCY_PATH) if os.path.exists(LATENCY_PATH) else None
     
     # 1. Layer Distribution per Area
-    plt.figure(figsize=(12, 6))
-    order = ['PFC', 'FEF', 'MT', 'V4', 'V3/V4', 'V1/V2']
-    df_known = df[df['layer'] != 'unknown']
+    fig1, ax1 = plt.subplots(figsize=(14, 6))
+    order = ['V1/V2', 'V3/V4', 'MT/MST', 'V4/TEO', 'FEF', 'PFC']
+    df_known = df_units[df_units['layer'] != 'unknown']
     
     unique_areas = [o for o in order if o in df_known['area'].unique()]
     layers = ['Superficial', 'L4', 'Deep']
     x = np.arange(len(unique_areas))
-    width = 0.2
+    width = 0.25
     
     for i, layer in enumerate(layers):
         counts = [len(df_known[(df_known['area'] == a) & (df_known['layer'] == layer)]) for a in unique_areas]
-        plt.bar(x + (i-1)*width, counts, width, label=layer)
+        ax1.bar(x + (i-1)*width, counts, width, label=layer)
         
-    plt.xticks(x, unique_areas)
-    plt.title("Real Omission Neuron Distribution (Strict: r_fix > 2, r_seq > 2)")
-    plt.ylabel("Count of Units")
-    plt.legend()
-    plt.grid(True, axis='y', alpha=0.3)
-    plt.savefig(os.path.join(OUTPUT_DIR, 'real_omission_layer_distribution.png'))
-    plt.close()
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(unique_areas)
+    ax1.set_title("Omission Neuron Distribution by Layer (Corrected Timing)")
+    ax1.set_ylabel("Count of Real Omission Units")
+    ax1.legend()
+    ax1.grid(True, axis='y', alpha=0.3)
+    fig1.savefig(os.path.join(OUTPUT_DIR, 'summary_layer_distribution.png'))
 
-    # 3. Omission Index (Ratio) by Area and Layer
-    plt.figure(figsize=(12, 6))
+    # 2. Omission Index (Ratio) by Area and Layer
+    fig2, ax2 = plt.subplots(figsize=(14, 6))
     for i, area in enumerate(unique_areas):
         for j, layer in enumerate(layers):
             data = df_known[(df_known['area'] == area) & (df_known['layer'] == layer)]['r_fix']
             if not data.empty:
-                plt.boxplot(data, positions=[i + (j-1)*width], widths=width, showfliers=False)
+                ax2.boxplot(data, positions=[i + (j-1)*width], widths=width, showfliers=False)
     
-    plt.xticks(np.arange(len(unique_areas)), unique_areas)
-    plt.yscale('log')
-    plt.title("Omission Response Strength (Omit/Fix Ratio)")
-    plt.ylabel("Ratio (Log Scale)")
-    plt.grid(True, axis='y', alpha=0.3)
-    plt.savefig(os.path.join(OUTPUT_DIR, 'real_omission_strength_by_layer.png'))
-    plt.close()
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(unique_areas)
+    ax2.set_yscale('log')
+    ax2.set_title("Omission Response Strength (Omit/Fix Ratio)")
+    ax2.set_ylabel("Ratio (Log Scale)")
+    ax2.grid(True, axis='y', alpha=0.3)
+    fig2.savefig(os.path.join(OUTPUT_DIR, 'summary_strength_by_layer.png'))
 
-    print(f"Summary visualizations saved to {OUTPUT_DIR}")
+    # 3. Latency Hierarchy Plot
+    if df_lat is not None:
+        fig3, ax3 = plt.subplots(figsize=(10, 6))
+        # Filter to target areas for hierarchy
+        df_target = df_lat[df_lat['area'].isin(order)].copy()
+        df_target['area'] = pd.Categorical(df_target['area'], categories=order, ordered=True)
+        df_target = df_target.sort_values('area')
+        
+        ax3.barh(df_target['area'].astype(str), df_target['latency_ms'], color='skyblue')
+        ax3.set_xlabel("Latency (ms after Omission Onset)")
+        ax3.set_title("Omission Signal Hierarchy (Population PSTH Onset)")
+        ax3.grid(True, axis='x', alpha=0.3)
+        fig3.savefig(os.path.join(OUTPUT_DIR, 'summary_latency_hierarchy.png'))
+
+    print(f"Summary visualizations updated in {OUTPUT_DIR}")
 
 if __name__ == "__main__":
     main()
