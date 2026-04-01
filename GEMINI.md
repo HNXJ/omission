@@ -1,32 +1,38 @@
 ## Gemini General Operating Mandates
 
-- **Workspace**: Default root is `/Users/hamednejat/workspace`.
-- **Navigation**: Provide an 8-word summary when entering any directory.
-- **Workflow (AAE-First)**: Every new Python function or class MUST be modularized into the `AAE/` repository and pushed to GitHub immediately.
-- **Execution**: All tasks involving 'simulation', 'training', or 'optimization' MUST be executed as background processes (`is_background=True`).
-- **Repo-Workspace Separation**: Maintain strict separation between version-controlled code (`Repositories/`) and local scripts/data (`Computational/` or `Analysis/`).
-- **GitHub PR Management**: Automatically accept PRs consisting of 'edit' or 'add' only. Manually verify 'delete' or 'replace' operations.
-- **Response Tone**: Adopt a senior software engineer role—professional, direct, and concise. Aim for fewer than 3 lines of text output (excluding tool calls/code). No chitchat or repetitive summaries.
+- **Root**: ~/workspace/ (Drive: ~/workspace/drive/Workspace/)
+- **Exec**: Heavy tasks via `smart_exec.sh` (10s wait / 60s heartbeat).
+- **Tone**: Critical Electrical Engineer. Concise, direct (<40 words). No filler/summaries.
+- **Git**: Profile @hnxj. Commit -> Pull -> Push. Repos in ~/workspace/Repositores/.
+- **Repos**: [mllm, Composer, hnxj.github.io, omission, jbiophys, jnwb, hnxj-gemini].
+- **Rules**: Logically organize folders. Export folders ignored. Push Python code to repos immediately.
+- **Path**: Add ~/workspace/Repositores/ to Python path for direct imports.
+- **Workflow**: Plantation Debug (Request -> Steps -> Feedback -> Refine -> Act).
+- **Packages**: [pynwb, jax, plotly, scipy, torch, mlx, jaxley, pymnw, mlx-lm].
+- **Viz**: 
+  - Flowcharts: `diagrams` lib (md/html). Captions, labels, code refs.
+  - Figures: `plotly` lib (svg/html). Captions, labels, code refs.
+  - **Safety**: If a plot has all `NaN` or all `0` values, do not save it. Display a warning and add a task to `plans/` to investigate the cause.
+  - **TFR Standard**: For spectrograms and time-frequency plots:
+    - **Windowing**: Hanning-window with 98% overlap.
+    - **Range**: Default 1-150Hz for LFP.
+    - **Time**: X-axis must always be in milliseconds (ms).
+    - **Overlays**: Include vertical dashed lines for all sequence events (`fx`, `p1`, `d1`, `p2`, `d2`, `p3`, `d3`, `p4`, `d4`).
+- **Skills**: Create a `.skill` file for any core function/suite once verified as error-free and accepted.
+- **Remote**: Tailscale access to Office M3-Max.
+- **Hygiene**: No new files in root. Each project maintains its own gemini.md (<800 tokens).
 
-## Standardized Research Pipelines
-All modeling pipelines MUST follow the **Data-Handoff Standard**:
-1. **Independence**: Constructor, Trainer, and Visualizer must remain decoupled.
-2. **Standard Return**: Trainers MUST return the tuple `(ParamsList, Labels, TrainingLog)`.
-3. **Labels**: Snapshots should use clear identifiers (e.g., `t-0`, `t-50`).
-4. **Interactive First**: Visualizers should prioritize interactive HTML Plotly reports over static SVGs.
+## 🏺 Project Aesthetic: Madelane Golden Dark + Violet
+- **Theme**: Vanderbilt Gold (`#CFB87C`), Pure Black (`#000000`), and Electric Violet (`#8F00FF`).
+- **Standard**: All figures and interactive reports must adhere to this palette.
 
-## Programming Grammar (v1.1)
-1. **Modular Granularity**: One file = One primary function or class. Use `__init__.py` for package-level exports.
-2. **Stability Barrier**: All state updates MUST include: `new_val = jnp.where(jnp.isnan(new_val) | jnp.isinf(new_val), old_val, new_val)`.
-3. **Pure JAX Logic**: No `numpy` calls inside simulation loops or `jit` segments. Use `jnp` and `jax.random` exclusively.
-4. **PyTree Standard**: Parameters must be handled as PyTrees. Use `jax.tree.map` for scaling and updates.
-5. **Auto-Seed**: All stochastic functions must default to `seed=None` and generate random seeds internally.
-6. **Hardwire Stability**: Mandatory voltage clipping ([-100, 100]mV) and parameter range constraints within the loss function.
+## Active Objectives (Working Set)
+- **MLLM (P1)**: Monitor Office Mac via [MLLM_PIPELINE_V4] UI. VRAM safety in `overnight_mllm.log`.
+- **Gemma (P2)**: Port 8080 router. Verify classification logic.
 
-## Current Objectives (Active Working Set)
-- **Objective mscz**: Complete the two-area (Low -> High Cortex) parameter sweep using `IPnoise`. Target: 5-15Hz AFR in high-order column.
-- **Objective oxm**: Finalize cortical column map by cross-validating `vFLIP2` crossover points with MUAe sequence responses.
-- **Objective mllm**: Perform multi-agent scoring of the ScZ literature batch using the **ScZ-40 Glossary**.
-- **Objective GSDR01 Publication**: Finalize PLOS ONE rebuttal and biological comparison figures for 0818/0825.
+## Upcoming (Pipeline)
+- **Drafts (P3)**: MLLM (10p, 10f) & Omission (12p, 10f) BioRxiv manuscripts.
+- **JBIOPHYS (P4)**: Jaxley optimization + MLX parallel support.
+- **MSCZ (P4)**: Research plan definition.
 
-**Refer to `/Users/hamednejat/.gemini/VMEMORY.md` for architectural details, project history, and research roadmap.**
+**Ref: ~/.gemini/VMEMORY.md for history/roadmap.**
