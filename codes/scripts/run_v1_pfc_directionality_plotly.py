@@ -85,8 +85,13 @@ def run_v1_pfc_directionality():
                 pfc_spk_path = os.path.join(DATA_DIR, f'ses{sid_str}-units-probe{pfc_probe}-spk-{c}.npy')
                 
                 if os.path.exists(v1_spk_path) and os.path.exists(pfc_spk_path):
+<<<<<<< Updated upstream
                     v1_spk = np.load(v1_spk_path, mmap_mode='r')[:, :, OMIT_WIN[0]:OMIT_WIN[1]]
                     pfc_spk = np.load(pfc_spk_path, mmap_mode='r')[:, :, OMIT_WIN[0]:OMIT_WIN[1]]
+=======
+                    v1_spk = np.nan_to_num(np.load(v1_spk_path, mmap_mode='r'))[:, :, OMIT_WIN[0]:OMIT_WIN[1]]
+                    pfc_spk = np.nan_to_num(np.load(pfc_spk_path, mmap_mode='r'))[:, :, OMIT_WIN[0]:OMIT_WIN[1]]
+>>>>>>> Stashed changes
                     lags, ccg = compute_ccg_robust(v1_spk, pfc_spk)
                     results[f'ccg_{c}'] = ccg
                 
@@ -95,8 +100,13 @@ def run_v1_pfc_directionality():
                 pfc_lfp_path = os.path.join(DATA_DIR, f'ses{sid_str}-probe{pfc_probe}-lfp-{c}.npy')
                 
                 if os.path.exists(v1_lfp_path) and os.path.exists(pfc_lfp_path):
+<<<<<<< Updated upstream
                     v1_lfp = np.mean(np.load(v1_lfp_path, mmap_mode='r')[:, :, OMIT_WIN[0]:OMIT_WIN[1]], axis=1)
                     pfc_lfp = np.mean(np.load(pfc_lfp_path, mmap_mode='r')[:, :, OMIT_WIN[0]:OMIT_WIN[1]], axis=1)
+=======
+                    v1_lfp = np.nan_to_num(np.mean(np.load(v1_lfp_path, mmap_mode='r')[:, :, OMIT_WIN[0]:OMIT_WIN[1]], axis=1))
+                    pfc_lfp = np.nan_to_num(np.mean(np.load(pfc_lfp_path, mmap_mode='r')[:, :, OMIT_WIN[0]:OMIT_WIN[1]], axis=1))
+>>>>>>> Stashed changes
                     
                     # Trial-averaged LFP for Granger (more robust if trials are consistent)
                     data = np.stack([v1_lfp.mean(axis=0), pfc_lfp.mean(axis=0)])
@@ -109,6 +119,7 @@ def run_v1_pfc_directionality():
             except Exception as e:
                 print(f"  Error processing {c} for {sid_str}: {e}")
         
+<<<<<<< Updated upstream
         # Plotting for this session
         if f'ccg_AAAX' in results:
             fig_ccg = go.Figure()
@@ -117,6 +128,14 @@ def run_v1_pfc_directionality():
             fig_ccg.update_layout(template='plotly_dark', title=f"Directionality (Spike CCG): {sid_str} (V1 vs PFC)",
                                   xaxis_title="Lag (ms) [V1 leads PFC if peak > 0]", yaxis_title="Coincidence Count",
                                   paper_bgcolor=BLACK, plot_bgcolor=BLACK)
+=======
+        if f'ccg_AAAX' in results:
+            fig_ccg = go.Figure()
+            fig_ccg.add_trace(go.Scatter(x=lags, y=results['ccg_AAAX'], name='Omit (AAAX)', line=dict(color='red', width=3)))
+            fig_ccg.add_trace(go.Scatter(x=lags, y=results['ccg_RRRR'], name='Std (RRRR)', line=dict(color='gray', dash='dash')))
+            fig_ccg.update_layout(template='plotly_white', title=f"Directionality (Spike CCG): {sid_str} (V1 vs PFC)",
+                                  xaxis_title="Lag (ms) [V1 leads PFC if peak > 0]", yaxis_title="Coincidence Count")
+>>>>>>> Stashed changes
             fig_ccg.write_html(os.path.join(OUTPUT_DIR, f"DIR_CCG_{sid_str}_V1_PFC.html"))
             
         if f'g_v1_pfc_AAAX' in results:
@@ -126,6 +145,7 @@ def run_v1_pfc_directionality():
             def clean(x):
                 return np.where(np.isnan(x) | np.isinf(x), 0, x)
                 
+<<<<<<< Updated upstream
             fig_g.add_trace(go.Scatter(x=f, y=clean(results['g_v1_pfc_AAAX']), name='V1 -> PFC (Omit)', line=dict(color=GOLD)))
             fig_g.add_trace(go.Scatter(x=f, y=clean(results['g_pfc_v1_AAAX']), name='PFC -> V1 (Omit)', line=dict(color=VIOLET)))
             fig_g.add_trace(go.Scatter(x=f, y=clean(results['g_v1_pfc_RRRR']), name='V1 -> PFC (Std)', line=dict(color=GOLD, dash='dash'), opacity=0.5))
@@ -133,6 +153,15 @@ def run_v1_pfc_directionality():
             fig_g.update_layout(template='plotly_dark', title=f"Directionality (Spectral Granger): {sid_str} (V1 vs PFC)",
                                 xaxis_title="Frequency (Hz)", yaxis_title="Causality",
                                 xaxis_range=[0, 100], paper_bgcolor=BLACK, plot_bgcolor=BLACK)
+=======
+            fig_g.add_trace(go.Scatter(x=f, y=clean(results['g_v1_pfc_AAAX']), name='V1 -> PFC (Omit)', line=dict(color='red')))
+            fig_g.add_trace(go.Scatter(x=f, y=clean(results['g_pfc_v1_AAAX']), name='PFC -> V1 (Omit)', line=dict(color='blue')))
+            fig_g.add_trace(go.Scatter(x=f, y=clean(results['g_v1_pfc_RRRR']), name='V1 -> PFC (Std)', line=dict(color='red', dash='dash'), opacity=0.5))
+            fig_g.add_trace(go.Scatter(x=f, y=clean(results['g_pfc_v1_RRRR']), name='PFC -> V1 (Std)', line=dict(color='blue', dash='dash'), opacity=0.5))
+            fig_g.update_layout(template='plotly_white', title=f"Directionality (Spectral Granger): {sid_str} (V1 vs PFC)",
+                                xaxis_title="Frequency (Hz)", yaxis_title="Causality",
+                                xaxis_range=[0, 100])
+>>>>>>> Stashed changes
             fig_g.write_html(os.path.join(OUTPUT_DIR, f"DIR_Granger_{sid_str}_V1_PFC.html"))
         
         all_results.append(results)
@@ -143,6 +172,7 @@ def run_v1_pfc_directionality():
         summary_ccg_std = np.mean([r['ccg_RRRR'] for r in all_results if 'ccg_RRRR' in r], axis=0)
         
         fig_ccg_sum = go.Figure()
+<<<<<<< Updated upstream
         fig_ccg_sum.add_trace(go.Scatter(x=lags, y=summary_ccg_om, name='Omit (AAAX)', line=dict(color=GOLD, width=4)))
         fig_ccg_sum.add_trace(go.Scatter(x=lags, y=summary_ccg_std, name='Std (RRRR)', line=dict(color=SLATE, dash='dash')))
         fig_ccg_sum.update_layout(template='plotly_dark', title="Figure 06A: V1-PFC Spike CCG (Summary)",
@@ -152,15 +182,32 @@ def run_v1_pfc_directionality():
         
         # Granger Summary
         # ... similar for Granger ...
+=======
+        fig_ccg_sum.add_trace(go.Scatter(x=lags, y=summary_ccg_om, name='Omit (AAAX)', line=dict(color='red', width=4)))
+        fig_ccg_sum.add_trace(go.Scatter(x=lags, y=summary_ccg_std, name='Std (RRRR)', line=dict(color='gray', dash='dash')))
+        fig_ccg_sum.update_layout(template='plotly_white', title="Figure 06A: V1-PFC Spike CCG (Summary)",
+                                  xaxis_title="Lag (ms) [V1 leads PFC if peak > 0]", yaxis_title="Coincidence Count")
+        fig_ccg_sum.write_html(os.path.join(OUTPUT_DIR, "FIG_06A_V1_PFC_CCG_Summary.html"))
+        
+        # Granger Summary
+>>>>>>> Stashed changes
         summary_g_v1_pfc_om = np.mean([r['g_v1_pfc_AAAX'] for r in all_results if 'g_v1_pfc_AAAX' in r], axis=0)
         summary_g_pfc_v1_om = np.mean([r['g_pfc_v1_AAAX'] for r in all_results if 'g_pfc_v1_AAAX' in r], axis=0)
         
         fig_g_sum = go.Figure()
+<<<<<<< Updated upstream
         fig_g_sum.add_trace(go.Scatter(x=f, y=clean(summary_g_v1_pfc_om), name='V1 -> PFC (Omit)', line=dict(color=GOLD, width=3)))
         fig_g_sum.add_trace(go.Scatter(x=f, y=clean(summary_g_pfc_v1_om), name='PFC -> V1 (Omit)', line=dict(color=VIOLET, width=3)))
         fig_g_sum.update_layout(template='plotly_dark', title="Figure 06B: V1-PFC Spectral Granger (Summary)",
                                 xaxis_title="Frequency (Hz)", yaxis_title="Causality",
                                 xaxis_range=[0, 100], paper_bgcolor=BLACK, plot_bgcolor=BLACK)
+=======
+        fig_g_sum.add_trace(go.Scatter(x=f, y=clean(summary_g_v1_pfc_om), name='V1 -> PFC (Omit)', line=dict(color='red', width=3)))
+        fig_g_sum.add_trace(go.Scatter(x=f, y=clean(summary_g_pfc_v1_om), name='PFC -> V1 (Omit)', line=dict(color='blue', width=3)))
+        fig_g_sum.update_layout(template='plotly_white', title="Figure 06B: V1-PFC Spectral Granger (Summary)",
+                                xaxis_title="Frequency (Hz)", yaxis_title="Causality",
+                                xaxis_range=[0, 100])
+>>>>>>> Stashed changes
         fig_g_sum.write_html(os.path.join(OUTPUT_DIR, "FIG_06B_V1_PFC_Granger_Summary.html"))
 
     print("Directionality Analysis Complete.")
