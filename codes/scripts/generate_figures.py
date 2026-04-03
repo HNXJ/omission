@@ -12,11 +12,20 @@ COLORS = ['red', 'blue', 'green', 'yellow', 'brown', 'pink', 'gray', 'purple', '
 BAND_COLORS = {'Theta': 'purple', 'Alpha': 'orange', 'Beta': 'red', 'Gamma': 'blue'}
 TEMPLATE = 'plotly_white'
 
+<<<<<<< Updated upstream
 # Task Timing (Relative to P1 Onset at Sample 1000)
 OMISSION_CONFIGS = {
     'p2': {'start': 531, 'end': 2062},
     'p3': {'start': 1562, 'end': 3093},
     'p4': {'start': 2593, 'end': 4124}
+=======
+# Task Timing (Relative to P1 Onset at Sample 0)
+# p1=0, d1=531, p2=1031, d2=1562, p3=2062, d3=2593, p4=3093, d4=3624
+OMISSION_CONFIGS = {
+    'p2': {'start': 1031, 'end': 1562},
+    'p3': {'start': 2062, 'end': 2593},
+    'p4': {'start': 3093, 'end': 3624}
+>>>>>>> Stashed changes
 }
 
 CONDITION_MAP = {
@@ -560,9 +569,15 @@ def generate_fig_06(base_dir):
     
     bands = {
         'theta': (4, 8),
+<<<<<<< Updated upstream
         'alpha': (8, 12),
         'beta': (12, 30),
         'gamma': (30, 80)
+=======
+        'alpha': (8, 13),
+        'beta': (15, 25),
+        'gamma': (35, 70)
+>>>>>>> Stashed changes
     }
 
     print(f"--- Processing Averaged Omissions for Fig 06 ---")
