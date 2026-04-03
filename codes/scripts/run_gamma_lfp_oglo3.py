@@ -5,12 +5,17 @@ Master execution of the 15-Step GAMMA PLAN for LFP-only omission analysis.
 Generates the "OMISSION 2026 Systematic Figure Suite" in oglo3/.
 """
 
+import sys
 import os
+from pathlib import Path
+
+# Fix ModuleNotFoundError
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
+
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
-from pathlib import Path
 
 # --- Import Functional Core ---
 from codes.functions.lfp_constants import GOLD, BLACK, VIOLET, PINK, TIMING_MS, BANDS, HIERARCHY
@@ -31,11 +36,11 @@ CONDS = ["AAAB", "AAAX", "AAXB", "AXAB", "BBBA", "BBBX", "BBXA", "BXBA", "RRRR",
 PROBES = [0, 1, 2] # Up to 3 probes per session
 
 def run_gamma_oglo3():
-    print("🚀 Starting GAMMA MASTER PIEPLINE (V4 Suite)...")
+    print("Starting GAMMA MASTER PIEPLINE (V4 Suite)...")
     
     # --- Loop Sessions ---
     for sid in SESSIONS:
-        print(f"  📂 Processing Session: {sid}")
+        print(f"  Processing Session: {sid}")
         # Create session output folder
         ses_out = OUT_DIR / f"ses{sid}"
         os.makedirs(ses_out, exist_ok=True)
@@ -82,7 +87,7 @@ def run_gamma_oglo3():
                                            title=f"Beta: {sid} {cond} Probe{pid}")
                 fig_beta.write_html(ses_out / f"{cond}_probe{pid}_beta.html")
 
-    print("🏁 GAMMA MASTER PIEPLINE COMPLETE.")
+    print("GAMMA MASTER PIEPLINE COMPLETE.")
 
 if __name__ == "__main__":
     run_gamma_oglo3()
