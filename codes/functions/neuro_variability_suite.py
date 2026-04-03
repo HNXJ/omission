@@ -167,12 +167,22 @@ class NeuroVariabilitySuite:
         return np.nanmean(mmv_accum, axis=0)
 
     @staticmethod
+<<<<<<< Updated upstream
     def detect_bursts(data, fs=1000, band=(35, 80), threshold_factor=3.0):
         """
         Detects oscillatory bursts in a specific band.
         Input: data (Trials, Time)
         Output: burst_mask (Trials, Time) - binary
         """
+=======
+    def detect_bursts(data, fs=1000, band=(35, 70), threshold_factor=3.0):
+        """
+        Detects oscillatory bursts in a specific band (Default: Gamma 35-70Hz).
+        Input: data (Trials, Time)
+        Output: burst_mask (Trials, Time) - binary
+        """
+        data = np.nan_to_num(data)
+>>>>>>> Stashed changes
         from scipy.signal import butter, filtfilt, hilbert
         nyq = 0.5 * fs
         b, a = butter(4, [band[0]/nyq, band[1]/nyq], btype='band')
