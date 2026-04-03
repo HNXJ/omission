@@ -64,6 +64,7 @@ def run_gamma_oglo3():
         for cond in CONDS:
             for pid in PROBES:
                 area = get_area(sid, pid)
+                area_clean = area.replace("/", "_").replace("\\", "_").replace(", ", "_")
                 fname = DATA_DIR / f"ses{sid}-probe{pid}-lfp-{cond}.npy"
                 if not fname.exists(): continue
                 
@@ -91,7 +92,7 @@ def run_gamma_oglo3():
                 # --- Fig 05: Per-Condition TFR ---
                 fig_tfr = create_tfr_figure(f, (t-0.5)*1000, pwr_db_mean, 
                                            title=f"TFR: {sid} {area} {cond}")
-                fig_tfr.write_html(ses_out / f"{cond}_{area}_tfr.html")
+                fig_tfr.write_html(ses_out / f"{cond}_{area_clean}_tfr.html")
                 
                 # --- Step 7: Band Extraction ---
                 times_ms = (t-0.5)*1000
@@ -101,13 +102,13 @@ def run_gamma_oglo3():
                     sem_traj = np.std(band_db_trials, axis=0) / np.sqrt(band_db_trials.shape[0])
                     
                     # Save for aggregation
-                    save_path = CKP_DIR / f"ses{sid}_{area}_{cond}_{band_name}.npy"
+                    save_path = CKP_DIR / f"ses{sid}_{area_clean}_{cond}_{band_name}.npy"
                     np.save(save_path, {"mean": mean_traj, "sem": sem_traj, "times": times_ms})
                     
                     # --- Fig 06: Band Summary ---
                     fig_band = create_band_plot(times_ms, mean_traj, sem_traj, 
                                                title=f"{band_name}: {sid} {area} {cond}")
-                    fig_band.write_html(ses_out / f"{cond}_{area}_{band_name}.html")
+                    fig_band.write_html(ses_out / f"{cond}_{area_clean}_{band_name}.html")
 
     print("GAMMA MASTER PIEPLINE COMPLETE.")
 
