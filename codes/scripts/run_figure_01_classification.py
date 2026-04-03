@@ -14,17 +14,34 @@ OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\figures\final_reports'
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Omission Groups: (Conditions, Omit Win, Preceding Delay Win)
+<<<<<<< Updated upstream
 OMIT_GROUPS = {
     'P4 Omission': (['AAAX', 'RRRX', 'BBBX'], (4186, 4717), (3655, 4186)),
     'P3 Omission': (['AAXB', 'RRXR', 'BBXA'], (3124, 3655), (2593, 3124)),
     'P2 Omission': (['AXAB', 'RXRR', 'BXBA'], (2062, 2593), (1531, 2062)),
+=======
+# Based on Gamma-Standard: p1=1000, p2=2031, p3=3062, p4=4093
+OMIT_GROUPS = {
+    'P4 Omission': (['AAAX', 'RRRX', 'BBBX'], (4093, 4624), (3562, 4093)),
+    'P3 Omission': (['AAXB', 'RRXR', 'BBXA'], (3062, 3593), (2562, 3062)),
+    'P2 Omission': (['AXAB', 'RXRR', 'BXBA'], (2031, 2562), (1531, 2031)),
+>>>>>>> Stashed changes
 }
 
 def load_pupil(sid, cond):
     fpath = os.path.join(DATA_DIR, f'ses{sid}-behavioral-{cond}.npy')
     if not os.path.exists(fpath): return None
+<<<<<<< Updated upstream
     data = np.load(fpath, mmap_mode='r')
     return data[:, 0, :] # (trials, 6000)
+=======
+    try:
+        data = np.load(fpath, mmap_mode='r')
+        pupil = data[:, 2, :] # Correct Channel Mapping: 2 is Pupil Diameter
+        return np.nan_to_num(pupil) # Sanitation
+    except Exception:
+        return None
+>>>>>>> Stashed changes
 
 def run_pupil_omission_detection():
     all_results = []
