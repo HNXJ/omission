@@ -15,6 +15,7 @@ VIOLET = "#8F00FF"
 SLATE = "#444444"
 
 # Task Timing (Relative to P1 Onset at Sample 1000)
+<<<<<<< Updated upstream
 # d(k-1) -> p(k) -> d(k)
 # Total ~1531ms
 OMISSION_CONFIGS = {
@@ -33,6 +34,17 @@ GAUSS_SIGMA_SAMPLES = GAUSS_SIGMA_MS / (NPERSEG - NOVERLAP) # Rough approximatio
 
 def smooth_tfr(Sxx, sigma_samples):
     return ndimage.gaussian_filter1d(Sxx, sigma=sigma_samples, axis=-1)
+=======
+# Gamma-Standard timings: p1=1000, d1=1531, p2=2031, d2=2562, p3=3062, d3=3593, p4=4093, d4=4624
+OMISSION_CONFIGS = {
+    'p2': {'start': 1031, 'end': 1562, 'label': 'AXAB/BXBA/RXRR'},
+    'p3': {'start': 2062, 'end': 2593, 'label': 'AAXB/BBXA/RRXR'},
+    'p4': {'start': 3093, 'end': 3624, 'label': 'AAAX/BBBX/RRRX'}
+}
+
+# TFR Parameters
+BANDS = {'Theta': (4, 8), 'Alpha': (8, 13), 'Beta': (15, 25), 'Gamma': (35, 70)}
+>>>>>>> Stashed changes
 
 def compute_relative_power(lfp, fs, nperseg, noverlap, config):
     """
@@ -44,7 +56,11 @@ def compute_relative_power(lfp, fs, nperseg, noverlap, config):
     t_end = 1000 + config['end']
     
     # Extract window
+<<<<<<< Updated upstream
     window_data = lfp[:, t_start:t_end]
+=======
+    window_data = np.nan_to_num(lfp[:, t_start:t_end])
+>>>>>>> Stashed changes
     n_trials, n_time = window_data.shape
     
     # Compute TFR for each trial
@@ -60,6 +76,7 @@ def compute_relative_power(lfp, fs, nperseg, noverlap, config):
     
     # Baseline: Average power during d(k-1) and d(k)
     # d(k-1) is first ~500ms, d(k) is last ~500ms
+<<<<<<< Updated upstream
     # Index in t_vec
     t_ms = t_vec * 1000
     idx_baseline = np.where((t_ms < 500) | (t_ms > 1031))[0]
@@ -80,12 +97,27 @@ def compute_relative_power(lfp, fs, nperseg, noverlap, config):
         # Average power in band per trial then convert to dB
         trial_band_power = np.mean(trial_tfrs[:, f_idx, :], axis=1) # (trials, time)
         # We need trial-specific baseline for SEM
+=======
+    t_ms = t_vec * 1000
+    idx_baseline = np.where((t_ms < 500) | (t_ms > 1031))[0]
+    
+    avg_trial_tfr = np.mean(trial_tfrs, axis=0)
+    baseline_power = np.mean(avg_trial_tfr[:, idx_baseline], axis=1, keepdims=True)
+    
+    rel_db = 10 * np.log10(avg_trial_tfr / (baseline_power + 1e-12))
+    
+    traces = {}
+    for name, (f_min, f_max) in BANDS.items():
+        f_idx = np.where((f >= f_min) & (f <= f_max))[0]
+        trial_band_power = np.mean(trial_tfrs[:, f_idx, :], axis=1)
+>>>>>>> Stashed changes
         trial_baseline = np.mean(trial_band_power[:, idx_baseline], axis=1, keepdims=True)
         trial_db = 10 * np.log10(trial_band_power / (trial_baseline + 1e-12))
         
         traces[name] = {
             'mean': np.nanmean(trial_db, axis=0),
             'sem': np.nanstd(trial_db, axis=0) / np.sqrt(n_trials),
+<<<<<<< Updated upstream
             'time': t_ms - 500 # Align omission to 0ms (d-k-1 is -500 to 0)
         }
         
@@ -157,14 +189,39 @@ def run_omission_dynamics():
             # d(k-1) is -531 to 0. p(k) is 0 to 500. d(k) is 500 to 1031.
             fig.add_vline(x=0, line_dash="dash", line_color="white", annotation_text="Omission Onset")
             fig.add_vline(x=500, line_dash="dash", line_color="white", annotation_text="Omission End")
+=======
+            'time': t_ms - 500
+        }
+    return traces
+
+def run_omission_dynamics():
+    # ... (setup remains same)
+    
+            # Use channel 64 (middle) as representative for now
+            lfp_data = np.nan_to_num(np.load(f_path, mmap_mode='r'))
+            traces = compute_relative_power(lfp_data[:, 64, :], FS, NPERSEG, NOVERLAP, OMISSION_CONFIGS[target_p])
+            
+            # Plot
+            fig = go.Figure()
+            colors = {'Theta': 'cyan', 'Alpha': 'lime', 'Beta': 'gold', 'Gamma': 'violet'}
+            
+            # ... (trace plotting remains same)
+            
+            fig.add_vline(x=0, line_dash="dash", line_color="black", annotation_text="Omission Onset")
+            fig.add_vline(x=500, line_dash="dash", line_color="black", annotation_text="Omission End")
+>>>>>>> Stashed changes
             
             fig.update_layout(
                 title=f"🏺 Omission Relative Power (dB) | {sid} P{probe} {cond}",
                 xaxis_title="Time (ms)",
                 yaxis_title="Relative Power Change (dB)",
+<<<<<<< Updated upstream
                 template="plotly_dark",
                 paper_bgcolor=BLACK, plot_bgcolor=BLACK,
                 font=dict(color=GOLD, family="Consolas")
+=======
+                template="plotly_white"
+>>>>>>> Stashed changes
             )
             
             out_name = f"OMIT_POWER_{sid}_P{probe}_{cond}.html"
