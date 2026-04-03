@@ -10,6 +10,14 @@ from scipy.ndimage import gaussian_filter1d
 
 # Constants
 AREA_ORDER = ['V1', 'V2', 'V3d', 'V3a', 'V4', 'MT', 'MST', 'TEO', 'FST', 'FEF', 'PFC']
+<<<<<<< Updated upstream
+=======
+HIERARCHY = {
+    'Low': ['V1', 'V2'],
+    'Mid': ['V3d', 'V3a', 'V4', 'MT', 'MST', 'TEO', 'FST'],
+    'High': ['FEF', 'PFC']
+}
+>>>>>>> Stashed changes
 CHANNELS_PER_PROBE = 128
 AREA_MAPPING = {'DP': 'V4', 'V3': ['V3d', 'V3a']}
 SAMPLING_RATE = 1000 # Hz
