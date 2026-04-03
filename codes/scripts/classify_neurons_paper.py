@@ -70,16 +70,17 @@ def classify():
         for (probe_id, local_idx), area in u_map.items():
             if probe_id not in cond_data['RRRR']: continue
             
-            # Baseline window (RRRR)
-            data_std = cond_data['RRRR'][probe_id][:, local_idx, :]
-            fx_fr = np.mean(data_std[:, 0:1000]) * 1000
-            p1_fr = np.mean(data_std[:, 1000:1531]) * 1000
-            d1_fr = np.mean(data_std[:, 1531:2031]) * 1000
+            # Fixation Baseline (0:1000ms)
+            data_std = np.nan_to_num(cond_data['RRRR'][probe_id][:, local_idx, :])
+            fx_data = data_std[:, 0:1000] # fixation window
+            fx_fr = np.mean(fx_data) * 1000
             
-            # SD of combined baseline
-            combined_baseline = np.mean(data_std[:, 0:2031], axis=0) * 1000
-            baseline_sd = np.std(combined_baseline)
-            baseline_mean = np.mean(combined_baseline)
+            # Baseline SD across trials
+            trial_baselines = np.mean(fx_data, axis=1) * 1000
+            baseline_sd = np.std(trial_baselines)
+            baseline_mean = fx_fr
+            
+            p1_fr = np.mean(data_std[:, 1000:1531]) * 1000
 
             label = 'Null'
 
