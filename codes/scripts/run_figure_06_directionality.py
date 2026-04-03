@@ -14,10 +14,27 @@ import re
 SESSIONS = ['230630', '230816', '230830']
 FS = 1000.0
 LAG_RANGE = 200 # ms
+<<<<<<< Updated upstream
 OMIT_WIN = (4093, 4624) # Sample indices for 0-531ms post-p2 omission
 STD_WIN = (4093, 4624) # Same window in RRRR trials (post-p2)
 LFP_ORDER = 15 # Granger order
 
+=======
+# Gamma-Standard timings: p1=1000, p2=2031, p3=3062, p4=4093
+# Condition AAAX has omission at P4.
+OMIT_WIN = (4093, 4624) # Sample indices for 0-531ms post-p4 omission
+STD_WIN = (4093, 4624) # Same window in RRRR trials (post-p4)
+LFP_ORDER = 15 # Granger order
+
+def load_data_sanitized(path):
+    try:
+        data = np.load(path, mmap_mode='r')
+        return np.nan_to_num(data)
+    except Exception as e:
+        print(f"Error loading {path}: {e}")
+        return None
+
+>>>>>>> Stashed changes
 # Paths
 DATA_DIR = r'D:\Analysis\Omission\local-workspace\data'
 CHECKPOINT_DIR = r'D:\Analysis\Omission\local-workspace\checkpoints'
