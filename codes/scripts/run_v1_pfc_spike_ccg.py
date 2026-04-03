@@ -43,6 +43,7 @@ def process_session_ccg(session_id, neurons_df):
     if len(v1_units) == 0 or len(pfc_units) == 0:
         return None
         
+<<<<<<< Updated upstream
     # Load spiking data for RXRR (Omission)
     # Mapping probes to areas
     v1_probe = v1_units['probe'].iloc[0]
@@ -50,12 +51,22 @@ def process_session_ccg(session_id, neurons_df):
     
     v1_file = os.path.join(DATA_DIR, f"ses{session_id}-units-probe{v1_probe}-spk-RXRR.npy")
     pfc_file = os.path.join(DATA_DIR, f"ses{session_id}-units-probe{pfc_probe}-spk-RXRR.npy")
+=======
+    # Load spiking data for RRRX (P4 Omission)
+    v1_file = os.path.join(DATA_DIR, f"ses{session_id}-units-probe{v1_probe}-spk-RRRX.npy")
+    pfc_file = os.path.join(DATA_DIR, f"ses{session_id}-units-probe{pfc_probe}-spk-RRRX.npy")
+>>>>>>> Stashed changes
     
     if not (os.path.exists(v1_file) and os.path.exists(pfc_file)):
         return None
         
+<<<<<<< Updated upstream
     v1_spk_all = np.load(v1_file)[:, v1_units['unit_idx'].values, OMIT_WINDOW]
     pfc_spk_all = np.load(pfc_file)[:, pfc_units['unit_idx'].values, OMIT_WINDOW]
+=======
+    v1_spk_all = np.nan_to_num(np.load(v1_file))[:, v1_units['unit_idx'].values, OMIT_WINDOW]
+    pfc_spk_all = np.nan_to_num(np.load(pfc_file))[:, pfc_units['unit_idx'].values, OMIT_WINDOW]
+>>>>>>> Stashed changes
     
     results = []
     # Compute CCG for all pairs
