@@ -56,7 +56,11 @@ def process_area_dynamics(session_id, area, session_neurons, area_neurons):
             if os.path.exists(spk_file):
                 unit_indices = area_neurons[area_neurons['probe'] == probe]['unit_idx'].values
                 # spikes shape: (Trials, Neurons, Time)
+<<<<<<< Updated upstream
                 spk = np.load(spk_file)[:, unit_indices, :]
+=======
+                spk = np.nan_to_num(np.load(spk_file))[:, unit_indices, :]
+>>>>>>> Stashed changes
                 area_spk.append(spk)
         
         if len(area_spk) > 0:
