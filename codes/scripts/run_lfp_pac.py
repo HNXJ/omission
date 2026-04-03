@@ -2,20 +2,33 @@
 import numpy as np
 import pandas as pd
 import os
+<<<<<<< Updated upstream
+=======
+import plotly.express as px
+>>>>>>> Stashed changes
 from scipy.signal import hilbert, butter, filtfilt
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 # Parameters
 DATA_DIR = r'D:\Analysis\Omission\local-workspace\data'
+<<<<<<< Updated upstream
 CHECKPOINT_DIR = r'D:\Analysis\Omission\local-workspace\checkpoints'
+=======
+CHECKPOINT_DIR = r'D:\Analysis\Omission\local-workspace\data\checkpoints'
+>>>>>>> Stashed changes
 OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\figures\final_reports\lfp'
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 SESSIONS = ['230630', '230816', '230830']
 FS = 1000.0
+<<<<<<< Updated upstream
 OMIT_ONSET = 4124
 WIN_SIZE = 500 # 500ms window
+=======
+OMIT_ONSET = 4093 # Gamma-Standard p4 onset
+WIN_SIZE = 531 # 531ms window
+>>>>>>> Stashed changes
 
 def bandpass_filter(data, lowcut, highcut, fs, order=2):
     nyq = 0.5 * fs
@@ -73,7 +86,11 @@ def run_lfp_pac():
                 for t in range(min(50, sig.shape[0])): # Limit trials
                     raw = sig[t, :]
                     theta = bandpass_filter(raw, 4, 8, FS)
+<<<<<<< Updated upstream
                     gamma = bandpass_filter(raw, 35, 80, FS)
+=======
+                    gamma = bandpass_filter(raw, 35, 70, FS)
+>>>>>>> Stashed changes
                     
                     phase = np.angle(hilbert(theta))
                     amp = np.abs(hilbert(gamma))
