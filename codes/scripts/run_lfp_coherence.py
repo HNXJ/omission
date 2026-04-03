@@ -1,20 +1,20 @@
-
 import numpy as np
 import pandas as pd
 import os
+import plotly.express as px
 from scipy.signal import coherence
 import plotly.graph_objects as go
 
 # Parameters
 DATA_DIR = r'D:\Analysis\Omission\local-workspace\data'
-CHECKPOINT_DIR = r'D:\Analysis\Omission\local-workspace\checkpoints'
+CHECKPOINT_DIR = r'D:\Analysis\Omission\local-workspace\data\checkpoints'
 OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\figures\final_reports\lfp'
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 SESSIONS = ['230630', '230816', '230830']
 FS = 1000.0
-OMIT_ONSET = 4124
-WIN_SIZE = 500
+OMIT_ONSET = 4093 # p4 onset
+WIN_SIZE = 531
 
 def run_lfp_coherence():
     vflip_df = pd.read_csv(os.path.join(CHECKPOINT_DIR, 'vflip2_mapping_v3.csv'))
@@ -64,12 +64,16 @@ def run_lfp_coherence():
                         
                         avg_coh = np.mean(all_coh, axis=0)
                         
-                        # Extract Gamma Coherence (35-80Hz)
-                        gamma_mask = (f_vec >= 35) & (f_vec <= 80)
+                        # Standard Bands
+                        beta_mask = (f_vec >= 15) & (f_vec <= 25)
+                        gamma_mask = (f_vec >= 35) & (f_vec <= 70)
+                        
+                        beta_coh = np.mean(avg_coh[beta_mask])
                         gamma_coh = np.mean(avg_coh[gamma_mask])
                         
                         results.append({
                             'session': sid, 'pair': f"{area1}-{area2}", 'condition': cond, 
+                            'beta_coherence': beta_coh,
                             'gamma_coherence': gamma_coh
                         })
     
@@ -77,9 +81,13 @@ def run_lfp_coherence():
     res_df.to_csv(os.path.join(CHECKPOINT_DIR, 'lfp_coherence_results.csv'), index=False)
     
     # Plotting
-    fig = px.bar(res_df, x='pair', y='gamma_coherence', color='condition', barmode='group',
-                 title="Figure 11: Inter-Area Gamma Coherence (Omission vs. Standard)")
-    fig.write_html(os.path.join(OUTPUT_DIR, "FIG_11_Coherence_Results.html"))
+    fig_beta = px.bar(res_df, x='pair', y='beta_coherence', color='condition', barmode='group',
+                      title="Figure 11A: Inter-Area Beta Coherence (Omission vs. Standard)")
+    fig_beta.write_html(os.path.join(OUTPUT_DIR, "FIG_11A_Beta_Coherence.html"))
+    
+    fig_gamma = px.bar(res_df, x='pair', y='gamma_coherence', color='condition', barmode='group',
+                       title="Figure 11B: Inter-Area Gamma Coherence (Omission vs. Standard)")
+    fig_gamma.write_html(os.path.join(OUTPUT_DIR, "FIG_11B_Gamma_Coherence.html"))
 
 if __name__ == '__main__':
     run_lfp_coherence()
