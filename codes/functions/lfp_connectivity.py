@@ -1,21 +1,27 @@
 """
 lfp_connectivity.py
-Pairwise and directed connectivity (Steps 9-11).
+Pairwise and directed connectivity (Coherence, Granger).
 """
+from __future__ import annotations
+from typing import Dict, Tuple
 import numpy as np
-from scipy import signal
+from scipy.signal import coherence
+from codes.functions.lfp_constants import FS_LFP
+
+
+def compute_coherence(sig1: np.ndarray, sig2: np.ndarray, fs: float = FS_LFP):
+    """Coherence spectrum for one area pair."""
+    if sig1.size == 0 or sig2.size == 0:
+        return np.array([]), np.array([])
+    f, cxy = coherence(sig1, sig2, fs=fs, nperseg=256)
+    return f, cxy
+
 
 def compute_pairwise_coherence(sig_a, sig_b, fs=1000.0):
-    """
-    Computes coherence (Step 9).
-    sig_a/b: (trials, time)
-    """
-    f, Cxy = signal.coherence(sig_a, sig_b, fs=fs, nperseg=256)
-    return f, Cxy
+    """Alias for compute_coherence to maintain repo compatibility."""
+    return compute_coherence(sig_a, sig_b, fs)
 
-def compute_granger_causality(sig_a, sig_b, fs=1000.0):
-    """
-    Placeholder for Granger (Step 11).
-    Real implementation in run_figure_06_directionality.py
-    """
-    return None
+
+def compute_granger(*args, **kwargs):
+    """Directionality placeholder. (Step 11)."""
+    return np.empty((0, 0))
