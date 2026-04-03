@@ -1,52 +1,80 @@
 #!/usr/bin/env python3
-"""
-run_lfp_omission_pipeline.py
-The Master entrypoint for the OMISSION 2026 LFP Figure Suite.
-Implementation of the 15-Step NWB-LFP Analysis Pipeline.
-"""
+from __future__ import annotations
 
-import os
+import argparse
 from pathlib import Path
-from codes.functions.lfp_io import load_lfp_session, save_lfp_results
-from codes.functions.lfp_preproc import apply_bipolar_ref, reject_bad_channels
-from codes.functions.lfp_plotting import create_tfr_figure, create_band_plot
+from typing import Dict, Any
 
-# --- Project Paths ---
-ROOT = Path("D:/Analysis/Omission/local-workspace")
-NWB_DIR = ROOT / "data"
-OUT_DIR = ROOT / "figures/final_reports/lfp"
-OS_DIR = ROOT / "outputs/lfp_omission"
+import numpy as np
 
-def run_omission_lfp_analysis(session_id: str):
-    """
-    Main orchestrator for Steps 1-15.
-    """
-    print(f"🚀 Processing Omission Session: {session_id}")
-    nwb_path = NWB_DIR / f"{session_id}.nwb"
-    
-    # --- Step 1 & 4: Load and Extract Aligned Epochs ---
-    lfp, ch_tbl, tr_tbl = load_lfp_session(nwb_path)
-    
-    # --- Step 3: Referencing and QC ---
-    lfp = reject_bad_channels(lfp)
-    lfp_bip = apply_bipolar_ref(lfp)
-    
-    # --- Step 5-7: TFR and Band Power Trajectories ---
-    # (Placeholder logic for implementation)
-    # tfr = compute_tfr(lfp_bip)
-    # band_trajs = compute_band_trajectories(tfr)
-    
-    # --- Step 15: Create Figures ---
-    # fig_tfr = create_tfr_figure(freqs, times_ms, power_db, title=f"Session {session_id} - TFR")
-    # fig_band = create_band_plot(times_ms, mean_pwr, sem_pwr, title=f"Session {session_id} - Beta Power")
-    
-    print(f"✅ Finished Processing Session {session_id}.")
+from codes.functions.lfp_io import load_session, save_json_manifest
+from codes.functions.lfp_events import build_event_table
+from codes.functions.lfp_preproc import preprocess_lfp, extract_epochs, baseline_normalize
+from codes.functions.lfp_tfr import compute_tfr, collapse_band_power
+from codes.functions.lfp_connectivity import compute_coherence, compute_granger
+from codes.functions.lfp_stats import cluster_permutation_test, mean_sem
+from codes.functions.lfp_plotting import plot_tfr_grid, plot_band_trajectories, plot_coherence_network
+from codes.functions.lfp_constants import ALL_CONDITIONS, OMISSION_CONDITIONS, WHITE
 
-def main():
-    # Example session run
-    SESSIONS = ["230630", "230816", "230830"]
-    for sid in SESSIONS:
-        run_omission_lfp_analysis(sid)
+
+def run_one_session(nwb_path: Path, out_dir: Path) -> Dict[str, Any]:
+    session = load_session(nwb_path)
+    events = build_event_table(session)
+    lfp = preprocess_lfp(session.get("lfp"), session.get("channels"))
+    epochs = extract_epochs(lfp, events)
+
+    freqs, times, power = compute_tfr(epochs)
+    bands = collapse_band_power(freqs, power)
+
+    coh = None
+    gc = None
+    stats = cluster_permutation_test(power, power)
+
+    out_dir.mkdir(parents=True, exist_ok=True)
+    manifest = {
+        "session_id": session.get("session_id"),
+        "nwb_path": str(nwb_path),
+        "n_trials": int(len(session.get("trials", []))) if hasattr(session.get("trials"), "__len__") else 0,
+        "bands": list(bands.keys()),
+        "conditions": ALL_CONDITIONS,
+        "omission_conditions": OMISSION_CONDITIONS,
+        "stats": stats,
+    }
+    save_json_manifest(out_dir / "manifest.json", manifest)
+
+    # Template figures (saved even if data are sparse)
+    tfr_fig = plot_tfr_grid({"session": (freqs, times, power)})
+    tfr_fig.write_html(out_dir / "tfr.html")
+    try:
+        tfr_fig.write_image(out_dir / "tfr.svg")
+    except Exception:
+        pass
+
+    band_fig = plot_band_trajectories(bands)
+    band_fig.write_html(out_dir / "bands.html")
+    try:
+        band_fig.write_image(out_dir / "bands.svg")
+    except Exception:
+        pass
+
+    coh_fig = plot_coherence_network(np.array([]), band_name="beta")
+    coh_fig.write_html(out_dir / "coherence.html")
+    try:
+        coh_fig.write_image(out_dir / "coherence.svg")
+    except Exception:
+        pass
+
+    return {"manifest": manifest, "bands": bands, "freqs": freqs, "times": times, "power": power}
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="LFP omission pipeline skeleton")
+    parser.add_argument("--nwb", type=Path, required=True)
+    parser.add_argument("--out", type=Path, required=True)
+    args = parser.parse_args()
+
+    run_one_session(args.nwb, args.out)
+
 
 if __name__ == "__main__":
     main()
