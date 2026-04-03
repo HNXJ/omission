@@ -12,6 +12,7 @@ GOLD = "#CFB87C"
 BLACK = "#000000"
 VIOLET = "#8F00FF"
 
+<<<<<<< Updated upstream
 # Window: Omission Period (relative to P1 at Sample 1000)
 # p4 omission is Samples 4093-4624
 OMIT_WINDOW = (3093, 3624) # Relative to P1=0. 
@@ -19,6 +20,17 @@ OMIT_WINDOW = (3093, 3624) # Relative to P1=0.
 
 AREAS = ['V1', 'V2', 'V3d', 'V3a', 'V4', 'MT', 'MST', 'TEO', 'FST', 'FEF', 'PFC']
 BANDS = {'Theta': (4, 8), 'Alpha': (8, 13), 'Beta': (13, 30), 'Gamma': (35, 80)}
+=======
+# Gamma-Standard timings: p1=1000, d1=1531, p2=2031, d2=2562, p3=3062, d3=3593, p4=4093, d4=4624
+OMISSION_WINDOWS = {
+    'AXAB': (2031, 2562), 'BXBA': (2031, 2562), 'RXRR': (2031, 2562),
+    'AAXB': (3062, 3593), 'BBXA': (3062, 3593), 'RRXR': (3062, 3593),
+    'AAAX': (4093, 4624), 'BBBX': (4093, 4624), 'RRRX': (4093, 4624)
+}
+
+AREAS = ['V1', 'V2', 'V3', 'V4', 'MT', 'MST', 'TEO', 'FST', 'DP', 'FEF', 'PFC']
+BANDS = {'Theta': (4, 8), 'Alpha': (8, 13), 'Beta': (15, 25), 'Gamma': (35, 70)}
+>>>>>>> Stashed changes
 
 def compute_rdm(features, metric='correlation'):
     """
@@ -84,22 +96,37 @@ def run_omission_rsa():
             valid_conds = []
             
             for cond in CONDITIONS:
+<<<<<<< Updated upstream
                 # Find the spike npy file for this session/probe
                 # For spikes, we usually have them pooled or per probe. 
                 # Let's assume they are in 'data/ses{sid}-units-probe{p}-spk-{cond}.npy'
                 # Actually, enhanced_neuron_categories has 'probe' column.
                 probes = area_units['probe'].unique()
                 cond_vec = []
+=======
+                probes = area_units['probe'].unique()
+                cond_vec = []
+                win = OMISSION_WINDOWS.get(cond, (4093, 4624)) # Default to P4
+>>>>>>> Stashed changes
                 
                 for p in probes:
                     f = os.path.join(data_dir, f'ses{sid}-units-probe{p}-spk-{cond}.npy')
                     if os.path.exists(f):
+<<<<<<< Updated upstream
                         spikes = np.load(f, mmap_mode='r') # (trials, units, time)
                         # Average across trials and time in omission window
                         # OMIT_WINDOW is relative to P1 onset (1000)
                         # Spiking data start at 0 (Sample 1000 is onset)
                         mean_rate = np.mean(spikes[:, :, OMIT_WINDOW[0]:OMIT_WINDOW[1]], axis=(0, 2))
                         cond_vec.extend(mean_rate)
+=======
+                        try:
+                            spikes = np.nan_to_num(np.load(f, mmap_mode='r'))
+                            # mean rate in condition-specific window
+                            mean_rate = np.mean(spikes[:, :, win[0]:win[1]], axis=(0, 2))
+                            cond_vec.extend(mean_rate)
+                        except Exception: continue
+>>>>>>> Stashed changes
                 
                 if cond_vec:
                     spike_features.append(cond_vec)
@@ -197,8 +224,12 @@ def run_omission_rsa():
         fig.add_trace(go.Bar(x=sub['area'], y=sub['score'], name=rsa_type))
         
     fig.update_layout(title="🏺 Representational Similarity (CKA)", 
+<<<<<<< Updated upstream
                       template="plotly_dark", paper_bgcolor=BLACK, plot_bgcolor=BLACK,
                       font=dict(color=GOLD))
+=======
+                      template="plotly_white")
+>>>>>>> Stashed changes
     fig.write_html(os.path.join(output_dir, "FIG_10_RSA_CKA_Hierarchy.html"))
     print("RSA Suite Complete.")
 
