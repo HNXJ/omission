@@ -4,24 +4,22 @@ Plotting utilities for LFP Omission figures.
 Standardizes Plotly, gold/black/violet palette, and ms-based time axes.
 """
 import plotly.graph_objects as go
-from codes.functions.lfp_constants import GOLD, BLACK, VIOLET, PINK, TIMING_MS
+from codes.functions.lfp_constants import GOLD, BLACK, VIOLET, PINK, TEAL, ORANGE, GRAY, TIMING_MS, SEQUENCE_TIMING
 
 def create_tfr_figure(freqs, times_ms, power, title="LFP TFR (dB)"):
     """
-    Creates standardized TFR Heatmap (Step 6).
+    Creates standardized TFR Heatmap (Step 6) with full sequence patches.
     """
     fig = go.Figure(data=go.Heatmap(
         z=power, x=times_ms, y=freqs, colorscale="Viridis"
     ))
     
-    # Add Sequence Event Lines
-    for name, t_ms in TIMING_MS.items():
-        fig.add_vline(x=t_ms, line_dash="dash", line_color=BLACK, 
+    # Add Sequence Event Rectangle Patches (Step 2)
+    for name, info in SEQUENCE_TIMING.items():
+        fig.add_vrect(x0=info["start"], x1=info["end"], 
+                      fillcolor=info["color"], opacity=0.15, line_width=0)
+        fig.add_vline(x=info["start"], line_dash="dash", line_color=BLACK, 
                       annotation_text=name, annotation_position="top")
-        
-    # Highlight Omission (Pink Transparent Patch)
-    # p4 window is 3093 to 3624 ms
-    fig.add_vrect(x0=3093, x1=3624, fillcolor=PINK, opacity=0.2, line_width=0)
 
     fig.update_layout(
         template="plotly_white", title=title,
@@ -31,7 +29,7 @@ def create_tfr_figure(freqs, times_ms, power, title="LFP TFR (dB)"):
 
 def create_band_plot(times_ms, mean_pwr, sem_pwr, title="Band Power Trajectory"):
     """
-    Creates standardized band trajectory plot (Step 7).
+    Creates standardized band trajectory plot (Step 7) with ±SEM shading.
     """
     fig = go.Figure()
     # Add +/- 2SEM shading (Standard)
@@ -41,15 +39,19 @@ def create_band_plot(times_ms, mean_pwr, sem_pwr, title="Band Power Trajectory")
     ))
     fig.add_trace(go.Scatter(
         x=times_ms, y=mean_pwr - 2*sem_pwr, fill='tonexty', mode='lines', 
-        line=dict(width=0), fillcolor='rgba(207,184,124,0.2)', showlegend=False
+        line=dict(width=0), fillcolor='rgba(207,184,124,0.2)', showlegend=False,
+        name="2 SEM"
     ))
     fig.add_trace(go.Scatter(
-        x=times_ms, y=mean_pwr, mode='lines', line=dict(color=GOLD), 
+        x=times_ms, y=mean_pwr, mode='lines', line=dict(color=BLACK, width=2), 
         name="Mean Power"
     ))
     
-    # Add omission patch (Step 2)
-    fig.add_vrect(x0=3093, x1=3624, fillcolor=PINK, opacity=0.15, line_width=0)
+    # Add full sequence patches (Step 2)
+    for name, info in SEQUENCE_TIMING.items():
+        fig.add_vrect(x0=info["start"], x1=info["end"], 
+                      fillcolor=info["color"], opacity=0.1, line_width=0)
     
-    fig.update_layout(template="plotly_white", title=title)
+    fig.update_layout(template="plotly_white", title=title, 
+                      xaxis_title="Time (ms)", yaxis_title="Power (dB)")
     return fig
