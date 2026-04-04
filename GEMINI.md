@@ -1,40 +1,90 @@
-## Gemini General Operating Mandates
+## gemini project context: omission
 
-- **Root**: ~/workspace/ (Drive: ~/workspace/drive/Workspace/)
-- **Exec**: Heavy tasks via `smart_exec.sh` (10s wait / 60s heartbeat).
-- **Tone**: Critical Electrical Engineer. Concise, direct (<40 words). No filler/summaries.
-- **Git**: Profile @hnxj. Commit -> Pull -> Push. Repos in ~/workspace/Repositores/.
-- **Repos**: [mllm, Composer, hnxj.github.io, omission, jbiophys, jnwb, hnxj-gemini].
-- **Rules**: Logically organize folders. Export folders ignored. Push Python code to repos immediately.
-- **Path**: Add ~/workspace/Repositores/ to Python path for direct imports.
-- **Workflow**: Plantation Debug (Request -> Steps -> Feedback -> Refine -> Act).
-- **Packages**: [pynwb, jax, plotly, scipy, torch, mlx, jaxley, pymnw, mlx-lm].
-- **Viz**: 
-  - Flowcharts: `diagrams` lib (md/html). Captions, labels, code refs.
-  - Figures: `plotly` lib (svg/html). Captions, labels, code refs.
-  - **Safety**: If a plot has all `NaN` or all `0` values, do not save it. Display a warning and add a task to `plans/` to investigate the cause.
-  - **TFR Standard**: For spectrograms and time-frequency plots:
-    - **Windowing**: Hanning-window with 98% overlap (Step 6).
-    - **Range**: Default 1-150Hz for LFP.
-    - **Time**: X-axis must always be in milliseconds (ms). Aligned to p1 (0ms).
-    - **Overlays**: Include vertical dashed lines AND colorful rectangle patches for all sequence events (`fx`, `p1`, `d1`, `p2`, `d2`, `p3`, `d3`, `p4`, `d4`).
-    - **Variability**: Use +/- 2SEM shading for all band power traces (Step 7).
-- **Skills**: Create a `.skill` file for any core function/suite once verified as error-free and accepted.
-- **Remote**: Tailscale access to Office M3-Max.
-- **Hygiene**: No new files in root. Each project maintains its own gemini.md (<800 tokens).
+**Project root**: `~/antigravity/omission/`  
+**Repo**: `hnxj/omission` | **Profile**: @hnxj
 
-## 🏺 Project Aesthetic: Madelane Golden Dark + Violet
-- **Theme**: Vanderbilt Gold (`#CFB87C`), Pure Black (`#000000`), and Electric Violet (`#8F00FF`).
-- **Standard**: All figures and interactive reports must adhere to this palette.
+---
 
-## Active Objectives (Working Set)
-- **OMISSION-LFP (P1)**: Execute modular 15-step pipeline across 13 sessions. Generate Figure Revision V4.
-- **MLLM (P1)**: Monitor Office Mac via [MLLM_PIPELINE_V4] UI. VRAM safety in `overnight_mllm.log`.
-- **Gemma (P2)**: Port 8080 router. Verify classification logic.
+## directory structure
+```
+codes/
+  functions/    # importable modules (underscores in filenames)
+  scripts/      # run-able entrypoints (hyphens in filenames)
+context/
+  docs/         # poster descriptions, reference documents
+  plans/        # analysis plans and roadmaps
+  queue/        # pending tasks
+gemini.md       # this file
+vmemory.md      # methodology memory
+```
 
-## Upcoming (Pipeline)
-- **Drafts (P3)**: MLLM (10p, 10f) & Omission (12p, 10f) BioRxiv manuscripts.
-- **JBIOPHYS (P4)**: Jaxley optimization + MLX parallel support.
-- **MSCZ (P4)**: Research plan definition.
+## analysis pipeline: 15-step lfp protocol
+**Module**: `codes/functions/lfp_pipeline.py`  
+**Plan**: `context/plans/15-step-lfp-pipeline.md`
 
-**Ref: ~/.gemini/VMEMORY.md for history/roadmap.**
+| Step | Function | Purpose |
+|------|----------|---------|
+| 1 | `validate_session_schema` | NWB schema enforcement |
+| 2 | `build_omission_windows` | event timeline + ghost signal |
+| 3 | `run_lfp_qc` | per-channel QC |
+| 4 | `extract_matched_epochs` | trial-aligned epochs |
+| 5 | `normalize_epochs` | dB baseline normalization |
+| 6 | `compute_tfr_per_condition` | TFR per area per condition |
+| 7 | `compute_band_contrast` | omission Δ-power per band |
+| 8 | `compute_spectral_corr` | inter-area correlation matrices |
+| 9 | `compute_all_pairs_coherence` | all-pairs coherence spectra |
+| 10 | `build_coherence_network_data` | adjacency matrices per band |
+| 11 | `compute_spectral_granger` | directional GC (VAR-based) |
+| 12 | `run_cluster_permutation` | cluster permutation stats |
+| 13 | `aggregate_by_tier` | Low/Mid/High hierarchy tiers |
+| 14 | `compute_post_omission_adapt` | post-omission trial tracking |
+| 15 | `write_analysis_manifest` | JSON + CSV reproducibility |
+
+## core function modules
+| Module | Contents |
+|--------|----------|
+| `lfp_constants.py` | Colors, timing, bands, `FS_LFP=1000.0` |
+| `lfp_io.py` | load_session, load_condition_table, save_json_manifest |
+| `lfp_events.py` | build_event_table, infer_omission_position |
+| `lfp_preproc.py` | apply_bipolar_ref, baseline_normalize, extract_epochs |
+| `lfp_tfr.py` | compute_tfr, get_band_power, collapse_band_power |
+| `lfp_stats.py` | mean_sem, run_cluster_permutation, run_tier_rank_sum |
+| `lfp_connectivity.py` | compute_coherence, compute_granger |
+| `lfp_plotting.py` | create_tfr_figure, plot_tfr_grid, create_band_plot |
+| `lfp_pipeline.py` | **15-step pipeline** — new master module |
+| `poster_figures.py` | Exact poster figure replication (10 figure functions) |
+
+## constants (authoritative)
+```python
+FS_LFP = 1000.0   # Hz
+Beta = (13, 30)   # widened per protocol
+fx = -500ms       # fixation pre-window (baseline)
+p1 = 0ms          # alignment anchor (code 101.0)
+Normalization = dB (10*log10(P/Pbase))
+```
+
+## aesthetic mandates
+- **Palette**: Gold=`#CFB87C`, Violet=`#8F00FF`, Black=`#000000`
+- **Theme**: `plotly_white`, Arial font
+- **Condition colors**: RRRR=Gold, RXRR=Violet, RRXR=Teal, RRRX=Orange
+- **SEM**: ±2 SEM on all band-power and spiking traces
+- **Safety**: Never save NaN/all-zero plots. Log to `context/queue/`.
+
+## skills (26 active)
+`analysis-lfp-pipeline`, `analysis-lfp-15step`, `analysis-poster-figures`,
+`analysis-poster-figure-pipeline`, `analysis-mmff`, `analysis-population-coding`,
+`analysis-rsa-cka`, `predictive-routing`, `analysis-spectrolaminar`,
+`analysis-nwb-utils` + 16 others in `.gemini/skills/`
+
+## active objectives
+- **OMISSION-LFP (P1)**: Run 15-step pipeline across all 13 sessions
+- **FIGURES (P1)**: Generate revision panels using `poster_figures.py`
+- **MLLM (P1)**: Monitor M3-Max Office Mac
+
+## rules (immutable)
+- No uppercase in filenames or function names
+- No underscores in `codes/scripts/` filenames (hyphens only)
+- No version suffixes (`_v1`, `_v2`) anywhere
+- All functions ≤49 characters in name
+- Output: `.html` + `.svg` to `output/`, `.npy` + `.metadata.json` sidecar
+- `codes/functions/` for importable modules, `codes/scripts/` for entrypoints

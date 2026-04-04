@@ -8,6 +8,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Tuple, List
 
+# Canonical LFP sampling rate — propagated to lfp_tfr, lfp_preproc
+FS_LFP: float = 1000.0
+
 # Project Aesthetic: Madelane Golden Dark + Violet
 GOLD = "#CFB87C"
 BLACK = "#000000"
@@ -33,7 +36,7 @@ SEQUENCE_TIMING = {
 }
 
 TIMING_MS = {name: info["start"] for name, info in SEQUENCE_TIMING.items()}
-TIMING_MS["fx"] = -1000
+TIMING_MS["fx"] = -500    # fixation window: -500ms to 0ms (baseline)
 
 # Scaffold-compatible event lines
 EVENT_LINES_MS: Dict[str, int] = TIMING_MS.copy()
@@ -42,7 +45,7 @@ EVENT_LINES_MS: Dict[str, int] = TIMING_MS.copy()
 BANDS: Dict[str, Tuple[int, int]] = {
     "Theta": (4, 8),
     "Alpha": (8, 13),
-    "Beta": (15, 25),
+    "Beta": (13, 30),    # widened per 15-step protocol
     "Gamma": (35, 70)
 }
 
