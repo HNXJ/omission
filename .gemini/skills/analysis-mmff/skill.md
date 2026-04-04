@@ -86,3 +86,37 @@ fig.update_layout(template='plotly_white')
 fig.write_html('output/fig_mmff.html')
 fig.write_image('output/fig_mmff.svg')
 ```
+
+
+---
+
+## omission_hierarchy_utils — core functions
+| Function | Signature | Purpose |
+|---|---|---|
+| `get_unit_to_area_map(nwb_path)` | `str → dict` | Maps `(probe_id, local_idx)` → area label from NWB electrode metadata |
+| `extract_unit_traces(session_id, conds, sigma)` | `str, list, float → dict` | Extracts Gaussian-smoothed (sigma=20ms) firing rate + variance traces per unit |
+| `baseline_correct(traces, baseline_window)` | `array, tuple → array` | Subtracts mean fixation-window firing rate (default 0–1000ms window) |
+| `compute_area_mmff(all_unit_stats, areas, conds, win_size, step)` | `dict → dict` | MMFF across areas/conditions with sliding window (WIN=150ms, STEP=5ms) |
+
+## compute_mean_matched_fano — core functions
+| Function | Purpose |
+|---|---|
+| `get_unit_to_area_map(nwb_path)` | Same as above — canonical version in `omission_hierarchy_utils` |
+| `compute_mmff()` | Top-level orchestrator: reads NWB + NPY → runs mean-matching → saves JSON |
+
+## neuro_variability_suite — core functions
+| Function | Signature | Purpose |
+|---|---|---|
+| `apply_post_hoc_smoothing(trace, sigma)` | `array, float → array` | NaN-safe 1D Gaussian smoothing (sigma=2.0 default); interpolates before smooth, re-applies NaN mask |
+
+## canonical workflow
+```python
+from codes.functions.omission_hierarchy_utils import (
+    get_unit_to_area_map, extract_unit_traces,
+    baseline_correct, compute_area_mmff
+)
+u_map  = get_unit_to_area_map("session.nwb")
+traces = extract_unit_traces("230629", sigma=20)
+traces = baseline_correct(traces)
+mmff   = compute_area_mmff(traces)
+```

@@ -41,3 +41,61 @@ session = load_session(Path("session.nwb"))
 events  = build_event_table(session)
 lfp_bip = apply_bipolar_ref(session["lfp"])
 ```
+
+
+---
+
+## lfp_io — full api
+| Function | Purpose |
+|---|---|
+| `load_session(nwb_path)` | Opens NWB file, returns session dict with lfp/units/trials |
+| `load_condition_table(root, session_id, cond)` | Loads `.npy` spike/lfp/behavioral array for a condition |
+| `save_json_manifest(path, meta_dict)` | Writes `.metadata.json` sidecar next to any derived array |
+| `save_lfp_results(out_path, data, meta)` | Saves derived LFP `.npy` + auto-generates sidecar |
+
+## lfp_events — full api
+| Function | Purpose |
+|---|---|
+| `build_event_table(session)` | Returns DataFrame of all event codes with ms timestamps |
+| `infer_omission_position(condition)` | Returns 2, 3, or 4 given cond string (e.g. 'RXRR' → 2) |
+
+## lfp_preproc — full api
+| Function | Purpose |
+|---|---|
+| `preprocess_lfp(lfp, fs)` | Full pipeline: bipolar ref → baseline normalize → epoch extract |
+| `apply_bipolar_ref(lfp)` | Adjacent-channel subtraction (shape: `(ch, T)` → `(ch-1, T)`) |
+| `baseline_normalize(epoch, baseline_win)` | dB change: `10*log10(P/P_baseline)`, fixation window -500–0ms |
+| `extract_epochs(lfp, onsets_ms, pre, post, fs)` | Returns `(n_trials, n_ch, T)` windowed array |
+
+## lfp_tfr — full api
+| Function | Purpose |
+|---|---|
+| `compute_tfr(epoch, fs, nperseg, noverlap)` | Hanning STFT TFR — 98% overlap default; returns `(freqs, times, power)` |
+| `compute_multitaper_tfr(data, fs, nperseg, noverlap)` | Alias for `compute_tfr` (compatibility wrapper) |
+| `get_band_power(freqs, power, band)` | Slices TFR to a named band (theta/alpha/beta/gamma) |
+| `collapse_band_power(freqs, power, band)` | Mean across frequency axis for a band → `(trials, T)` |
+
+## lfp_stats — full api
+| Function | Purpose |
+|---|---|
+| `mean_sem(x, axis)` | Returns `(mean, sem)` tuple along axis |
+| `cluster_permutation_test(x, y, n_perm)` | 2D cluster-based permutation; returns p-value mask |
+| `compare_tiers(tier_a, tier_b)` | Rank-sum test between hierarchy tiers; returns p, stat |
+| `summarize_by_area(results, areas)` | Aggregates per-unit results into area-level dict |
+
+## lfp_connectivity — full api
+| Function | Purpose |
+|---|---|
+| `compute_coherence(sig1, sig2, fs)` | Magnitude-squared coherence between two LFP channels |
+| `compute_pairwise_coherence(sig_a, sig_b, fs)` | Alias for `compute_coherence` (compatibility) |
+| `compute_granger(*args, **kwargs)` | Spectral Granger directionality placeholder (Step 11); uses `nitime.GrangerAnalyzer` |
+
+## lfp_plotting — full api
+| Function | Purpose |
+|---|---|
+| `_style(fig)` | Applies `plotly_white`, Arial, black axes to any figure |
+| `create_tfr_figure(freqs, times_ms, power, title)` | TFR heatmap with full sequence event patches |
+| `plot_tfr_grid(tfr_dict, areas)` | Grid of TFR heatmaps across areas |
+| `create_band_plot(times_ms, mean_pwr, sem_pwr, title, color)` | Band trajectory with ±2SEM shading |
+| `plot_band_trajectories(bands, times_ms, area)` | All 5 bands in subplots for one area |
+| `plot_coherence_network(coh_matrix, areas, band)` | 11×11 heatmap of inter-area coherence |

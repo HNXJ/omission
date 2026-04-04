@@ -54,3 +54,29 @@ vel = np.sqrt(np.gradient(x)**2 + np.gradient(y)**2) * FS
 
 ## cross-modal rsa link
 → See `analysis-rsa-cka` for comparing spike manifolds with LFP geometry.
+
+
+---
+
+## spike_lfp_coordination — full api
+| Function | Signature | Purpose |
+|---|---|---|
+| `compute_ppc(phases)` | `array(n_spikes) → float` | Pairwise Phase Consistency (Vinck 2010) — bias-free spike-field coupling |
+| `get_band_phase(lfp, band, fs)` | `array, tuple, int → array` | Bandpass filter + Hilbert → instantaneous phase for a band |
+| `compute_spike_lfp_ppc_trace(spikes, lfp_phase, win_size, step)` | `(T,), (T,), int, int → array` | Time-resolved PPC over sliding windows (default 200ms/50ms) |
+| `compute_spike_lfp_power_corr(spikes, lfp_power, win_size, step)` | `(T,), (T,), int, int → array` | Pearson r between firing rate and LFP power per window |
+
+## usage
+```python
+from codes.functions.spike_lfp_coordination import (
+    get_band_phase, compute_ppc, compute_spike_lfp_ppc_trace
+)
+phase = get_band_phase(lfp_trial, band=(15, 30), fs=1000)  # beta
+ppc   = compute_ppc(phase[spike_idx])
+trace = compute_spike_lfp_ppc_trace(spikes, phase, win_size=200, step=50)
+```
+
+## interpretation
+- **PPC**: Use over PLV/coherence — invariant to spike count bias.
+- **Power corr**: Test if omission neurons drive specific oscillatory bands.
+- **Band definitions**: Theta 4–8Hz, Alpha 8–14Hz, Beta 15–30Hz, Low-γ 35–55Hz, High-γ 65–100Hz.
