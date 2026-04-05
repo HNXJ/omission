@@ -15,11 +15,12 @@ import pandas as pd
 import plotly.graph_objects as go
 from scipy.signal import spectrogram
 from plotly.subplots import make_subplots
+from pathlib import Path
 
 # Configuration
-DATA_DIR = r'D:\Analysis\Omission\local-workspace\data\arrays'
-OUTPUT_DIR_5 = r'D:\Analysis\Omission\local-workspace\figures\oglo\fig_05_LFP_power_traces'
-OUTPUT_DIR_6 = r'D:\Analysis\Omission\local-workspace\figures\oglo\fig_06_LFP_bands_summary'
+DATA_DIR = Path(__file__).parents[2] / "data" / "arrays"
+OUTPUT_DIR_5 = Path(__file__).parents[2] / "output"
+OUTPUT_DIR_6 = Path(__file__).parents[2] / "output"
 os.makedirs(OUTPUT_DIR_5, exist_ok=True)
 os.makedirs(OUTPUT_DIR_6, exist_ok=True)
 

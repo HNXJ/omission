@@ -1,5 +1,6 @@
 import numpy as np
 import os
+from pathlib import Path
 from run_behavioral_decoding_suite import analyze_session_eye, decode_identity_eye
 from run_behavioral_decoding_suite_plotly import plot_identity_decoding_plotly
 from run_eye_consolidated_report_plotly import run_eye_consolidated_plotly
@@ -17,7 +18,7 @@ def run_all_behavioral_analyses(data_dir, exclude_session="230629"):
             print(f"Skipping excluded session: {session_id}")
             continue
             
-        output_check = os.path.join(r"D:\Analysis\Omission\local-workspace\figures", f"FIG_Eye_Rose_Grid_{session_id}.html")
+        output_check = Path(__file__).parents[2] / "output" / f"FIG_Eye_Rose_Grid_{session_id}.html"
         if os.path.exists(output_check):
             print(f"Session {session_id} already processed. Skipping.")
             continue
@@ -42,5 +43,5 @@ def run_all_behavioral_analyses(data_dir, exclude_session="230629"):
             print(f"Error processing session {session_id}: {e}")
 
 if __name__ == "__main__":
-    data_dir = r"D:\Analysis\Omission\local-workspace\data"
+    data_dir = Path(__file__).parents[2] / "data"
     run_all_behavioral_analyses(data_dir)

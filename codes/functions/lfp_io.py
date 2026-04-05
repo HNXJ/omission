@@ -26,6 +26,7 @@ def load_session(nwb_path: Path) -> Dict[str, Any]:
         "lfp": None,
         "electrodes": pd.DataFrame(),
         "trials": pd.DataFrame(),
+        "units": pd.DataFrame(), # Added for spiking unit data
         "areas": [],
         "channels": [],
         "photodiode": None,
@@ -40,6 +41,15 @@ def load_session(nwb_path: Path) -> Dict[str, Any]:
             session["electrodes"] = nwb.electrodes.to_dataframe().copy()
         if hasattr(nwb, "trials"):
             session["trials"] = nwb.trials.to_dataframe().copy()
+        if hasattr(nwb, "units"): # Extract spiking unit data
+            session["units"] = nwb.units.to_dataframe().copy()
+            # If units are present, try to extract spike times into a list
+            if 'spike_times' not in session['units'].columns:
+                session['units']['spike_times'] = [
+                    np.asarray(nwb.units.get_unit_spike_times(u_idx))
+                    for u_idx in range(len(nwb.units))
+                ]
+            
         if "lfp" in getattr(nwb, "acquisition", {}):
             lfp_obj = nwb.acquisition["lfp"]
             session["lfp"] = np.asarray(lfp_obj.data)

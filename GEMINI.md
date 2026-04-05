@@ -1,6 +1,6 @@
 ## gemini project context: omission
 
-**Project root**: `~/antigravity/omission/`  
+**Project root**: `D:\drive\omission/`  
 **Repo**: `hnxj/omission` | **Profile**: @hnxj
 
 ---

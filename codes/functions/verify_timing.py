@@ -5,10 +5,11 @@ Plots V1 population PSTH and overlays task events to confirm T=0 alignment.
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 
-DATA_DIR = r'D:\Analysis\Omission\local-workspace\data'
-FILE = os.path.join(DATA_DIR, 'ses230720-units-probe0-spk-AAAB.npy') # V1/V2 Probe
-OUTPUT_PATH = r'D:\Analysis\Omission\local-workspace\figures\timing_verification_v1.png'
+DATA_DIR = Path(__file__).parents[2] / "data"
+FILE = Path(__file__).parents[2] / "data" / 'ses230720-units-probe0-spk-AAAB.npy' # V1/V2 Probe
+OUTPUT_PATH = Path(__file__).parents[2] / "output" / "timing_verification_v1.png"
 
 # Task Timing from TASK_DETAILS.md (relative to p1 onset = 0)
 EVENTS = [

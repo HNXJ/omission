@@ -29,7 +29,7 @@ def compute_phase_lag(sig1, sig2, fs):
     return f, Cxy, phase
 
 def run_phase_analysis():
-    target_sessions = ['230630', '230816', '230830']
+    target_sessions = ['230630', '230816', '230818', '230825', '230830']
     os.makedirs('figures/connectivity', exist_ok=True)
     
     print("\n--- LFP Coherence & Phase Lag Results (Omission) ---")

@@ -49,6 +49,20 @@ BANDS: Dict[str, Tuple[int, int]] = {
     "Gamma": (35, 70)
 }
 
+
+# Omission timings for patches (ms, from p1 onset = 0ms)
+OMISSION_PATCHES = {
+    'AXAB': (2031, 2562),
+    'BXBA': (2031, 2562),
+    'RXRR': (2031, 2562),
+    'AAXB': (3062, 3593),
+    'BBXA': (3062, 3593),
+    'RRXR': (3062, 3593),
+    'AAAX': (4093, 4624),
+    'BBBX': (4093, 4624),
+    'RRRX': (4093, 4624)
+}
+
 # All OGLO conditions
 ALL_CONDITIONS = [
     "AAAB", "AXAB", "AAXB", "AAAX",
@@ -66,6 +80,9 @@ HIERARCHY = {
 }
 
 AREA_TIERS = {k.lower(): v for k, v in HIERARCHY.items()}
+
+# Targeted 11 Areas for population firing plots
+TARGET_AREAS = ['V1', 'V2', 'V3', 'V4', 'MT', 'MST', 'TEO', 'FST', 'DP', 'PFC', 'FEF']
 
 DEFAULT_WF_PARAMS = {
     "window": "hann",

@@ -1,5 +1,5 @@
 $ErrorActionPreference = "Stop"
-$Workspace = "D:\Analysis\Omission\local-workspace"
+$Workspace = (Get-Item -Path $PSScriptRoot).Parent.Parent.FullName
 $ScriptsDir = "$Workspace\codes\scripts"
 $LogFile = "$Workspace\session_progress.log"
 

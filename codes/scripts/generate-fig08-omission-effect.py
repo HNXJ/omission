@@ -9,9 +9,10 @@ import numpy as np
 import pandas as pd
 from scipy.stats import ttest_ind
 import plotly.graph_objects as go
+from pathlib import Path
 
 DATA_DIR = r'D:\Analysis\Omission\local-workspace\data\arrays'
-OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\figures\oglo\fig_08_OMISSION_EFFECT'
+OUTPUT_DIR = Path(__file__).parents[2] / "output"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Windows: P1 (1000-1531), P2 (2031-2562), P3 (3062-3593), P4 (4093-4624)

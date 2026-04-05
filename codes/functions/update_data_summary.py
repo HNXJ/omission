@@ -2,9 +2,10 @@ import os
 import pandas as pd
 import re
 import numpy as np
+from pathlib import Path
 
-DATA_DIR = r'D:\Analysis\Omission\local-workspace\data'
-SUMMARY_PATH = r'D:\Analysis\Omission\local-workspace\DATA_AVAILABILITY_SUMMARY.md'
+DATA_DIR = Path(__file__).parents[2] / "data"
+SUMMARY_PATH = Path(__file__).parents[2] / "DATA_AVAILABILITY_SUMMARY.md"
 
 def get_session_id(filename):
     match = re.search(r'ses-(\d{6})', filename)

@@ -14,13 +14,14 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.colors as pc
+from pathlib import Path
 from scipy.signal import welch
 from scipy.stats import pearsonr
 from sklearn.cluster import KMeans
 
 # Configuration
-DATA_DIR = r'D:\Analysis\Omission\local-workspace\data\arrays'
-OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\figures\oglo\fig_07_LFP_SPK_CORR'
+DATA_DIR = Path(__file__).parents[2] / "data" / "arrays"
+OUTPUT_DIR = Path(__file__).parents[2] / "output"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 FS = 1000.0

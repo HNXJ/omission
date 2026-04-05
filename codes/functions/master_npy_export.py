@@ -9,14 +9,15 @@ import numpy as np
 import pandas as pd
 from pynwb import NWBHDF5IO
 import gc
+from pathlib import Path
 
 # Add jnwb to path
 sys.path.append(r'D:\Analysis\jnwb\repos\jnwb')
 from jnwb.oglo_v2 import get_oglo_trial_masks_v2 as get_trial_masks
 
 # Configuration
-NWB_DIR = r'D:\Analysis\Omission\local-workspace\data'
-DATA_DIR = r'D:\Analysis\Omission\local-workspace\data'
+NWB_DIR = Path(__file__).parents[2] / "data"
+DATA_DIR = Path(__file__).parents[2] / "data"
 
 def export_session_granular(nwb_path, session_id):
     print(f"\n>>> Optimized Granular Export: {session_id}")

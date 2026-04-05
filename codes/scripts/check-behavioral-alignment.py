@@ -2,9 +2,10 @@
 import numpy as np
 import scipy.io
 import os
+from pathlib import Path
 
-MAT_FILE = r'D:\Analysis\Omission\local-workspace\behavioral\omission_bhv\data\230830_Cajal_glo_omission.bhv2.mat'
-NPY_FILE = r'D:\Analysis\Omission\local-workspace\data\ses230830-behavioral-AAAB.npy'
+MAT_FILE = Path(__file__).parents[2] / "data" / "behavioral" / "omission_bhv" / "data" / "230830_Cajal_glo_omission.bhv2.mat"
+NPY_FILE = Path(__file__).parents[2] / "data" / "ses230830-behavioral-AAAB.npy"
 
 # 1. Load MAT
 data_mat = scipy.io.loadmat(MAT_FILE)

@@ -4,6 +4,7 @@ import h5py
 import os
 import re
 import glob
+from pathlib import Path
 from scipy.stats import ttest_ind, pearsonr
 from scipy.signal import hilbert
 
@@ -28,8 +29,8 @@ def get_lfp_envelope(data):
     return amplitude_envelope
 
 def classify_lfp_refined():
-    data_dir = r"D:\Analysis\Omission\local-workspace\data"
-    checkpoint_dir = r"D:\Analysis\Omission\local-workspace\checkpoints"
+    data_dir = Path(__file__).parents[2] / "data"
+    checkpoint_dir = Path(__file__).parents[2] / "output" / "checkpoints"
     os.makedirs(checkpoint_dir, exist_ok=True)
     
     files = glob.glob(f'{data_dir}/lfp_by_area_ses-*.h5')
@@ -65,8 +66,8 @@ def classify_lfp_refined():
     print("Note: H5 files lack condition labels. Switching to .npy discovery for LFP classification.")
 
 def classify_lfp_from_npy():
-    data_dir = r"D:\Analysis\Omission\local-workspace\data"
-    checkpoint_dir = r"D:\Analysis\Omission\local-workspace\checkpoints"
+    data_dir = Path(__file__).parents[2] / "data"
+    checkpoint_dir = Path(__file__).parents[2] / "output" / "checkpoints"
     
     sessions = sorted(list(set([re.search(r'ses(\d+)', f).group(1) for f in glob.glob(f'{data_dir}/ses*-probe*-lfp-*.npy')])))
     

@@ -11,9 +11,10 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from pathlib import Path
 
-DATA_DIR = r'D:\Analysis\Omission\local-workspace\data\arrays'
-OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\figures\oglo\fig_03_SPK_AVG_V4'
+DATA_DIR = Path(__file__).parents[2] / "data" / "arrays"
+OUTPUT_DIR = Path(__file__).parents[2] / "output"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 CONDITIONS = ['AAAB', 'AAAX', 'AAXB', 'AXAB', 'BBBA', 'BBBX', 'BBXA', 'BXBA', 'RRRR', 'RRRX', 'RRXR', 'RXRR']

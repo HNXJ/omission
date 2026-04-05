@@ -6,9 +6,10 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter1d
+from pathlib import Path
 
-DATA_DIR = r'D:\Analysis\Omission\local-workspace\data'
-OUTPUT_PATH = r'D:\Analysis\Omission\local-workspace\figures\timing_verification_multi_v1.png'
+DATA_DIR = Path(__file__).parents[2] / "data"
+OUTPUT_PATH = Path(__file__).parents[2] / "output" / "timing_verification_multi_v1.png"
 
 # Mapping of Session ID to Probe ID that contains V1/V2
 V1_MAPPING = {

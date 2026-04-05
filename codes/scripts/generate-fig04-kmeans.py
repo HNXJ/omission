@@ -15,10 +15,11 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from pathlib import Path
 
 # Configuration
 DATA_DIR = r'D:\Analysis\Omission\local-workspace\data\arrays'
-OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\figures\oglo\fig_04_SPK_5_group_kmeans_V4'
+OUTPUT_DIR = Path(__file__).parents[2] / "output"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 CONDITIONS = ['AAAB', 'AAAX', 'AAXB', 'AXAB', 'BBBA', 'BBBX', 'BBXA', 'BXBA', 'RRRR', 'RRRX', 'RRXR', 'RXRR']

@@ -2,6 +2,7 @@ import numpy as np
 import scipy.io as sio
 import os
 import sys
+from pathlib import Path
 
 # Ensure functions folder is in path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'functions')))
@@ -67,8 +68,8 @@ def process_session(file_path, output_dir):
     print(f"Saved {len(processed_trials)} correct trials to {save_path}")
 
 if __name__ == "__main__":
-    input_dir = r"D:\Analysis\Omission\local-workspace\behavioral\omission_bhv\data"
-    output_dir = r"D:\Analysis\Omission\local-workspace\data"
+    input_dir = Path(__file__).parents[2] / "data" / "behavioral" / "omission_bhv" / "data"
+    output_dir = Path(__file__).parents[2] / "data"
     
     # Process the first session as a test
     mat_files = sorted([f for f in os.listdir(input_dir) if f.endswith('.mat')])

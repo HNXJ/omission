@@ -5,12 +5,13 @@ Alignment: Code 101.0 at Sample 1000.
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 from pynwb import NWBHDF5IO
 
 # Paths
-NWB_PATH = r'D:\Analysis\Omission\local-workspace\data\sub-V198o_ses-230720_rec.nwb'
-NPY_PATH = r'D:\Analysis\Omission\local-workspace\data\ses230720-units-probe0-spk-AAAB.npy'
-OUTPUT_PATH = r'D:\Analysis\Omission\local-workspace\figures\photodiode_alignment_v1.png'
+NWB_PATH = Path(__file__).parents[2] / "data" / "sub-V198o_ses-230720_rec.nwb"
+NPY_PATH = Path(__file__).parents[2] / "data" / "ses230720-units-probe0-spk-AAAB.npy"
+OUTPUT_PATH = Path(__file__).parents[2] / "output" / "photodiode_alignment_v1.png"
 
 def extract_photodiode():
     print(f"Loading NWB from {NWB_PATH}...")

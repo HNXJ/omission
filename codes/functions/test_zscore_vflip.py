@@ -6,8 +6,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import welch
 from scipy.ndimage import gaussian_filter1d
+from pathlib import Path
 
-DATA_DIR = r'D:\Analysis\Omission\local-workspace\data'
+DATA_DIR = Path(__file__).parents[2] / "data"
 FILE = os.path.join(DATA_DIR, 'ses230831-probe1-lfp-BBBA.npy')
 BANDS = {'alpha_beta': (8, 30), 'gamma': (35, 80)}
 
@@ -51,7 +52,7 @@ def analyze():
     ax2.legend()
     
     plt.tight_layout()
-    plt.savefig(r'D:\Analysis\Omission\local-workspace\LFP_Extractions\zscore_comparison.png')
+    plt.savefig(Path(__file__).parents[2] / "output" / "zscore_comparison.png")
     print("Comparison plot saved to LFP_Extractions/zscore_comparison.png")
 
 if __name__ == "__main__":

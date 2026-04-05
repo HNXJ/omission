@@ -6,6 +6,7 @@ import re
 from scipy.stats import ttest_ind, pearsonr
 from pynwb import NWBHDF5IO
 from collections import defaultdict
+from pathlib import Path
 
 # Constants
 CHANNELS_PER_PROBE = 128
@@ -57,8 +58,8 @@ def get_unit_metadata(nwb_path):
 
 def classify_neurons_refined():
     """Enhanced classification: selective, agnostic, preference, omit, eye."""
-    data_dir = r"D:\Analysis\Omission\local-workspace\data"
-    checkpoint_dir = r"D:\Analysis\Omission\local-workspace\checkpoints"
+    data_dir = Path(__file__).parents[2] / "data"
+    checkpoint_dir = Path(__file__).parents[2] / "output" / "checkpoints"
     os.makedirs(checkpoint_dir, exist_ok=True)
     
     # Load session mappings
