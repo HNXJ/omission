@@ -82,9 +82,11 @@ Normalization = dB (10*log10(P/Pbase))
 - **MLLM (P1)**: Monitor M3-Max Office Mac
 
 ## rules (immutable)
-- No uppercase in filenames or function names
-- No underscores in `codes/scripts/` filenames (hyphens only)
-- No version suffixes (`_v1`, `_v2`) anywhere
-- All functions ≤49 characters in name
-- Output: `.html` + `.svg` to `output/`, `.npy` + `.metadata.json` sidecar
-- `codes/functions/` for importable modules, `codes/scripts/` for entrypoints
+- **Root Integrity**: No new folders or files are allowed in the root of any git directory unless specifically requested and confirmed.
+- **Context Only**: Only code and markdown files are allowed in the `omission/` repository.
+- **Naming**: No uppercase in filenames or function names; no underscores in `codes/scripts/` (use hyphens).
+- **Versioning**: No version suffixes (`_v1`, `_v2`, `_final`) anywhere.
+- **Functions**: All function names must be ≤49 characters.
+- **Outputs**: All analysis outputs (`.html`, `.svg`, `.npy`, `.metadata.json`) must go to `output/` (outside repo root).
+- **Structure**: `codes/functions/` for imports, `codes/scripts/` for entrypoints.
+- **Documentation**: All non-code context belongs in `context/` as organized markdown.
