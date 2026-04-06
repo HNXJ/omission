@@ -130,5 +130,14 @@ def classify():
     df.to_csv('checkpoints/neuron_categories.csv', index=False)
     print(f"Classification complete. {df['category'].value_counts().to_dict()}")
 
-if __name__ == '__main__':
+
+def main(args=None):
     classify()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

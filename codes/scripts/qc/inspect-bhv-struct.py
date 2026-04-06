@@ -1,7 +1,9 @@
+from codes.config.paths import BEHAVIORAL_DIR
+
 import scipy.io as sio
 import numpy as np
 
-file_path = r'D:\Analysis\Omission\local-workspace\data\behavioral\230818_Cajal_glo_omission.bhv2.mat'
+file_path = str(BEHAVIORAL_DIR / '230818_Cajal_glo_omission.bhv2.mat')
 data = sio.loadmat(file_path)
 
 if 'bhvUni' in data:

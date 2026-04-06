@@ -1,4 +1,6 @@
 
+from codes.config.paths import PROJECT_ROOT
+
 import os
 import json
 import pandas as pd
@@ -18,7 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-WORKSPACE_ROOT = "D:/Analysis/Omission/local-workspace"
+WORKSPACE_ROOT = PROJECT_ROOT
 CHECKPOINT_DIR = os.path.join(WORKSPACE_ROOT, "data/checkpoints")
 FIGURES_DIR = os.path.join(WORKSPACE_ROOT, "figures")
 

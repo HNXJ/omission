@@ -42,6 +42,15 @@ def run_all_behavioral_analyses(data_dir, exclude_session="230629"):
         except Exception as e:
             print(f"Error processing session {session_id}: {e}")
 
-if __name__ == "__main__":
+
+def main(args=None):
     data_dir = Path(__file__).parents[2] / "data"
     run_all_behavioral_analyses(data_dir)
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

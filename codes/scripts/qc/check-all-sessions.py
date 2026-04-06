@@ -1,9 +1,11 @@
 
+from codes.config.paths import BEHAVIORAL_DIR
+
 import scipy.io
 import numpy as np
 import os
 
-BHV_DIR = r'D:\Analysis\Omission\local-workspace\behavioral\omission_bhv\data'
+BHV_DIR = str(BEHAVIORAL_DIR / 'omission_bhv/data')
 SIDS = ['230630', '230816', '230830', '230818', '230825']
 
 for sid in SIDS:

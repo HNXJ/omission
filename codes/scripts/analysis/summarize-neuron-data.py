@@ -2,14 +2,16 @@
 summarize_neuron_data.py: Aggregates neuron data (counts, r_fix, latency) by area, layer, and signal strength.
 Handles NaNs and uses latest CSVs. Uses simple string formatting for prints.
 """
+from codes.config.paths import PROCESSED_DATA_DIR, PROJECT_ROOT
+
 import os
 import pandas as pd
 import numpy as np
 
 # Paths
-UNITS_LAYERED_PATH = 'D:/Analysis/Omission/local-workspace/checkpoints/real_omission_units_layered_v3.csv'
-LATENCY_PATH = 'D:/Analysis/Omission/local-workspace/checkpoints/omission_latencies_v2.csv'
-OUTPUT_DIR = 'D:/Analysis/Omission/local-workspace/summary_stats'
+UNITS_LAYERED_PATH = str(PROCESSED_DATA_DIR / 'real_omission_units_layered_v3.csv')
+LATENCY_PATH = str(PROCESSED_DATA_DIR / 'omission_latencies_v2.csv')
+OUTPUT_DIR = str(PROJECT_ROOT / 'summary_stats')
 
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -78,5 +80,11 @@ def main():
     strength_layer_summary.to_csv(os.path.join(OUTPUT_DIR, 'summary_neurons_by_strength_layer.csv'), index=False)
     print("Saved neuron summaries by signal strength.")
 
-if __name__ == "__main__":
-    main()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

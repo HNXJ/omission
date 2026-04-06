@@ -106,5 +106,14 @@ def run_lfp_connectivity():
             except Exception as e:
                 print(f"  - Error processing session {session_id}: {e}")
 
-if __name__ == '__main__':
+
+def main(args=None):
     run_lfp_connectivity()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

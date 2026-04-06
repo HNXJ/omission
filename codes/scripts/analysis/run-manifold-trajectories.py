@@ -1,3 +1,5 @@
+from codes.config.paths import DATA_DIR, FIGURES_DIR, PROCESSED_DATA_DIR
+
 import numpy as np
 import pandas as pd
 import glob
@@ -36,9 +38,9 @@ def bin_and_smooth(data, bin_ms=50, sigma_ms=100):
     return smoothed
 
 def run_manifold_analysis():
-    data_dir = r"D:\Analysis\Omission\local-workspace\data"
-    checkpoint_dir = r"D:\Analysis\Omission\local-workspace\checkpoints"
-    out_dir = r"D:\Analysis\Omission\local-workspace\figures\manifolds"
+    data_dir = str(DATA_DIR)
+    checkpoint_dir = str(PROCESSED_DATA_DIR)
+    out_dir = str(FIGURES_DIR / 'manifolds')
     os.makedirs(out_dir, exist_ok=True)
     
     # Load metadata
@@ -153,5 +155,14 @@ def run_manifold_analysis():
     summary_df.to_csv(os.path.join(checkpoint_dir, 'manifold_summary.csv'), index=False)
     print("Manifold analysis complete.")
 
-if __name__ == '__main__':
+
+def main(args=None):
     run_manifold_analysis()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

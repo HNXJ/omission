@@ -1,3 +1,5 @@
+from codes.config.paths import BEHAVIORAL_DIR, DATA_DIR
+
 import os
 import pandas as pd
 import scipy.io as sio
@@ -8,11 +10,11 @@ def generate_condition_tables():
     """
     Generates condition_table.csv for each session from the .bhv2.mat files.
     """
-    mat_data_dir = Path("D:/drive/data/behavioral")
+    mat_data_dir = Path(str(BEHAVIORAL_DIR))
     if not mat_data_dir.exists():
         print(f"Behavioral data directory not found at: {mat_data_dir}")
         return
-    nwb_data_dir = Path("D:/analysis/nwb")
+    nwb_data_dir = Path(str(DATA_DIR))
     if not nwb_data_dir.exists():
         print(f"NWB data directory not found at: {nwb_data_dir}")
         return

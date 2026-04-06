@@ -1,8 +1,10 @@
 
+from codes.config.paths import BEHAVIORAL_DIR
+
 import scipy.io
 import numpy as np
 
-MAT_FILE = r'D:\Analysis\Omission\local-workspace\behavioral\omission_bhv\data\230830_Cajal_glo_omission.bhv2.mat'
+MAT_FILE = str(BEHAVIORAL_DIR / 'omission_bhv/data/230830_Cajal_glo_omission.bhv2.mat')
 data = scipy.io.loadmat(MAT_FILE)
 bhv = data['bhvUni'][0]
 

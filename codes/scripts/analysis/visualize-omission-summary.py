@@ -2,16 +2,19 @@
 visualize_omission_summary.py: Final multi-panel summary of omission signaling.
 Includes Layer Distribution, Response Strength, LFP PEV, and Robust Onset Latency.
 """
+from codes.config.paths import FIGURES_DIR, PROCESSED_DATA_DIR, PROJECT_ROOT
+
 import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
 # Paths
-LAYERED_UNITS_PATH = r'D:\Analysis\Omission\local-workspace\checkpointseal_omission_units_layered_v3.csv'
-PEV_PATH = r'D:\Analysis\Omission\local-workspace\LFP_Extractions\omission_lfp_pev_v2.npz'
-LATENCY_PATH = r'D:\Analysis\Omission\local-workspace\checkpoints\area_population_latencies.csv'
-OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\figures'
+LAYERED_UNITS_PATH = str(PROJECT_ROOT / 'checkpoints
+eal_omission_units_layered_v3.csv')
+PEV_PATH = str(PROJECT_ROOT / 'LFP_Extractions/omission_lfp_pev_v2.npz')
+LATENCY_PATH = str(PROCESSED_DATA_DIR / 'area_population_latencies.csv')
+OUTPUT_DIR = str(FIGURES_DIR)
 
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)

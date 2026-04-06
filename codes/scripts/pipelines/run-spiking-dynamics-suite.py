@@ -1,4 +1,6 @@
 
+from codes.config.paths import DATA_DIR, PROCESSED_DATA_DIR
+
 import os
 import numpy as np
 import pandas as pd
@@ -14,8 +16,8 @@ STEP = 10
 FS = 1000 
 TIME_RANGE = (2500, 4500) # Window covering P3, Delay, and P4/Omission
 
-DATA_DIR = "D:/Analysis/Omission/local-workspace/data"
-CHECKPOINT_DIR = "D:/Analysis/Omission/local-workspace/data/checkpoints"
+DATA_DIR = str(DATA_DIR)
+CHECKPOINT_DIR = str(PROCESSED_DATA_DIR)
 NEURON_CAT_FILE = os.path.join(CHECKPOINT_DIR, "enhanced_neuron_categories.csv")
 
 def get_pop_vectors(spikes, win_size=50, step=10):
@@ -180,5 +182,11 @@ def main():
     summary_df = pd.DataFrame(all_results)
     summary_df.to_csv(os.path.join(CHECKPOINT_DIR, "spiking_dynamics_summary.csv"), index=False)
 
-if __name__ == "__main__":
-    main()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

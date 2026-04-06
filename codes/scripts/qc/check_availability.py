@@ -1,9 +1,11 @@
+from codes.config.paths import PROJECT_ROOT
+
 import os
 import pandas as pd
 from pynwb import NWBHDF5IO
 import numpy as np
 
-NWB_DIR = r'D:\Analysis\Omission\local-workspace'
+NWB_DIR = PROJECT_ROOT
 
 def check_data_availability():
     nwb_files = [f for f in os.listdir(NWB_DIR) if f.endswith('.nwb')]

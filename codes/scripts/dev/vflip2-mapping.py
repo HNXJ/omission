@@ -8,6 +8,8 @@ Improves robustness by:
 3. Automatic smoothing adjustment.
 4. Outputting a CSV with session, probe, and area metadata.
 """
+from codes.config.paths import DATA_DIR, FIGURES_DIR, PROCESSED_DATA_DIR
+
 import os
 import numpy as np
 import pandas as pd
@@ -18,9 +20,9 @@ import glob
 import re
 from pynwb import NWBHDF5IO
 
-DATA_DIR = r'D:\Analysis\Omission\local-workspace\data'
-OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\figures\final_reports\vflips'
-CHECKPOINT_DIR = r'D:\Analysis\Omission\local-workspace\checkpoints'
+DATA_DIR = str(DATA_DIR)
+OUTPUT_DIR = str(FIGURES_DIR / 'final_reports/vflips')
+CHECKPOINT_DIR = str(PROCESSED_DATA_DIR)
 FS = 1000.0
 BANDS = {
     'alpha_beta': (8, 30),

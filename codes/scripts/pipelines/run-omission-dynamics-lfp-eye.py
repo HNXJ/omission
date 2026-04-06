@@ -101,5 +101,14 @@ def run_omission_dynamics():
             fig.write_image(os.path.join(output_dir, out_name.replace('.html', '.png')))
             print(f"  - Saved: {out_name}")
 
-if __name__ == '__main__':
+
+def main(args=None):
     run_omission_dynamics()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

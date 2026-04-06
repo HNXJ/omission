@@ -1,3 +1,5 @@
+from codes.config.paths import DATA_DIR, FIGURES_DIR
+
 import numpy as np
 import os
 import plotly.graph_objects as go
@@ -53,19 +55,26 @@ def plot_identity_decoding_plotly(scores, session_id):
         yaxis_range=[0.3, 1.0] # Standard decoding range
     )
     
-    html_path = os.path.join(r"D:\Analysis\Omission\local-workspace\figures", f"FIG_Eye_Identity_Decoding_{session_id}.html")
-    svg_path = os.path.join(r"D:\Analysis\Omission\local-workspace\figures", f"FIG_Eye_Identity_Decoding_{session_id}.svg")
+    html_path = os.path.join(str(FIGURES_DIR), f"FIG_Eye_Identity_Decoding_{session_id}.html")
+    svg_path = os.path.join(str(FIGURES_DIR), f"FIG_Eye_Identity_Decoding_{session_id}.svg")
     
     fig.write_html(html_path)
     fig.write_image(svg_path)
     print(f"Saved Identity Decoding: {html_path}, {svg_path}")
 
-if __name__ == "__main__":
-    data_dir = r"D:\Analysis\Omission\local-workspace\data"
+
+def main(args=None):
+    data_dir = str(DATA_DIR)
     session_id = "230629"
-    
     results = analyze_session_eye(data_dir, session_id)
     identity_scores = decode_identity_eye(results)
-    
     if identity_scores is not None:
         plot_identity_decoding_plotly(identity_scores, session_id)
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

@@ -3,17 +3,19 @@ layer_mapping_omission.py: Maps identified omission neurons to cortical layers (
 using the vFLIP2 crossover points. Uses latest data files and robust parsing.
 Focuses on minimal print statements for path/error reporting.
 """
+from codes.config.paths import DATA_DIR, PROCESSED_DATA_DIR, PROJECT_ROOT
+
 import os
 import pandas as pd
 import numpy as np
 from pynwb import NWBHDF5IO
 
 # Paths
-UNITS_LAYERED_PATH = 'D:/Analysis/Omission/local-workspace/checkpoints/real_omission_units_layered_v3.csv'
-LATENCY_PATH = 'D:/Analysis/Omission/local-workspace/checkpoints/omission_latencies_v2.csv'
-VFLIP_SUMMARY_PATH = 'D:/Analysis/Omission/local-workspace/LFP_Extractions/vflip2_summary.txt'
-NWB_DIR = 'D:/Analysis/Omission/local-workspace/data'
-OUTPUT_PATH = 'D:/Analysis/Omission/local-workspace/checkpoints/real_omission_units_layered_v3_final.csv'
+UNITS_LAYERED_PATH = str(PROCESSED_DATA_DIR / 'real_omission_units_layered_v3.csv')
+LATENCY_PATH = str(PROCESSED_DATA_DIR / 'omission_latencies_v2.csv')
+VFLIP_SUMMARY_PATH = str(PROJECT_ROOT / 'LFP_Extractions/vflip2_summary.txt')
+NWB_DIR = str(DATA_DIR)
+OUTPUT_PATH = str(PROCESSED_DATA_DIR / 'real_omission_units_layered_v3_final.csv')
 
 def parse_vflip_summary(path):
     mappings = {}

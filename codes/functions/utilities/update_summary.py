@@ -1,7 +1,9 @@
+from codes.config.paths import PROJECT_ROOT
+
 import os
 import pandas as pd
 
-NWB_DIR = r'D:\Analysis\Omission\local-workspace'
+NWB_DIR = PROJECT_ROOT
 DATA_DIR = os.path.join(NWB_DIR, 'data')
 
 def update_summary_table():

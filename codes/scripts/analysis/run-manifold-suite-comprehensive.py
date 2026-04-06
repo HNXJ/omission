@@ -1,3 +1,5 @@
+from codes.config.paths import DATA_DIR, FIGURES_DIR, PROCESSED_DATA_DIR
+
 import numpy as np
 import pandas as pd
 import glob
@@ -27,9 +29,9 @@ def bin_and_smooth(data, bin_ms=100, sigma_ms=100):
     return smoothed
 
 def run_manifold_suite():
-    data_dir = r"D:\Analysis\Omission\local-workspace\data"
-    checkpoint_dir = r"D:\Analysis\Omission\local-workspace\checkpoints"
-    out_dir = r"D:\Analysis\Omission\local-workspace\figures\manifolds_comprehensive"
+    data_dir = str(DATA_DIR)
+    checkpoint_dir = str(PROCESSED_DATA_DIR)
+    out_dir = str(FIGURES_DIR / 'manifolds_comprehensive')
     os.makedirs(out_dir, exist_ok=True)
     
     # Load metadata
@@ -153,5 +155,14 @@ def run_manifold_suite():
     pd.DataFrame(all_summary).to_csv(os.path.join(checkpoint_dir, 'manifold_explained_variance.csv'), index=False)
     print("Comprehensive Manifold Suite Complete.")
 
-if __name__ == '__main__':
+
+def main(args=None):
     run_manifold_suite()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

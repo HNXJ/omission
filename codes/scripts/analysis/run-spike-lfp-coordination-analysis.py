@@ -1,14 +1,16 @@
 
+from codes.config.paths import DATA_DIR, PROCESSED_DATA_DIR
+
 import os
 import numpy as np
 import pandas as pd
 import h5py
 from concurrent.futures import ProcessPoolExecutor
-from functions.spike_lfp_coordination import get_band_phase, compute_spike_lfp_ppc_trace
+from codes.functions.spike_lfp_coordination import get_band_phase, compute_spike_lfp_ppc_trace
 import json
 
-DATA_DIR = "D:/Analysis/Omission/local-workspace/data"
-CHECKPOINT_DIR = "D:/Analysis/Omission/local-workspace/checkpoints"
+DATA_DIR = str(DATA_DIR)
+CHECKPOINT_DIR = str(PROCESSED_DATA_DIR)
 NEURON_CAT_FILE = os.path.join(CHECKPOINT_DIR, "enhanced_neuron_categories.csv")
 
 BANDS = {
@@ -130,5 +132,11 @@ def main():
         
     print(f"Analysis complete. Results saved to {output_file}")
 
-if __name__ == "__main__":
-    main()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

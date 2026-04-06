@@ -1,3 +1,5 @@
+from codes.config.paths import PROJECT_ROOT
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -72,6 +74,6 @@ def plot_omission_validation(units_path, summary_path, output_svg):
 if __name__ == "__main__":
     plot_omission_validation(
         units_path=r'D:\oxm0818_units.npy',
-        summary_path=r'D:\hnxj-gemini\ses-230818_part1_summary.csv',
+        summary_path=str(PROJECT_ROOT / 'ses-230818_part1_summary.csv'),
         output_svg=r'D:\figures\ses-230818_omission_validation.svg'
     )

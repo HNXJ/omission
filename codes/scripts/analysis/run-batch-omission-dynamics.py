@@ -1,3 +1,5 @@
+from codes.config.paths import BEHAVIORAL_DIR, FIGURES_DIR
+
 import numpy as np
 import pandas as pd
 import scipy.io as sio
@@ -83,8 +85,8 @@ def parse_bhv_eye_data(mat_path):
         return None
 
 def process_batch():
-    bhv_dir = r'D:\Analysis\Omission\local-workspace\data\behavioral'
-    output_dir = r'D:\Analysis\Omission\local-workspace\figures\part01'
+    bhv_dir = str(BEHAVIORAL_DIR)
+    output_dir = str(FIGURES_DIR / 'part01')
     os.makedirs(output_dir, exist_ok=True)
     
     bhv_paths = glob.glob(os.path.join(bhv_dir, "*.mat"))
@@ -130,5 +132,14 @@ def process_batch():
             fig.write_html(out_path)
             print(f"    -> Saved {out_path}")
 
-if __name__ == '__main__':
+
+def main(args=None):
     process_batch()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

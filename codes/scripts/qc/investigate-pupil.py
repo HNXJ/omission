@@ -1,3 +1,5 @@
+from codes.config.paths import BEHAVIORAL_DIR
+
 import scipy.io as sio
 import numpy as np
 import os
@@ -34,6 +36,6 @@ def find_pupil_data(file_paths):
             print(f"  Error: {e}")
 
 if __name__ == "__main__":
-    bhv_dir = r'D:/Analysis/Omission/local-workspace/data/behavioral'
+    bhv_dir = str(BEHAVIORAL_DIR)
     files = glob.glob(os.path.join(bhv_dir, "*.bhv2.mat"))
     find_pupil_data(files)

@@ -1,3 +1,5 @@
+from codes.config.paths import PROJECT_ROOT
+
 import h5py
 import numpy as np
 import matplotlib.pyplot as plt
@@ -64,7 +66,7 @@ def main():
             plt.ylabel("Amplitude")
             plt.grid(True, alpha=0.3)
             plt.legend()
-            plt.savefig("D:/hnxj-gemini/pfc_omission_lfp.png")
+            plt.savefig(str(PROJECT_ROOT / 'pfc_omission_lfp.png'))
             print("Plot saved to D:/hnxj-gemini/pfc_omission_lfp.png")
             
         except Exception as e:

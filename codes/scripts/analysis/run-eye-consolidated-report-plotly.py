@@ -1,3 +1,5 @@
+from codes.config.paths import DATA_DIR, FIGURES_DIR
+
 import numpy as np
 import os
 import plotly.graph_objects as go
@@ -69,8 +71,8 @@ def plot_rose_directions_grid_plotly(directions_grid, session_id):
     # Clean up polar axes
     fig.update_polars(radialaxis_showticklabels=False, angularaxis_showticklabels=False)
     
-    html_path = os.path.join(r"D:\Analysis\Omission\local-workspace\figures", f"FIG_Eye_Rose_Grid_{session_id}.html")
-    svg_path = os.path.join(r"D:\Analysis\Omission\local-workspace\figures", f"FIG_Eye_Rose_Grid_{session_id}.svg")
+    html_path = os.path.join(str(FIGURES_DIR), f"FIG_Eye_Rose_Grid_{session_id}.html")
+    svg_path = os.path.join(str(FIGURES_DIR), f"FIG_Eye_Rose_Grid_{session_id}.svg")
     
     fig.write_html(html_path)
     fig.write_image(svg_path)
@@ -127,8 +129,8 @@ def plot_temporal_trajectories_plotly(session_results, session_id):
     fig.update_layout(template='plotly_dark', title=f'Temporal Eye Trajectories: {session_id}',
                       paper_bgcolor=BLACK, plot_bgcolor=BLACK, height=800)
     
-    html_path = os.path.join(r"D:\Analysis\Omission\local-workspace\figures", f"FIG_Eye_Temporal_Trajectories_{session_id}.html")
-    svg_path = os.path.join(r"D:\Analysis\Omission\local-workspace\figures", f"FIG_Eye_Temporal_Trajectories_{session_id}.svg")
+    html_path = os.path.join(str(FIGURES_DIR), f"FIG_Eye_Temporal_Trajectories_{session_id}.html")
+    svg_path = os.path.join(str(FIGURES_DIR), f"FIG_Eye_Temporal_Trajectories_{session_id}.svg")
     
     fig.write_html(html_path)
     fig.write_image(svg_path)
@@ -158,5 +160,14 @@ def run_eye_consolidated_plotly(data_dir, session_id):
     # Temporal
     plot_temporal_trajectories_plotly(results, session_id)
 
-if __name__ == "__main__":
-    run_eye_consolidated_plotly(r"D:\Analysis\Omission\local-workspace\data", "230629")
+
+def main(args=None):
+    run_eye_consolidated_plotly(str(DATA_DIR), "230629")
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

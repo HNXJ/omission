@@ -2,12 +2,14 @@
 summarize_lfp_pev.py: Aggregates LFP PEV data by area and probe.
 Uses data from omission_lfp_pev_v2.npz.
 """
+from codes.config.paths import PROJECT_ROOT
+
 import os
 import numpy as np
 import pandas as pd
 
-PEV_PATH = r'D:\Analysis\Omission\local-workspace\LFP_Extractions\omission_lfp_pev_v2.npz'
-OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\summary_stats'
+PEV_PATH = str(PROJECT_ROOT / 'LFP_Extractions/omission_lfp_pev_v2.npz')
+OUTPUT_DIR = str(PROJECT_ROOT / 'summary_stats')
 
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -44,5 +46,11 @@ def main():
     df_lfp_summary.to_csv(os.path.join(OUTPUT_DIR, 'summary_lfp_pev_by_area.csv'), index=False)
     print(f"LFP PEV analysis complete. Saved summary to {OUTPUT_DIR}/summary_lfp_pev_by_area.csv")
 
-if __name__ == "__main__":
-    main()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

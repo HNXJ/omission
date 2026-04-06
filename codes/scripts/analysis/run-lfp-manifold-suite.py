@@ -1,3 +1,5 @@
+from codes.config.paths import DATA_DIR, FIGURES_DIR, PROCESSED_DATA_DIR
+
 import numpy as np
 import pandas as pd
 import h5py
@@ -33,9 +35,9 @@ def bin_and_smooth(data, bin_ms=100, sigma_ms=100):
     return smoothed.mean(axis=0) # Return average across trials
 
 def run_lfp_manifold_suite():
-    data_dir = r"D:\Analysis\Omission\local-workspace\data"
-    checkpoint_dir = r"D:\Analysis\Omission\local-workspace\checkpoints"
-    out_dir = r"D:\Analysis\Omission\local-workspace\figures\lfp_manifolds"
+    data_dir = str(DATA_DIR)
+    checkpoint_dir = str(PROCESSED_DATA_DIR)
+    out_dir = str(FIGURES_DIR / 'lfp_manifolds')
     os.makedirs(out_dir, exist_ok=True)
     
     # Load metadata
@@ -155,5 +157,14 @@ def run_lfp_manifold_suite():
     pd.DataFrame(all_summary).to_csv(os.path.join(checkpoint_dir, 'lfp_manifold_summary.csv'), index=False)
     print("LFP Manifold Analysis Complete.")
 
-if __name__ == '__main__':
+
+def main(args=None):
     run_lfp_manifold_suite()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

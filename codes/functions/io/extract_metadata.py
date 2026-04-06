@@ -1,10 +1,12 @@
+from codes.config.paths import PROJECT_ROOT
+
 from pynwb import NWBHDF5IO
 import pandas as pd
 import os
 import sys
 
 def extract_trial_metadata(nwb_path, session_id):
-    output_path = f'D:/hnxj-gemini/ses-{session_id}_trials.csv'
+    output_path = fstr(PROJECT_ROOT / 'ses-{session_id}_trials.csv')
     
     if os.path.exists(output_path):
         print(f"Metadata already exists for {session_id}. Skipping.")

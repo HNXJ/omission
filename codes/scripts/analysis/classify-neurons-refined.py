@@ -168,5 +168,14 @@ def classify_neurons_refined():
     df.to_csv(f'{checkpoint_dir}/enhanced_neuron_categories.csv', index=False)
     print(f"Enhanced classification saved. Count: {len(df)}")
 
-if __name__ == '__main__':
+
+def main(args=None):
     classify_neurons_refined()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

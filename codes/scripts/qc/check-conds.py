@@ -1,4 +1,6 @@
 
+from codes.config.paths import BEHAVIORAL_DIR
+
 import scipy.io
 import numpy as np
 from collections import Counter
@@ -29,4 +31,4 @@ def check_conditions(file_path):
             print(f"Counts: {counts}")
 
 if __name__ == "__main__":
-    check_conditions('D:/drive/data/behavioral/230629_Joule_glo_omission.bhv2.mat')
+    check_conditions(str(BEHAVIORAL_DIR / '230629_Joule_glo_omission.bhv2.mat'))

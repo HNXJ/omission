@@ -67,5 +67,11 @@ def main():
     
     print("✅ Pipeline Schema Loaded.")
 
-if __name__ == "__main__":
-    main()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

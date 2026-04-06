@@ -88,7 +88,7 @@ def run_analysis():
     """
     Main function to run the MUA-LFP correlation analysis for Supplemental Figure 2.
     """
-    nwb_data_dir = "D:/analysis/nwb"
+    nwb_data_dir = str(DATA_DIR)
     nwb_files = glob.glob(f"{nwb_data_dir}/**/*.nwb", recursive=True)
     
     if not nwb_files:
@@ -304,7 +304,7 @@ def run_analysis():
     print("Finished processing all sessions.")
     
     # Save the detailed per-electrode results
-    output_path = Path("D:/drive/outputs/mua_lfp_correlation_per_electrode_results.json")
+    output_path = Path(str(OUTPUT_DIR / 'mua_lfp_correlation_per_electrode_results.json'))
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, 'w') as f:
         json.dump(all_electrode_results, f, indent=4)
@@ -312,8 +312,17 @@ def run_analysis():
 
     # Plot the results
     from codes.functions.visualization.lfp_plotting_sup_fig2 import plot_supplemental_figure_2
-    output_dir = Path("D:/drive/outputs/mua-lfp-correlation")
+    output_dir = Path(str(OUTPUT_DIR / 'mua-lfp-correlation'))
     plot_supplemental_figure_2(all_electrode_results, output_dir)
 
-if __name__ == "__main__":
+
+def main(args=None):
     run_analysis()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

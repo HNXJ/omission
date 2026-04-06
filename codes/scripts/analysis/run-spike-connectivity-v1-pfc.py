@@ -105,5 +105,14 @@ def run_spike_connectivity():
     if all_lags:
         print(f"\nAverage V1-PFC Peak Lag (Omission): {np.mean(all_lags):.2f} ms")
 
-if __name__ == '__main__':
+
+def main(args=None):
     run_spike_connectivity()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

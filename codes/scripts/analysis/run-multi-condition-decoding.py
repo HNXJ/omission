@@ -1,4 +1,6 @@
 
+from codes.config.paths import DATA_DIR, FIGURES_DIR
+
 import numpy as np
 import pandas as pd
 import os
@@ -10,14 +12,14 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 # Constants
-DATA_DIR = r'D:\Analysis\Omission\local-workspace\data'
-OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\figures\final_reports\behavioral_decoding'
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+DATA_DIR = str(DATA_DIR)
+OUTPUT_DIR = str(FIGURES_DIR / 'final_reports/behavioral_decoding')
 
-SESSIONS = ['230629', '230630', '230714', '230719', '230720', '230721', '230816', '230818', '230823', '230825', '230830', '230831', '230901']
-CONDITIONS = ['AAAB', 'AAAX', 'AAXB', 'AXAB', 'BBBA', 'BBBX', 'BBXA', 'BXBA', 'RRRR', 'RRRX', 'RRXR', 'RXRR']
-
-INTERVALS = {
+def main(args=None):
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    SESSIONS = ['230629', '230630', '230714', '230719', '230720', '230721', '230816', '230818', '230823', '230825', '230830', '230831', '230901']
+    CONDITIONS = ['AAAB', 'AAAX', 'AAXB', 'AXAB', 'BBBA', 'BBBX', 'BBXA', 'BXBA', 'RRRR', 'RRRX', 'RRXR', 'RXRR']
+    INTERVALS = {
     'Fix': (0, 1000),
     'P1': (1000, 1531),
     'D1': (1531, 2062),
@@ -27,9 +29,8 @@ INTERVALS = {
     'D3': (3655, 4186),
     'P4': (4186, 4717),
     'D4': (4717, 5248)
-}
-
-STIM_MAP = {
+    }
+    STIM_MAP = {
     'AAAB': ['A', 'A', 'A', 'B'],
     'AAAX': ['A', 'A', 'A', 'O'],
     'AAXB': ['A', 'A', 'O', 'B'],
@@ -42,9 +43,8 @@ STIM_MAP = {
     'RRRX': ['R', 'R', 'R', 'O'],
     'RRXR': ['R', 'R', 'O', 'R'],
     'RXRR': ['R', 'O', 'R', 'R']
-}
-
-def get_pca_direction(x, y):
+    }
+    def get_pca_direction(x, y):
     if len(x) < 5: return 0
     X = np.stack([x, y], axis=1)
     center = np.mean(X, axis=0)
@@ -58,8 +58,7 @@ def get_pca_direction(x, y):
     if np.dot(delta, direction) < 0:
         direction = -direction
     return np.arctan2(direction[1], direction[0])
-
-def extract_all_behavioral_data():
+    def extract_all_behavioral_data():
     all_data = []
     for sid in SESSIONS:
         print(f"Loading Session {sid}...")
@@ -73,13 +72,11 @@ def extract_all_behavioral_data():
                     for name, (start, end) in INTERVALS.items():
                         seg = trial_data[:, start:end]
                         theta = get_pca_direction(seg[1], seg[2])
-                        
                         if name == 'Fix': label = 'Fix'
                         elif name.startswith('D'): label = 'Delay'
                         elif name.startswith('P'):
                             st = STIM_MAP[cond][int(name[1])-1]
                             label = 'Omit' if st == 'O' else f'Stim-{st}'
-                        
                         all_data.append({
                             'label': label,
                             'x_mean': np.mean(seg[1]), 'y_mean': np.mean(seg[2]),
@@ -88,29 +85,23 @@ def extract_all_behavioral_data():
                         })
             except: continue
     return pd.DataFrame(all_data)
-
-def run_multi_condition_decoding():
+    def run_multi_condition_decoding():
     df = extract_all_behavioral_data()
     print(f"Total intervals: {len(df)}")
-    
     tasks = {
         'A vs B': ['Stim-A', 'Stim-B'],
         'A vs B vs Delay': ['Stim-A', 'Stim-B', 'Delay'],
         'A vs B vs Delay vs Omit': ['Stim-A', 'Stim-B', 'Delay', 'Omit']
     }
-    
     feature_sets = {
         'Gaze (X,Y)': ['x_mean', 'y_mean'],
         'Gaze + Dir': ['x_mean', 'y_mean', 'sin_theta', 'cos_theta'],
         'Gaze + Dir + Pupil': ['x_mean', 'y_mean', 'sin_theta', 'cos_theta', 'pupil_mean']
     }
-    
     final_results = []
-    
     for task_name, allowed_labels in tasks.items():
         print(f"Decoding {task_name}...")
         task_df = df[df['label'].isin(allowed_labels)].copy()
-        
         # Balance
         counts = Counter(task_df['label'])
         min_size = min(min(counts.values()), 2000) # Limit for speed
@@ -119,7 +110,6 @@ def run_multi_condition_decoding():
             indices.extend(np.random.choice(task_df[task_df['label']==l].index, min_size, replace=False))
         sub_df = task_df.loc[indices]
         y = sub_df['label'].values
-        
         for fs_name, fs_cols in feature_sets.items():
             X = sub_df[fs_cols].values
             X_scaled = StandardScaler().fit_transform(X)
@@ -129,7 +119,6 @@ def run_multi_condition_decoding():
                 clf = SVC(kernel='rbf', C=1.0)
                 clf.fit(X_scaled[train_idx], y[train_idx])
                 accs.append(clf.score(X_scaled[test_idx], y[test_idx]))
-            
             final_results.append({
                 'Task': task_name,
                 'FeatureSet': fs_name,
@@ -137,21 +126,17 @@ def run_multi_condition_decoding():
                 'Chance': 1.0 / len(allowed_labels)
             })
             print(f"  {fs_name}: {np.mean(accs):.3f}")
-
     res_df = pd.DataFrame(final_results)
-    
     # Plotting with Caption
     fig = px.bar(res_df, x='Task', y='Accuracy', color='FeatureSet', barmode='group',
                  text_auto='.3f', title="Figure 18: Behavioral Decoder Sensitivity Across Omission Categories",
                  category_orders={'Task': list(tasks.keys())}, template="plotly_white")
-    
     # Adding Chance Lines
     colors = ['red', 'blue', 'green']
     for i, (task, labels) in enumerate(tasks.items()):
         chance = 1.0 / len(labels)
         fig.add_shape(type="line", x0=i-0.4, x1=i+0.4, y0=chance, y1=chance,
                       line=dict(color="black", width=2, dash="dot"))
-
     # Caption logic
     caption = (
         "Figure 18: Comparative decoding performance of oculomotor features across increasing task complexity. "
@@ -160,7 +145,6 @@ def run_multi_condition_decoding():
         "Results: Directionality features provide a substantial boost across all granularities (+15-20%), while Pupil diameter adds incremental accuracy specifically for omission detection. "
         "Remarkable Notes: Even at 4-class complexity, behavioral features maintain ~2x chance accuracy, proving that 'fixation' windows are highly content-specific."
     )
-    
     fig.add_annotation(
         text=caption,
         xref="paper", yref="paper",
@@ -170,10 +154,15 @@ def run_multi_condition_decoding():
         font=dict(size=12, color="black"),
         width=800
     )
-    
     fig.update_layout(margin=dict(b=150), yaxis_range=[0, 0.8])
     fig.write_html(os.path.join(OUTPUT_DIR, "FIG_18_Multi_Condition_Decoding.html"))
     print("Saved FIG_18.")
+    run_multi_condition_decoding()
 
 if __name__ == '__main__':
-    run_multi_condition_decoding()
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

@@ -1,6 +1,8 @@
 """
 plot_psth_verification.py: Plots PSTH of top omission units using Plotly with standardized event shading.
 """
+from codes.config.paths import DATA_DIR, PROCESSED_DATA_DIR
+
 import os
 import numpy as np
 import pandas as pd
@@ -8,8 +10,8 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from scipy.ndimage import gaussian_filter1d
 
-DATA_DIR = r'D:\Analysis\Omission\local-workspace\data'
-UNITS_PATH = r'D:\Analysis\Omission\local-workspace\checkpoints\real_omission_units_layered_v3.csv'
+DATA_DIR = str(DATA_DIR)
+UNITS_PATH = str(PROCESSED_DATA_DIR / 'real_omission_units_layered_v3.csv')
 
 # Standardized Event Shading
 EVENTS = {

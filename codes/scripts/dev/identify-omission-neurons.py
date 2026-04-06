@@ -2,14 +2,16 @@
 identify_omission_neurons.py: Detects units with significant firing increases specifically during omissions.
 Processes sessions 230831, 230901, and 230720 using granular .npy data.
 """
+from codes.config.paths import DATA_DIR, PROCESSED_DATA_DIR
+
 import os
 import numpy as np
 import pandas as pd
 from scipy.stats import ttest_rel
 import glob
 
-DATA_DIR = r'D:\Analysis\Omission\local-workspace\data'
-OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\checkpoints'
+DATA_DIR = str(DATA_DIR)
+OUTPUT_DIR = str(PROCESSED_DATA_DIR)
 SAMPLING_RATE = 1000 # Spikes are binary 1ms bins
 
 # Area mapping based on probe ID

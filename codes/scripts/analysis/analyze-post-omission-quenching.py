@@ -1,9 +1,11 @@
 
+from codes.config.paths import DATA_DIR, PROCESSED_DATA_DIR
+
 import os
 import numpy as np
 import pandas as pd
 import h5py
-from functions.neuro_variability_suite import NeuroVariabilitySuite, apply_post_hoc_smoothing
+from codes.functions.neuro_variability_suite import NeuroVariabilitySuite, apply_post_hoc_smoothing
 import json
 
 # Parameters
@@ -11,8 +13,8 @@ WIN_SIZE = 50
 STEP = 10 
 SIGMA_SMOOTH = 2.0 
 
-DATA_DIR = "D:/Analysis/Omission/local-workspace/data"
-CHECKPOINT_DIR = "D:/Analysis/Omission/local-workspace/checkpoints"
+DATA_DIR = str(DATA_DIR)
+CHECKPOINT_DIR = str(PROCESSED_DATA_DIR)
 NEURON_CAT_FILE = os.path.join(CHECKPOINT_DIR, "enhanced_neuron_categories.csv")
 
 # Post-Omission Windows
@@ -100,5 +102,14 @@ def run_post_omit_comparison():
         json.dump(results, f)
     print(f"Post-omission quenching analysis complete. Results saved to {output_file}")
 
-if __name__ == "__main__":
+
+def main(args=None):
     run_post_omit_comparison()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

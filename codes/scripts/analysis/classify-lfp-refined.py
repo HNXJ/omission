@@ -153,5 +153,14 @@ def classify_lfp_from_npy():
     df.to_csv(f'{checkpoint_dir}/enhanced_lfp_categories.csv', index=False)
     print(f"LFP classification complete. Count: {len(df)}")
 
-if __name__ == '__main__':
+
+def main(args=None):
     classify_lfp_from_npy()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

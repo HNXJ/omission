@@ -5,6 +5,8 @@ Master execution of the 15-Step GAMMA PLAN for LFP-only omission analysis.
 Generates the "OMISSION 2026 Systematic Figure Suite" in oglo3/.
 """
 
+from codes.config.paths import PROJECT_ROOT
+
 import sys
 import os
 from pathlib import Path
@@ -24,7 +26,7 @@ from codes.functions.visualization.lfp_plotting import create_tfr_figure, create
 from codes.functions.lfp.lfp_connectivity import compute_pairwise_coherence
 
 # --- Setup Paths ---
-ROOT = Path("D:/Analysis/Omission/local-workspace")
+ROOT = Path(PROJECT_ROOT)
 DATA_DIR = ROOT / "data/arrays"
 MAP_FILE = ROOT / "data/other/checkpoints/vflip2_mapping_v3.csv"
 OUT_DIR = ROOT / "figures/oglo3"

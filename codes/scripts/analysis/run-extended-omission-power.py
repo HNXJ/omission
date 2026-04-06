@@ -1,4 +1,6 @@
 
+from codes.config.paths import BEHAVIORAL_DIR, DATA_DIR, FIGURES_DIR, PROCESSED_DATA_DIR
+
 import numpy as np
 import pandas as pd
 import scipy.io as sio
@@ -107,10 +109,10 @@ def compute_relative_power(lfp, config):
     return traces
 
 def process_extended_batch():
-    data_dir = r'D:\Analysis\Omission\local-workspace\data'
-    bhv_dir = r'D:\Analysis\Omission\local-workspace\data\behavioral\omission_bhv\data'
-    checkpoint_dir = r'D:\Analysis\Omission\local-workspace\data\checkpoints'
-    output_dir = r'D:\Analysis\Omission\local-workspace\figures\part01'
+    data_dir = str(DATA_DIR)
+    bhv_dir = str(BEHAVIORAL_DIR / 'omission_bhv/data')
+    checkpoint_dir = str(PROCESSED_DATA_DIR)
+    output_dir = str(FIGURES_DIR / 'part01')
     os.makedirs(output_dir, exist_ok=True)
     
     mapping_df = pd.read_csv(os.path.join(checkpoint_dir, 'vflip2_mapping_v3.csv'))
@@ -181,5 +183,14 @@ def process_extended_batch():
             except Exception as e:
                 print(f"    Error processing Extended LFP {fname}: {e}")
 
-if __name__ == '__main__':
+
+def main(args=None):
     process_extended_batch()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

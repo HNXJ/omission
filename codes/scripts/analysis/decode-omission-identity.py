@@ -154,5 +154,14 @@ def decode_figure_5():
         fig_b.update_layout(title="Behavioral Decoding (Omission vs Delay, 50-50 Split)", yaxis_title="Accuracy", yaxis_range=[0,1])
         fig_b.write_html("figures/final_reports/FIG_05B_Behavioral_Control.html")
 
-if __name__ == '__main__':
+
+def main(args=None):
     decode_figure_5()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

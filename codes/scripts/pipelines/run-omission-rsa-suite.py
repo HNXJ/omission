@@ -1,4 +1,6 @@
 
+from codes.config.paths import DATA_DIR, FIGURES_DIR, PROCESSED_DATA_DIR
+
 import numpy as np
 import pandas as pd
 import os
@@ -57,9 +59,9 @@ def linear_cka(X, Y):
     return hsic / (norm + 1e-12)
 
 def run_omission_rsa():
-    data_dir = r'D:\Analysis\Omission\local-workspace\data'
-    checkpoint_dir = r'D:\Analysis\Omission\local-workspace\data\checkpoints'
-    output_dir = r'D:\Analysis\Omission\local-workspace\figures\part01'
+    data_dir = str(DATA_DIR)
+    checkpoint_dir = str(PROCESSED_DATA_DIR)
+    output_dir = str(FIGURES_DIR / 'part01')
     os.makedirs(output_dir, exist_ok=True)
     
     # Load mappings
@@ -200,5 +202,14 @@ def run_omission_rsa():
     fig.write_html(os.path.join(output_dir, "FIG_10_RSA_CKA_Hierarchy.html"))
     print("RSA Suite Complete.")
 
-if __name__ == '__main__':
+
+def main(args=None):
     run_omission_rsa()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

@@ -2,13 +2,15 @@
 identify_real_omission_neurons.py: Detects "Real" omission neurons using corrected 1000ms offset.
 Criteria: High firing ONLY during omission, not during fixation or stimulus sequence.
 """
+from codes.config.paths import DATA_DIR, PROCESSED_DATA_DIR
+
 import os
 import numpy as np
 import pandas as pd
 import glob
 
-DATA_DIR = r'D:\Analysis\Omission\local-workspace\data'
-OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\checkpoints'
+DATA_DIR = str(DATA_DIR)
+OUTPUT_DIR = str(PROCESSED_DATA_DIR)
 
 # Timing Windows (relative to file start, p1 onset = 1000)
 FIX_WIN = (500, 1000)

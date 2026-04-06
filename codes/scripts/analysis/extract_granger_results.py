@@ -49,5 +49,14 @@ def extract_band_granger():
         except Exception as e:
             print(f"  - Error session {session_id}: {e}")
 
-if __name__ == '__main__':
+
+def main(args=None):
     extract_band_granger()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

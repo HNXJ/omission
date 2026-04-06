@@ -1,4 +1,6 @@
 
+from codes.config.paths import DATA_DIR, FIGURES_DIR
+
 import numpy as np
 import scipy.io as sio
 import os
@@ -27,8 +29,8 @@ def detect_microsaccades(eye_x, eye_y, fs=1000, thresh=30):
 
 def run_eye_dynamics():
     # We search for behavioral NWB .npy files as they are already aligned
-    data_dir = r'D:\Analysis\Omission\local-workspace\data'
-    output_dir = r'D:\Analysis\Omission\local-workspace\figures\part01'
+    data_dir = str(DATA_DIR)
+    output_dir = str(FIGURES_DIR / 'part01')
     os.makedirs(output_dir, exist_ok=True)
     
     sessions = ['230630', '230816', '230830']
@@ -120,5 +122,14 @@ def run_eye_dynamics():
             fig.write_html(os.path.join(output_dir, out_name))
             print(f"  - Saved: {out_name}")
 
-if __name__ == '__main__':
+
+def main(args=None):
     run_eye_dynamics()
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

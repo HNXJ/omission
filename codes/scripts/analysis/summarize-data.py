@@ -2,14 +2,17 @@
 summarize_neuron_data.py: Aggregates omission neuron data by area, layer, and response strength.
 Handles potential NaNs in latency.
 """
+from codes.config.paths import PROCESSED_DATA_DIR, PROJECT_ROOT
+
 import os
 import pandas as pd
 import numpy as np
 
 # Paths
-UNITS_LAYERED_PATH = r'D:\Analysis\Omission\local-workspace\checkpointseal_omission_units_layered_v3.csv'
-LATENCY_PATH = r'D:\Analysis\Omission\local-workspace\checkpoints\omission_latencies_v2.csv' # Updated to use the latest latency file
-OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\summary_stats'
+UNITS_LAYERED_PATH = str(PROJECT_ROOT / 'checkpoints
+eal_omission_units_layered_v3.csv')
+LATENCY_PATH = str(PROCESSED_DATA_DIR / 'omission_latencies_v2.csv') # Updated to use the latest latency file
+OUTPUT_DIR = str(PROJECT_ROOT / 'summary_stats')
 
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)

@@ -1,3 +1,5 @@
+from codes.config.paths import DATA_DIR, FIGURES_DIR, PROCESSED_DATA_DIR
+
 import numpy as np
 import pandas as pd
 import h5py
@@ -27,88 +29,71 @@ LAG_RANGE = 200 # ms
 OMIT_WIN = (4093, 4624) 
 LFP_ORDER = 15
 
-DATA_DIR = r'D:\Analysis\Omission\local-workspace\data'
-CHECKPOINT_DIR = r'D:\Analysis\Omission\local-workspace\checkpoints'
-OUTPUT_DIR = r'D:\Analysis\Omission\local-workspace\figures\directionality'
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+DATA_DIR = str(DATA_DIR)
+CHECKPOINT_DIR = str(PROCESSED_DATA_DIR)
+OUTPUT_DIR = str(FIGURES_DIR / 'directionality')
 
-def compute_ccg_robust(spk1, spk2):
+def main(args=None):
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    def compute_ccg_robust(spk1, spk2):
     """Computes trial-averaged CCG between two spike trains with smoothing."""
     # spk: (trials, units, time)
     n_trials = spk1.shape[0]
     n_time = spk1.shape[2]
     lags = np.arange(-LAG_RANGE, LAG_RANGE + 1)
     ccg_sum = np.zeros(len(lags))
-    
     # Pool across units
     pop1 = np.mean(spk1, axis=1) # (trials, time)
     pop2 = np.mean(spk2, axis=1)
-    
     for t in range(n_trials):
         c = correlate(pop1[t, :], pop2[t, :], mode='full')
         mid = len(c) // 2
         ccg_sum += c[mid - LAG_RANGE : mid + LAG_RANGE + 1]
-    
     return lags, ccg_sum / n_trials
-
-def run_v1_pfc_directionality():
+    def run_v1_pfc_directionality():
     # Load categories to find V1 and PFC probes
     # Using neuron_categories.csv for broad area mapping
     cat_df = pd.read_csv(os.path.join(CHECKPOINT_DIR, 'neuron_categories.csv'))
     sessions = cat_df['session'].unique()
-    
     all_results = []
-    
     for sid in sessions:
         sid_str = str(sid)
         ses_units = cat_df[cat_df['session'] == sid]
-        
         v1_units = ses_units[ses_units['area'].str.contains('V1', na=False)]
         pfc_units = ses_units[ses_units['area'].str.contains('PFC', na=False)]
-        
         if v1_units.empty or pfc_units.empty:
             continue
-            
         print(f"--- Directionality: Session {sid_str} (V1 vs PFC) ---")
-        
         v1_probe = v1_units['probe'].iloc[0]
         pfc_probe = pfc_units['probe'].iloc[0]
-        
         # Conditions: AAAX (Omission) and RRRR (Standard)
         conds = ['AAAX', 'RRRR']
         results = {}
-        
         for c in conds:
             try:
                 # 1. SPIKES
                 v1_spk_path = os.path.join(DATA_DIR, f'ses{sid_str}-units-probe{v1_probe}-spk-{c}.npy')
                 pfc_spk_path = os.path.join(DATA_DIR, f'ses{sid_str}-units-probe{pfc_probe}-spk-{c}.npy')
-                
                 if os.path.exists(v1_spk_path) and os.path.exists(pfc_spk_path):
                     v1_spk = np.nan_to_num(np.load(v1_spk_path, mmap_mode='r'))[:, :, OMIT_WIN[0]:OMIT_WIN[1]]
                     pfc_spk = np.nan_to_num(np.load(pfc_spk_path, mmap_mode='r'))[:, :, OMIT_WIN[0]:OMIT_WIN[1]]
                     lags, ccg = compute_ccg_robust(v1_spk, pfc_spk)
                     results[f'ccg_{c}'] = ccg
-                
                 # 2. LFP
                 v1_lfp_path = os.path.join(DATA_DIR, f'ses{sid_str}-probe{v1_probe}-lfp-{c}.npy')
                 pfc_lfp_path = os.path.join(DATA_DIR, f'ses{sid_str}-probe{pfc_probe}-lfp-{c}.npy')
-                
                 if os.path.exists(v1_lfp_path) and os.path.exists(pfc_lfp_path):
                     v1_lfp = np.nan_to_num(np.mean(np.load(v1_lfp_path, mmap_mode='r')[:, :, OMIT_WIN[0]:OMIT_WIN[1]], axis=1))
                     pfc_lfp = np.nan_to_num(np.mean(np.load(pfc_lfp_path, mmap_mode='r')[:, :, OMIT_WIN[0]:OMIT_WIN[1]], axis=1))
-                    
                     # Trial-averaged LFP for Granger (more robust if trials are consistent)
                     data = np.stack([v1_lfp.mean(axis=0), pfc_lfp.mean(axis=0)])
                     t_series = ts.TimeSeries(data, sampling_rate=FS)
                     g_analyzer = nta.GrangerAnalyzer(t_series, order=LFP_ORDER)
-                    
                     results[f'freqs_{c}'] = g_analyzer.frequencies
                     results[f'g_v1_pfc_{c}'] = g_analyzer.causality_xy
                     results[f'g_pfc_v1_{c}'] = g_analyzer.causality_yx
             except Exception as e:
                 print(f"  Error processing {c} for {sid_str}: {e}")
-        
         if f'ccg_AAAX' in results:
             fig_ccg = go.Figure()
             fig_ccg.add_trace(go.Scatter(x=lags, y=results['ccg_AAAX'], name='Omit (AAAX)', line=dict(color='red', width=3)))
@@ -116,14 +101,11 @@ def run_v1_pfc_directionality():
             fig_ccg.update_layout(template='plotly_white', title=f"Directionality (Spike CCG): {sid_str} (V1 vs PFC)",
                                   xaxis_title="Lag (ms) [V1 leads PFC if peak > 0]", yaxis_title="Coincidence Count")
             fig_ccg.write_html(os.path.join(OUTPUT_DIR, f"DIR_CCG_{sid_str}_V1_PFC.html"))
-            
         if f'g_v1_pfc_AAAX' in results:
             fig_g = go.Figure()
             f = results['freqs_AAAX']
-            
             def clean(x):
                 return np.where(np.isnan(x) | np.isinf(x), 0, x)
-                
             fig_g.add_trace(go.Scatter(x=f, y=clean(results['g_v1_pfc_AAAX']), name='V1 -> PFC (Omit)', line=dict(color='red')))
             fig_g.add_trace(go.Scatter(x=f, y=clean(results['g_pfc_v1_AAAX']), name='PFC -> V1 (Omit)', line=dict(color='blue')))
             fig_g.add_trace(go.Scatter(x=f, y=clean(results['g_v1_pfc_RRRR']), name='V1 -> PFC (Std)', line=dict(color='red', dash='dash'), opacity=0.5))
@@ -132,25 +114,20 @@ def run_v1_pfc_directionality():
                                 xaxis_title="Frequency (Hz)", yaxis_title="Causality",
                                 xaxis_range=[0, 100])
             fig_g.write_html(os.path.join(OUTPUT_DIR, f"DIR_Granger_{sid_str}_V1_PFC.html"))
-        
         all_results.append(results)
-            
     # Aggregate across sessions
     if all_results:
         summary_ccg_om = np.mean([r['ccg_AAAX'] for r in all_results if 'ccg_AAAX' in r], axis=0)
         summary_ccg_std = np.mean([r['ccg_RRRR'] for r in all_results if 'ccg_RRRR' in r], axis=0)
-        
         fig_ccg_sum = go.Figure()
         fig_ccg_sum.add_trace(go.Scatter(x=lags, y=summary_ccg_om, name='Omit (AAAX)', line=dict(color='red', width=4)))
         fig_ccg_sum.add_trace(go.Scatter(x=lags, y=summary_ccg_std, name='Std (RRRR)', line=dict(color='gray', dash='dash')))
         fig_ccg_sum.update_layout(template='plotly_white', title="Figure 06A: V1-PFC Spike CCG (Summary)",
                                   xaxis_title="Lag (ms) [V1 leads PFC if peak > 0]", yaxis_title="Coincidence Count")
         fig_ccg_sum.write_html(os.path.join(OUTPUT_DIR, "FIG_06A_V1_PFC_CCG_Summary.html"))
-        
         # Granger Summary
         summary_g_v1_pfc_om = np.mean([r['g_v1_pfc_AAAX'] for r in all_results if 'g_v1_pfc_AAAX' in r], axis=0)
         summary_g_pfc_v1_om = np.mean([r['g_pfc_v1_AAAX'] for r in all_results if 'g_pfc_v1_AAAX' in r], axis=0)
-        
         fig_g_sum = go.Figure()
         fig_g_sum.add_trace(go.Scatter(x=f, y=clean(summary_g_v1_pfc_om), name='V1 -> PFC (Omit)', line=dict(color='red', width=3)))
         fig_g_sum.add_trace(go.Scatter(x=f, y=clean(summary_g_pfc_v1_om), name='PFC -> V1 (Omit)', line=dict(color='blue', width=3)))
@@ -158,8 +135,13 @@ def run_v1_pfc_directionality():
                                 xaxis_title="Frequency (Hz)", yaxis_title="Causality",
                                 xaxis_range=[0, 100])
         fig_g_sum.write_html(os.path.join(OUTPUT_DIR, "FIG_06B_V1_PFC_Granger_Summary.html"))
-
     print("Directionality Analysis Complete.")
+    run_v1_pfc_directionality()
 
 if __name__ == '__main__':
-    run_v1_pfc_directionality()
+    import argparse
+    parser = argparse.ArgumentParser(description='Run script')
+    # Add arguments here
+    args = parser.parse_args()
+    if 'main' in globals():
+        main(args)

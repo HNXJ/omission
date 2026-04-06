@@ -1,3 +1,5 @@
+from codes.config.paths import FIGURES_DIR
+
 import os
 import glob
 import base64
@@ -54,6 +56,6 @@ def audit_images(directory):
                 f.write(err + "\n")
 
 if __name__ == '__main__':
-    target_dir = r'D:\Analysis\Omission\local-workspace\figures\oglo'
+    target_dir = str(FIGURES_DIR / 'oglo')
     audit_images(target_dir)
     print("Vision Audit Complete.")
