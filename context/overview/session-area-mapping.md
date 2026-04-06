@@ -1,0 +1,60 @@
+---
+status: canonical
+scope: overview
+source_of_truth: true
+supersedes:
+  - context/docs/nwb-areas-table.md
+  - context/plans/nwb-areas-table.md
+last_reviewed: 2026-04-06
+---
+
+# Session-Area Mapping
+
+This document details the anatomical mapping of recording probes to brain areas for each session.
+
+## Mapping Logic
+1. **Probe Identification**: Channel IDs are sequential (128 per probe).
+   - Probe 0: 0-127
+   - Probe 1: 128-255
+   - Probe 2: 256-383
+2. **Area Division**: Labels like `V1, V2` imply a 50/50 split of the 128 channels (0-63 for V1, 64-127 for V2).
+3. **Aliases**: `DP` is mapped to **V4**. `V3` is split between **V3d** and **V3a**.
+
+## Master Mapping Table
+| Session | Probe | Areas | Channels |
+|:---:|:---:|:---|:---:|
+| 230629 | 0 | V1, V2 | 128 |
+| 230629 | 1 | V3d, V3a | 128 |
+| 230630 | 0 | PFC | 128 |
+| 230630 | 1 | V4, MT | 128 |
+| 230630 | 2 | V3, V1 | 128 |
+| 230714 | 0 | V1, V2 | 128 |
+| 230714 | 1 | V3d, V3a | 128 |
+| 230719 | 0 | V1, V2 | 128 |
+| 230719 | 1 | DP (V4) | 128 |
+| 230719 | 2 | V3d, V3a | 128 |
+| 230720 | 0 | V1, V2 | 128 |
+| 230720 | 1 | V3d, V3a | 128 |
+| 230721 | 0 | V1, V2 | 128 |
+| 230721 | 1 | V3d, V3a | 128 |
+| 230816 | 0 | PFC | 128 |
+| 230816 | 1 | V4, MT | 128 |
+| 230816 | 2 | V3, V1 | 128 |
+| 230818 | 0 | PFC | 128 |
+| 230818 | 1 | TEO, FST | 128 |
+| 230818 | 2 | MT, MST | 128 |
+| 230823 | 0 | FEF | 128 |
+| 230823 | 1 | MT, MST | 128 |
+| 230823 | 2 | V1, V2, V3 | 128 |
+| 230825 | 0 | PFC | 128 |
+| 230825 | 1 | MT, MST | 128 |
+| 230825 | 2 | V4, TEO | 128 |
+| 230830 | 0 | PFC | 128 |
+| 230830 | 1 | V4, MT | 128 |
+| 230830 | 2 | V1, V3 | 128 |
+| 230831 | 0 | FEF | 128 |
+| 230831 | 1 | MT, MST | 128 |
+| 230831 | 2 | V4, TEO | 128 |
+| 230901 | 0 | PFC | 128 |
+| 230901 | 1 | MT, MST | 128 |
+| 230901 | 2 | V3, V4 | 128 |

@@ -20,5 +20,12 @@
 ## 4. Safety Guard
 - **Rule**: If a power trace contains all `NaN` or `0` values, the figure is not saved to the vault to ensure technical integrity.
 
+## 5. Neural Variability Quenching (MMFF/MMV)
+**Objective**: Quantify the reduction in across-trial variability as a proxy for predictive precision.
+- **Algorithm (Spikes)**: Mean-Matched Fano Factor (Churchland 2010). Matches firing rate distributions across time bins to isolate variance changes from mean-rate changes.
+- **Algorithm (LFP/MUAe)**: Across-trial variance normalized by the mean absolute value (MMV) at each time point.
+- **Metric**: Total Variation Score (TV-Score) for channel quality assessment and artifact pruning.
+- **Hypothesis**: The "internal expectation" of a stimulus quenches variability even when the physical stimulus is absent (Visual Void).
+
 ---
 *Status: Verified and Accepted.*
