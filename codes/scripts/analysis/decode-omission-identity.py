@@ -11,6 +11,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 import plotly.graph_objects as go
+from codes.config.paths import DATA_DIR, FIGURES_DIR
 
 AREA_ORDER = ['V1', 'V2', 'V3d', 'V3a', 'V4', 'MT', 'MST', 'TEO', 'FST', 'FEF', 'PFC']
 CHANNELS_PER_PROBE = 128
@@ -46,11 +47,12 @@ def get_unit_to_area_map(nwb_path):
                     sw = CHANNELS_PER_PROBE / len(mapped)
                     area = mapped[min(int((p_id % CHANNELS_PER_PROBE) // sw), len(mapped)-1)]
                     if area in AREA_ORDER: unit_map[(probe_id, local_idx)] = area
-    except: pass
+    except Exception as e:
+        print(f"Error processing {nwb_path}: {e}")
     return unit_map
 
 def decode_figure_5():
-    nwb_files = glob.glob('data/sub-*_ses-*_rec.nwb')
+    nwb_files = glob.glob(str(DATA_DIR / 'sub-*_ses-*_rec.nwb'))
     
     # Session -> Area -> {'X': [], 'y': []}
     session_results = []
@@ -65,7 +67,7 @@ def decode_figure_5():
         session_area_data = {area: {'X': [], 'y': []} for area in AREA_ORDER}
         
         for c in COND_IDENTITY:
-            spk_files = glob.glob(f'data/ses{session_id}-units-probe*-spk-{c}.npy')
+            spk_files = glob.glob(str(DATA_DIR / f'ses{session_id}-units-probe*-spk-{c}.npy'))
             probe_data = {}
             for f in spk_files:
                 p_id = int(re.search(r'probe(\d+)', f).group(1))
@@ -103,10 +105,11 @@ def decode_figure_5():
                         'Train': accuracy_score(y_tr, clf.predict(X_tr)),
                         'Test': accuracy_score(y_te, clf.predict(X_te))
                     })
-                except: pass
+                except Exception as e:
+                    print(f"Error decoding {area} in {session_id}: {e}")
 
         # Behavioral (Aggregate across sessions)
-        f_beh = glob.glob(f'data/ses{session_id}-behavioral-AAAX.npy')
+        f_beh = glob.glob(str(DATA_DIR / f'ses{session_id}-behavioral-AAAX.npy'))
         if f_beh:
             beh_data = np.load(f_beh[0])
             for t_idx in range(beh_data.shape[0]):
@@ -122,7 +125,8 @@ def decode_figure_5():
                 behavior_all['y'].append(0)
 
     # Aggregated Results
-    os.makedirs('figures/final_reports', exist_ok=True)
+    output_dir = FIGURES_DIR / 'final_reports'
+    os.makedirs(output_dir, exist_ok=True)
     df_res = pd.DataFrame(session_results)
     if not df_res.empty:
         summary = df_res.groupby('Area').agg({'Train': 'mean', 'Test': ['mean', 'sem']}).reset_index()
@@ -137,7 +141,7 @@ def decode_figure_5():
         fig.add_hline(y=0.33, line_dash="dash", annotation_text="Chance (33%)")
         fig.update_layout(title="Omission Identity Decoding (A vs B vs null-R, 50-50 Split)",
                           yaxis_title="Accuracy", template="plotly_white", barmode='group')
-        fig.write_html("figures/final_reports/FIG_05A_Identity_Decoding.html")
+        fig.write_html(output_dir / "FIG_05A_Identity_Decoding.html")
 
     # Behavioral Result (50-50 Split)
     X_b = np.array(behavior_all['X'])
@@ -152,7 +156,7 @@ def decode_figure_5():
         fig_b = go.Figure(data=[go.Bar(x=["Eye Kinematics"], y=[beh_acc], marker_color='gray')])
         fig_b.add_hline(y=0.50, line_dash="dash", annotation_text="Chance (50%)")
         fig_b.update_layout(title="Behavioral Decoding (Omission vs Delay, 50-50 Split)", yaxis_title="Accuracy", yaxis_range=[0,1])
-        fig_b.write_html("figures/final_reports/FIG_05B_Behavioral_Control.html")
+        fig_b.write_html(output_dir / "FIG_05B_Behavioral_Control.html")
 
 
 def main(args=None):

@@ -85,8 +85,8 @@ def parse_bhv_eye_data(mat_path):
         return None
 
 def process_batch():
-    bhv_dir = str(BEHAVIORAL_DIR)
-    output_dir = str(FIGURES_DIR / 'part01')
+    bhv_dir = BEHAVIORAL_DIR
+    output_dir = FIGURES_DIR / 'part01'
     os.makedirs(output_dir, exist_ok=True)
     
     bhv_paths = glob.glob(os.path.join(bhv_dir, "*.mat"))
@@ -118,11 +118,11 @@ def process_batch():
             fig = go.Figure()
             # X
             fig.add_trace(go.Scatter(x=time, y=mu[:, 0] + sem[:, 0], line_width=0, showlegend=False))
-            fig.add_trace(go.Scatter(x=time, y=mu[:, 0] - sem[:, 0], fill='tonexty', fillcolor='red', opacity=0.2, line_width=0, showlegend=False))
+            fig.add_trace(go.Scatter(x=time, y=mu[:, 0] - sem[:, 0], fill='tonexty', fillcolor='rgba(255, 0, 0, 0.2)', line_width=0, showlegend=False))
             fig.add_trace(go.Scatter(x=time, y=mu[:, 0], name='Avg X', line=dict(color='red', width=3)))
             # Y
             fig.add_trace(go.Scatter(x=time, y=mu[:, 1] + sem[:, 1], line_width=0, showlegend=False))
-            fig.add_trace(go.Scatter(x=time, y=mu[:, 1] - sem[:, 1], fill='tonexty', fillcolor='blue', opacity=0.2, line_width=0, showlegend=False))
+            fig.add_trace(go.Scatter(x=time, y=mu[:, 1] - sem[:, 1], fill='tonexty', fillcolor='rgba(0, 0, 255, 0.2)', line_width=0, showlegend=False))
             fig.add_trace(go.Scatter(x=time, y=mu[:, 1], name='Avg Y', line=dict(color='blue', width=3)))
             
             fig.add_vline(x=0, line_dash="dash", line_color="black", annotation_text="Onset")

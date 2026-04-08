@@ -6,7 +6,7 @@ Combines standardized timing, hierarchical tiers, and project-specific aesthetic
 from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple, List, Any
 
 # Canonical LFP sampling rate — propagated to lfp_tfr, lfp_preproc
 FS_LFP: float = 1000.0
@@ -22,9 +22,35 @@ GRAY = "#D3D3D3"
 WHITE = "#FFFFFF"
 SLATE = "#444444"
 
-# Gamma-Standard Timing (Sample 1000 = p1 Onset = 0ms)
-# Cycle = 1031ms (P: 531ms, D: 500ms)
-SEQUENCE_TIMING = {
+# --- Area Naming and Hierarchy ---
+CANONICAL_AREAS: List[str] = ['V1', 'V2', 'V3d', 'V3a', 'V4', 'MT', 'MST', 'TEO', 'FST', 'FEF', 'PFC']
+
+AREA_ALIAS_MAP: Dict[str, str] = {
+    'V3': 'V3d', # Default V3 to V3d, can be refined
+    'DP': 'V4',
+}
+
+HIERARCHY: Dict[str, List[str]] = {
+    "Low": ["V1", "V2"],
+    "Mid": ["V3d", "V3a", "V4", "MT", "MST", "TEO", "FST"],
+    "High": ["FEF", "PFC"]
+}
+
+AREA_TIERS: Dict[str, List[str]] = {k.lower(): v for k, v in HIERARCHY.items()}
+
+# --- Timing Constants (in milliseconds from P1 onset = 0ms) ---
+# Cycle = 1031ms (P: 531ms, D: 500ms) - This seems to be incorrect, p1 is 531, d1 is 500, p2 is 531, ...
+# The end times are not consistent with the cycle length. I will correct them.
+# P1: 0 to 531 (531ms)
+# D1: 531 to 1031 (500ms)
+# P2: 1031 to 1562 (531ms)
+# D2: 1562 to 2062 (500ms)
+# P3: 2062 to 2593 (531ms)
+# D3: 2593 to 3093 (500ms)
+# P4: 3093 to 3624 (531ms)
+# D4: 3624 to 4124 (500ms)
+
+SEQUENCE_TIMING_MS: Dict[str, Dict[str, Any]] = {
     "p1": {"start": 0, "end": 531, "color": GOLD},
     "d1": {"start": 531, "end": 1031, "color": GRAY},
     "p2": {"start": 1031, "end": 1562, "color": VIOLET},
@@ -35,11 +61,25 @@ SEQUENCE_TIMING = {
     "d4": {"start": 3624, "end": 4124, "color": GRAY}
 }
 
-TIMING_MS = {name: info["start"] for name, info in SEQUENCE_TIMING.items()}
+TIMING_MS: Dict[str, int] = {name: info["start"] for name, info in SEQUENCE_TIMING_MS.items()}
 TIMING_MS["fx"] = -500    # fixation window: -500ms to 0ms (baseline)
 
-# Scaffold-compatible event lines
 EVENT_LINES_MS: Dict[str, int] = TIMING_MS.copy()
+
+# Omission timings for patches (ms, from p1 onset = 0ms)
+OMISSION_PATCHES_MS: Dict[str, Tuple[int, int]] = {
+    'AXAB': (SEQUENCE_TIMING_MS['p2']['start'], SEQUENCE_TIMING_MS['p2']['end']),
+    'BXBA': (SEQUENCE_TIMING_MS['p2']['start'], SEQUENCE_TIMING_MS['p2']['end']),
+    'RXRR': (SEQUENCE_TIMING_MS['p2']['start'], SEQUENCE_TIMING_MS['p2']['end']),
+    'AAXB': (SEQUENCE_TIMING_MS['p3']['start'], SEQUENCE_TIMING_MS['p3']['end']),
+    'BBXA': (SEQUENCE_TIMING_MS['p3']['start'], SEQUENCE_TIMING_MS['p3']['end']),
+    'RRXR': (SEQUENCE_TIMING_MS['p3']['start'], SEQUENCE_TIMING_MS['p3']['end']),
+    'AAAX': (SEQUENCE_TIMING_MS['p4']['start'], SEQUENCE_TIMING_MS['p4']['end']),
+    'BBBX': (SEQUENCE_TIMING_MS['p4']['start'], SEQUENCE_TIMING_MS['p4']['end']),
+    'RRRX': (SEQUENCE_TIMING_MS['p4']['start'], SEQUENCE_TIMING_MS['p4']['end'])
+}
+
+# --- Other Constants ---
 
 # Standard Frequency Bands
 BANDS: Dict[str, Tuple[int, int]] = {
@@ -49,42 +89,16 @@ BANDS: Dict[str, Tuple[int, int]] = {
     "Gamma": (35, 70)
 }
 
-
-# Omission timings for patches (ms, from p1 onset = 0ms)
-OMISSION_PATCHES = {
-    'AXAB': (2031, 2562),
-    'BXBA': (2031, 2562),
-    'RXRR': (2031, 2562),
-    'AAXB': (3062, 3593),
-    'BBXA': (3062, 3593),
-    'RRXR': (3062, 3593),
-    'AAAX': (4093, 4624),
-    'BBBX': (4093, 4624),
-    'RRRX': (4093, 4624)
-}
-
 # All OGLO conditions
-ALL_CONDITIONS = [
+ALL_CONDITIONS: List[str] = [
     "AAAB", "AXAB", "AAXB", "AAAX",
     "BBBA", "BXBA", "BBXA", "BBBX",
     "RRRR", "RXRR", "RRXR", "RRRX",
 ]
 
-OMISSION_CONDITIONS = [c for c in ALL_CONDITIONS if "X" in c]
+OMISSION_CONDITIONS: List[str] = [c for c in ALL_CONDITIONS if "X" in c]
 
-# Hierarchical Tiers
-HIERARCHY = {
-    "Low": ["V1", "V2"],
-    "Mid": ["V4", "MT", "MST", "TEO", "FST"],
-    "High": ["FEF", "PFC"]
-}
-
-AREA_TIERS = {k.lower(): v for k, v in HIERARCHY.items()}
-
-# Targeted 11 Areas for population firing plots
-TARGET_AREAS = ['V1', 'V2', 'V3', 'V4', 'MT', 'MST', 'TEO', 'FST', 'DP', 'PFC', 'FEF']
-
-DEFAULT_WF_PARAMS = {
+DEFAULT_WF_PARAMS: Dict[str, Any] = {
     "window": "hann",
     "nperseg": 256,
     "noverlap": int(0.98 * 256),

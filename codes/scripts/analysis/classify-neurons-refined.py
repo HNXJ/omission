@@ -7,6 +7,7 @@ from scipy.stats import ttest_ind, pearsonr
 from pynwb import NWBHDF5IO
 from collections import defaultdict
 from pathlib import Path
+from codes.config.paths import DATA_DIR, PROCESSED_DATA_DIR
 
 # Constants
 CHANNELS_PER_PROBE = 128
@@ -53,17 +54,17 @@ def get_unit_metadata(nwb_path):
                     'channel': p_id,
                     'area': area
                 })
-    except: pass
+    except Exception as e:
+        print(f"Error processing {nwb_path}: {e}")
     return unit_meta
 
 def classify_neurons_refined():
     """Enhanced classification: selective, agnostic, preference, omit, eye."""
-    data_dir = Path(__file__).parents[2] / "data"
-    checkpoint_dir = Path(__file__).parents[2] / "output" / "checkpoints"
+    checkpoint_dir = PROCESSED_DATA_DIR
     os.makedirs(checkpoint_dir, exist_ok=True)
     
     # Load session mappings
-    sessions = sorted(list(set([re.search(r'ses-(\d+)', f).group(1) for f in glob.glob(f'{data_dir}/sub-*_ses-*_rec.nwb')])))
+    sessions = sorted(list(set([re.search(r'ses-(\d+)', f).group(1) for f in glob.glob(str(DATA_DIR / 'sub-*_ses-*_rec.nwb'))])))
     
     # Load area mapping from existing categories
     area_df = pd.read_csv(os.path.join(checkpoint_dir, 'neuron_categories.csv'))
@@ -80,7 +81,7 @@ def classify_neurons_refined():
         conds = ['AAAB', 'BBBA', 'AXAB', 'BXBA']
         spk_data = {}
         for c in conds:
-            files = glob.glob(f'{data_dir}/ses{ses}-units-probe*-spk-{c}.npy')
+            files = glob.glob(str(DATA_DIR / f'ses{ses}-units-probe*-spk-{c}.npy'))
             for f in files:
                 p_id = int(re.search(r'probe(\d+)', f).group(1))
                 if c not in spk_data: spk_data[c] = {}
@@ -89,7 +90,7 @@ def classify_neurons_refined():
         # Load Behavioral data (Eye)
         eye_data = {}
         for c in conds:
-            f = glob.glob(f'{data_dir}/ses{ses}-behavioral-{c}.npy')
+            f = glob.glob(str(DATA_DIR / f'ses{ses}-behavioral-{c}.npy'))
             if f: eye_data[c] = np.load(f[0], mmap_mode='r')
             
         # Iterate through probes and units

@@ -10,11 +10,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Paths
-LAYERED_UNITS_PATH = str(PROJECT_ROOT / 'checkpoints
-eal_omission_units_layered_v3.csv')
-PEV_PATH = str(PROJECT_ROOT / 'LFP_Extractions/omission_lfp_pev_v2.npz')
-LATENCY_PATH = str(PROCESSED_DATA_DIR / 'area_population_latencies.csv')
-OUTPUT_DIR = str(FIGURES_DIR)
+LAYERED_UNITS_PATH = PROCESSED_DATA_DIR / 'real_omission_units_layered_v3.csv'
+PEV_PATH = PROCESSED_DATA_DIR / 'omission_lfp_pev_v2.npz'
+LATENCY_PATH = PROCESSED_DATA_DIR / 'area_population_latencies.csv'
+OUTPUT_DIR = FIGURES_DIR
 
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -41,7 +40,7 @@ def main():
     ax1.set_ylabel("Count of Real Omission Units")
     ax1.legend()
     ax1.grid(True, axis='y', alpha=0.3)
-    fig1.savefig(os.path.join(OUTPUT_DIR, 'summary_layer_distribution.png'))
+    fig1.savefig(OUTPUT_DIR / 'summary_layer_distribution.png')
 
     # 2. Omission Index (Ratio) by Area and Layer
     fig2, ax2 = plt.subplots(figsize=(14, 6))
@@ -57,7 +56,7 @@ def main():
     ax2.set_title("Omission Response Strength (Omit/Fix Ratio)")
     ax2.set_ylabel("Ratio (Log Scale)")
     ax2.grid(True, axis='y', alpha=0.3)
-    fig2.savefig(os.path.join(OUTPUT_DIR, 'summary_strength_by_layer.png'))
+    fig2.savefig(OUTPUT_DIR / 'summary_strength_by_layer.png')
 
     # 3. Latency Hierarchy Plot
     if df_lat is not None:
@@ -71,7 +70,7 @@ def main():
         ax3.set_xlabel("Latency (ms after Omission Onset)")
         ax3.set_title("Omission Signal Hierarchy (Population PSTH Onset)")
         ax3.grid(True, axis='x', alpha=0.3)
-        fig3.savefig(os.path.join(OUTPUT_DIR, 'summary_latency_hierarchy.png'))
+        fig3.savefig(OUTPUT_DIR / 'summary_latency_hierarchy.png')
 
     print(f"Summary visualizations updated in {OUTPUT_DIR}")
 

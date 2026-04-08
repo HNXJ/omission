@@ -37,11 +37,81 @@ import numpy as np
 import pandas as pd
 from scipy.signal import coherence as scipy_coherence, spectrogram
 
-from codes.functions.lfp.lfp_constants import (
-    FS_LFP, BANDS, SEQUENCE_TIMING, TIMING_MS, ALL_CONDITIONS,
-    OMISSION_CONDITIONS, AREA_TIERS, DEFAULT_WF_PARAMS,
-    GOLD, BLACK, VIOLET
-)
+# ... (existing imports)
+
+from codes.functions.lfp.lfp_mapping import resolve_area_membership
+
+# ... (rest of imports)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CANONICAL ACCESSOR
+# ─────────────────────────────────────────────────────────────────────────────
+
+def get_signal_conditional(
+    signal_type: str,
+    condition: str,
+    area: str,
+    t_pre_ms: int = 1000,
+    t_post_ms: int = 4000,
+    align_event: str = "p1",
+    target_fs: float = 1000.0,
+    spike_bin_ms: float = 1.0,
+    spike_smooth_ms: Optional[float] = None,
+    session_paths: Optional[List[Path]] = None,
+) -> Dict[str, Any]:
+    """
+    Canonical accessor for SPK, MUAe, or LFP data.
+    """
+    out = {
+        "signal_type": signal_type,
+        "condition": condition,
+        "area": area,
+        "align_event": align_event,
+        "t_pre_ms": t_pre_ms,
+        "t_post_ms": t_post_ms,
+        "fs": target_fs,
+        "times_ms": np.arange(-t_pre_ms, t_post_ms),
+        "sessions": {}
+    }
+
+    # Placeholder: implementation needs to iterate over session_paths 
+    # (or glob default data dir), use _resolve_area_channels_for_session, 
+    # extract epochs using _epoch_analog_trials/_epoch_spike_trials, 
+    # and fill out['sessions'][session_id].
+
+    return out
+
+def _normalize_session_token(session_id: str) -> str:
+    # Extract 6-digit token from potential path/name
+    import re
+    match = re.search(r'\d{6}', session_id)
+    return match.group(0) if match else session_id
+
+def _normalize_area_label(area: str) -> str:
+    # Alias logic
+    from codes.functions.lfp.lfp_constants import AREA_ALIAS_MAP
+    return AREA_ALIAS_MAP.get(area, area)
+
+def _resolve_area_channels_for_session(session: Dict, area: str) -> Dict[int, List[int]]:
+    # Use resolve_area_membership logic
+    session_id = _normalize_session_token(session.get("session_id", ""))
+    area = _normalize_area_label(area)
+    membership = {}
+    # Iterate probes...
+    return membership
+
+def summarize_conditional_signal(result: Dict) -> Dict:
+    summary = {}
+    for sid, sdata in result.get("sessions", {}).items():
+        data = sdata.get("data")
+        summary[sid] = {
+            "n_trials": data.shape[0] if data is not None else 0,
+            "n_features": data.shape[1] if data is not None else 0,
+            "n_time": data.shape[2] if data is not None else 0
+        }
+    return summary
+
+# ... (existing functions)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -157,14 +227,7 @@ def build_omission_windows(
         'baseline_win' : (-500, 0) — pre-p1 baseline
         'by_trial'     : {trial_id: {window_type: (t0, t1)}}
     """
-    DEFAULT_OMISSION_WINDOWS = {
-        "RXRR": (TIMING_MS["d1"], TIMING_MS["d2"]),
-        "AXAB": (TIMING_MS["d1"], TIMING_MS["d2"]),
-        "RRXR": (TIMING_MS["d2"], TIMING_MS["d3"]),
-        "AAXB": (TIMING_MS["d2"], TIMING_MS["d3"]),
-        "RRRX": (TIMING_MS["d3"], TIMING_MS["d4"]),
-        "AAAX": (TIMING_MS["d3"], TIMING_MS["d4"]),
-    }
+    DEFAULT_OMISSION_WINDOWS = OMISSION_PATCHES_MS
     GHOST_TIMES = {
         "RXRR": TIMING_MS["p2"],
         "AXAB": TIMING_MS["p2"],
@@ -889,9 +952,7 @@ def aggregate_by_tier(
     >>> # Plot: x=tier, y=tiers['High']['mean'] -- shows gradient
     """
     if tiers is None:
-        tiers = {"Low": ["V1", "V2"],
-                 "Mid": ["V4", "MT", "MST", "TEO", "FST"],
-                 "High": ["V3A", "V3D", "FEF", "PFC"]}
+        tiers = AREA_TIERS
 
     agg_fn = {"mean": np.nanmean, "median": np.nanmedian, "max": np.nanmax}[agg]
     result: Dict[str, Dict[str, float]] = {}

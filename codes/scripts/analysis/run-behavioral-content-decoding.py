@@ -15,40 +15,37 @@ from collections import Counter
 import plotly.express as px
 
 # Constants
-DATA_DIR = str(DATA_DIR)
-OUTPUT_DIR = str(FIGURES_DIR / 'final_reports/behavioral_decoding')
+OUTPUT_DIR = FIGURES_DIR / 'final_reports/behavioral_decoding'
+SESSIONS = ['230629', '230630', '230714', '230719', '230720', '230721', '230816', '230818', '230823', '230825', '230830', '230831', '230901']
+CONDITIONS = ['AAAB', 'AAAX', 'AAXB', 'AXAB', 'BBBA', 'BBBX', 'BBXA', 'BXBA', 'RRRR', 'RRRX', 'RRXR', 'RXRR']
+INTERVALS = {
+'Fix': (0, 1000),
+'P1': (1000, 1531),
+'D1': (1531, 2062),
+'P2': (2062, 2593),
+'D2': (2593, 3124),
+'P3': (3124, 3655),
+'D3': (3655, 4186),
+'P4': (4186, 4717),
+'D4': (4717, 5248)
+}
+STIM_MAP = {
+'AAAB': ['A', 'A', 'A', 'B'],
+'AAAX': ['A', 'A', 'A', 'O'],
+'AAXB': ['A', 'A', 'O', 'B'],
+'AXAB': ['A', 'O', 'A', 'B'],
+'BBBA': ['B', 'B', 'B', 'A'],
+'BBBX': ['B', 'B', 'B', 'O'],
+'BBXA': ['B', 'B', 'O', 'A'],
+'BXBA': ['B', 'O', 'B', 'A'],
+'RRRR': ['R', 'R', 'R', 'R'],
+'RRRX': ['R', 'R', 'R', 'O'],
+'RRXR': ['R', 'R', 'O', 'R'],
+'RXRR': ['R', 'O', 'R', 'R']
+}
 
-def main(args=None):
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    SESSIONS = ['230629', '230630', '230714', '230719', '230720', '230721', '230816', '230818', '230823', '230825', '230830', '230831', '230901']
-    CONDITIONS = ['AAAB', 'AAAX', 'AAXB', 'AXAB', 'BBBA', 'BBBX', 'BBXA', 'BXBA', 'RRRR', 'RRRX', 'RRXR', 'RXRR']
-    INTERVALS = {
-    'Fix': (0, 1000),
-    'P1': (1000, 1531),
-    'D1': (1531, 2062),
-    'P2': (2062, 2593),
-    'D2': (2593, 3124),
-    'P3': (3124, 3655),
-    'D3': (3655, 4186),
-    'P4': (4186, 4717),
-    'D4': (4717, 5248)
-    }
-    STIM_MAP = {
-    'AAAB': ['A', 'A', 'A', 'B'],
-    'AAAX': ['A', 'A', 'A', 'O'],
-    'AAXB': ['A', 'A', 'O', 'B'],
-    'AXAB': ['A', 'O', 'A', 'B'],
-    'BBBA': ['B', 'B', 'B', 'A'],
-    'BBBX': ['B', 'B', 'B', 'O'],
-    'BBXA': ['B', 'B', 'O', 'A'],
-    'BXBA': ['B', 'O', 'B', 'A'],
-    'RRRR': ['R', 'R', 'R', 'R'],
-    'RRRX': ['R', 'R', 'R', 'O'],
-    'RRXR': ['R', 'R', 'O', 'R'],
-    'RXRR': ['R', 'O', 'R', 'R']
-    }
-    def extract_features(data_seg, fs=1000):
-    # Ch 0: Pupil, Ch 1: X, Ch 2: Y
+def extract_features(data_seg, fs=1000):
+# Ch 0: Pupil, Ch 1: X, Ch 2: Y
     pupil = data_seg[0]
     x = data_seg[1]
     y = data_seg[2]
@@ -65,7 +62,8 @@ def main(args=None):
         'a_mean': np.mean(accel), 'a_max': np.max(accel)
     }
     return feats
-    def run_content_decoding():
+
+def run_content_decoding():
     all_data = []
     for sid in SESSIONS:
         print(f"Loading Session {sid}...")
@@ -92,7 +90,8 @@ def main(args=None):
                         feats['label'] = label
                         feats['session'] = sid
                         all_data.append(feats)
-            except:
+            except Exception as e:
+                print(f"Error processing {fpath}: {e}")
                 continue
     df = pd.DataFrame(all_data)
     print(f"Extracted {len(df)} feature vectors.")
@@ -148,12 +147,24 @@ def main(args=None):
     px.scatter(vis_df, x='PCA1', y='PCA2', color='label_global', title="PCA: Content Encoding").write_html(os.path.join(OUTPUT_DIR, "PCA_Content_Encoding.html"))
     px.scatter(vis_df, x='UMAP1', y='UMAP2', color='label', title="UMAP: Specific Content").write_html(os.path.join(OUTPUT_DIR, "UMAP_Content_Specific.html"))
     with open(os.path.join(OUTPUT_DIR, "behavioral_content_decoding_report.md"), 'w', encoding='utf-8') as f:
-        f.write("# Systematic Behavioral Content Decoding\n\n")
-        f.write("## 🎯 Objective\nDetermine if eye movements and pupil diameter encode the current visual content across 13 sessions.\n\n")
-        f.write("## 📈 Performance Summary\n")
+        f.write("# Systematic Behavioral Content Decoding
+
+")
+        f.write("## 🎯 Objective
+Determine if eye movements and pupil diameter encode the current visual content across 13 sessions.
+
+")
+        f.write("## 📈 Performance Summary
+")
         f.write(res_df.to_markdown(index=False))
-        f.write("\n\n## 🔍 Interpretation\n")
+        f.write("
+
+## 🔍 Interpretation
+")
         f.write("The results indicate whether oculomotor states (gaze position and kinetics) are passive or systematically biased by the visual content and internal expectations.")
+
+def main(args=None):
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
     run_content_decoding()
 
 if __name__ == '__main__':

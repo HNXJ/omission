@@ -1,5 +1,5 @@
 
-from codes.config.paths import FIGURES_DIR
+from codes.config.paths import FIGURES_DIR, BEHAVIORAL_DIR
 
 import scipy.io
 import numpy as np
@@ -12,19 +12,17 @@ import plotly.graph_objects as go
 from concurrent.futures import ProcessPoolExecutor
 
 # Constants
-BHV_DIR = r'behavioral\omission_bhv\data'
-OUTPUT_DIR = str(FIGURES_DIR / 'eye_directionality')
+BHV_DIR = BEHAVIORAL_DIR / 'omission_bhv/data'
+OUTPUT_DIR = FIGURES_DIR / 'eye_directionality'
+# Stimulus timing codes
+CODE_P1_ON = 101; CODE_P1_OFF = 102
+CODE_P2_ON = 103; CODE_P2_OFF = 104
+CODE_P3_ON = 105; CODE_P3_OFF = 106
+CODE_P4_ON = 107; CODE_P4_OFF = 108
+# Velocity Threshold for movement categorization (DVA/s)
+VEL_THRESH = 30 
 
-def main(args=None):
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    # Stimulus timing codes
-    CODE_P1_ON = 101; CODE_P1_OFF = 102
-    CODE_P2_ON = 103; CODE_P2_OFF = 104
-    CODE_P3_ON = 105; CODE_P3_OFF = 106
-    CODE_P4_ON = 107; CODE_P4_OFF = 108
-    # Velocity Threshold for movement categorization (DVA/s)
-    VEL_THRESH = 30 
-    def get_pca_direction(x, y):
+def get_pca_direction(x, y):
     """Calculates the principal direction of movement using PCA."""
     if len(x) < 10: return np.nan
     X = np.stack([x, y], axis=1)
@@ -39,7 +37,8 @@ def main(args=None):
     if np.dot(delta, direction) < 0:
         direction = -direction
     return np.arctan2(direction[1], direction[0])
-    def process_session(fpath):
+
+def process_session(fpath):
     print(f"Processing {os.path.basename(fpath)}...")
     try:
         data = scipy.io.loadmat(fpath, struct_as_record=False, squeeze_me=True)
@@ -108,7 +107,8 @@ def main(args=None):
                         'mean_vel': np.mean(vel)
                     })
     return session_results
-    def run_eye_directionality_analysis():
+
+def run_eye_directionality_analysis():
     files = glob.glob(os.path.join(BHV_DIR, "*.mat"))
     all_results = []
     # Using loop for simplicity and to avoid pickling errors with mat_struct
@@ -166,6 +166,9 @@ def main(args=None):
     fig_pos.add_annotation(text="Figure: Average gaze position and variability across A/B stimulus positions (p1-p4). Calibrated to Degrees of Visual Angle (DVA).",
                            xref="paper", yref="paper", x=0.5, y=-0.15, showarrow=False)
     fig_pos.write_html(os.path.join(OUTPUT_DIR, "FIG_Eye_Position_Summary.html"))
+
+def main(args=None):
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
     run_eye_directionality_analysis()
 
 if __name__ == '__main__':

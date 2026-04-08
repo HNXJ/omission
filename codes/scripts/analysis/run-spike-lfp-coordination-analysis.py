@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import h5py
 from concurrent.futures import ProcessPoolExecutor
-from codes.functions.spike_lfp_coordination import get_band_phase, compute_spike_lfp_ppc_trace
+from codes.functions.spiking.spike_lfp_coordination import get_band_phase, compute_spike_lfp_ppc_trace
 import json
 
 DATA_DIR = str(DATA_DIR)

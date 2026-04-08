@@ -9,10 +9,10 @@ import pandas as pd
 import numpy as np
 
 # Paths
-UNITS_LAYERED_PATH = str(PROJECT_ROOT / 'checkpoints
-eal_omission_units_layered_v3.csv')
-LATENCY_PATH = str(PROCESSED_DATA_DIR / 'omission_latencies_v2.csv') # Updated to use the latest latency file
-OUTPUT_DIR = str(PROJECT_ROOT / 'summary_stats')
+UNITS_PATH = PROCESSED_DATA_DIR / 'real_omission_units_layered_v3.csv'
+LATENCY_PATH = PROCESSED_DATA_DIR / 'omission_latencies_v2.csv'
+PEV_PATH = PROCESSED_DATA_DIR / 'lfp_pev_results.npz'
+OUTPUT_DIR = PROJECT_ROOT / 'summary_stats'
 
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -37,7 +37,7 @@ def main():
         mean_r_fix=('r_fix', lambda x: np.nanmean(x) if not x.isnull().all() else np.nan),
         median_latency_ms=('latency_ms', lambda x: np.nanmedian(x) if not x.isnull().all() else np.nan)
     ).reset_index()
-    area_summary.to_csv(os.path.join(OUTPUT_DIR, 'summary_neurons_by_area.csv'), index=False)
+    area_summary.to_csv(OUTPUT_DIR / 'summary_neurons_by_area.csv', index=False)
     print("Saved neuron summary by area.")
 
     # 2. Summary by Layer
@@ -46,7 +46,7 @@ def main():
         mean_r_fix=('r_fix', lambda x: np.nanmean(x) if not x.isnull().all() else np.nan),
         median_latency_ms=('latency_ms', lambda x: np.nanmedian(x) if not x.isnull().all() else np.nan)
     ).reset_index()
-    layer_summary.to_csv(os.path.join(OUTPUT_DIR, 'summary_neurons_by_layer.csv'), index=False)
+    layer_summary.to_csv(OUTPUT_DIR / 'summary_neurons_by_layer.csv', index=False)
     print("Saved neuron summary by layer.")
 
     # 3. Summary by Signal Strength (r_fix bins)
@@ -61,8 +61,8 @@ def main():
         neuron_count=('unit_idx', 'size')
     ).reset_index()
     
-    strength_area_summary.to_csv(os.path.join(OUTPUT_DIR, 'summary_neurons_by_strength_area.csv'), index=False)
-    strength_layer_summary.to_csv(os.path.join(OUTPUT_DIR, 'summary_neurons_by_strength_layer.csv'), index=False)
+    strength_area_summary.to_csv(OUTPUT_DIR / 'summary_neurons_by_strength_area.csv', index=False)
+    strength_layer_summary.to_csv(OUTPUT_DIR / 'summary_neurons_by_strength_layer.csv', index=False)
     print("Saved neuron summaries by signal strength.")
     
     # 4. LFP PEV Summary (Basic aggregation per area)
@@ -80,7 +80,7 @@ def main():
             lfp_summary_data.append({'session_id': session_id, 'area': area, 'avg_PEV': avg_pev, 'median_PEV': median_pev})
             
         df_lfp_summary = pd.DataFrame(lfp_summary_data)
-        df_lfp_summary.to_csv(os.path.join(OUTPUT_DIR, 'summary_lfp_pev_by_area.csv'), index=False)
+        df_lfp_summary.to_csv(OUTPUT_DIR / 'summary_lfp_pev_by_area.csv', index=False)
         print("Saved LFP PEV summary.")
     except FileNotFoundError:
         print("LFP PEV file not found. Skipping LFP summary.")

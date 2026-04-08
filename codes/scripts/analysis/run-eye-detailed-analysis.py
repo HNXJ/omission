@@ -1,5 +1,5 @@
 
-from codes.config.paths import FIGURES_DIR
+from codes.config.paths import FIGURES_DIR, BEHAVIORAL_DIR
 
 import scipy.io
 import numpy as np
@@ -11,14 +11,12 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 # Constants
-BHV_DIR = r'behavioral\omission_bhv\data'
-OUTPUT_DIR = str(FIGURES_DIR / 'eye_directionality')
+BHV_DIR = BEHAVIORAL_DIR / 'omission_bhv/data'
+OUTPUT_DIR = FIGURES_DIR / 'eye_directionality'
+SACCADE_VEL_THRESH = 30 # DVA/s
+MICROSACCADE_AMP_MAX = 1.5 # DVA
 
-def main(args=None):
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    SACCADE_VEL_THRESH = 30 # DVA/s
-    MICROSACCADE_AMP_MAX = 1.5 # DVA
-    def detect_movements(x, y, fs=1000):
+def detect_movements(x, y, fs=1000):
     """Detects saccades and categorizes them."""
     dx = np.diff(x)
     dy = np.diff(y)
@@ -47,11 +45,12 @@ def main(args=None):
         # But maybe just the PCA of the whole segment is what the user meant by "direction of eye movement"
         pass
     return movements
-    def process_session_detailed(fpath):
+
+def process_session_detailed(fpath):
     try:
         data = scipy.io.loadmat(fpath, struct_as_record=False, squeeze_me=True)
         bhv_array = data['bhvUni']
-    except: return []
+    except: return [], []
     all_movs = []
     all_segments = []
     for trial in bhv_array:
@@ -108,7 +107,8 @@ def main(args=None):
                         'x_mean': np.mean(x), 'y_mean': np.mean(y)
                     })
     return all_movs, all_segments
-    def run_detailed_analysis():
+
+def run_detailed_analysis():
     files = glob.glob(os.path.join(BHV_DIR, "*.mat"))
     all_movs = []
     all_segs = []
@@ -143,6 +143,9 @@ def main(args=None):
         fig.update_polars(angularaxis_direction="clockwise", angularaxis_rotation=90)
         fig.write_html(os.path.join(OUTPUT_DIR, f"FIG_Eye_Detailed_{state}.html"))
     print("Detailed analysis complete.")
+
+def main(args=None):
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
     run_detailed_analysis()
 
 if __name__ == '__main__':

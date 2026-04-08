@@ -4,6 +4,7 @@ import glob
 import nitime.analysis as na
 import nitime.timeseries as ts
 import re
+from codes.config.paths import DATA_DIR
 
 OMISSION_WINDOW = (4093, 4624)
 SAMPLING_RATE = 1000.0
@@ -17,12 +18,13 @@ BANDS = {
 def extract_band_granger():
     target_sessions = ['230630', '230816', '230830']
     
-    print("\n--- Spectral Granger Causality Band Results (Omission) ---")
+    print("
+--- Spectral Granger Causality Band Results (Omission) ---")
     
     for session_id in target_sessions:
         try:
-            f_v1 = glob.glob(f'data/ses{session_id}-probe2-lfp-AAAX.npy')[0]
-            f_pfc = glob.glob(f'data/ses{session_id}-probe0-lfp-AAAX.npy')[0]
+            f_v1 = glob.glob(str(DATA_DIR / f'ses{session_id}-probe2-lfp-AAAX.npy'))[0]
+            f_pfc = glob.glob(str(DATA_DIR / f'ses{session_id}-probe0-lfp-AAAX.npy'))[0]
             
             # Average over trials and channels for a stable population signal
             lfp_v1 = np.mean(np.load(f_v1, mmap_mode='r')[:, :, OMISSION_WINDOW[0]:OMISSION_WINDOW[1]], axis=(0, 1))

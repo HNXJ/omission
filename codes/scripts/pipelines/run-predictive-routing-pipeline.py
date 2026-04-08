@@ -1,3 +1,4 @@
+
 from codes.config.paths import PROJECT_ROOT
 
 import os
@@ -9,10 +10,9 @@ import traceback
 import numpy as np
 
 # Add the newly built predictive routing modules to path
+# sys.path.append(r"D:\Analysis\predictive_routing_2020\src")
 
-def main(args=None):
-    sys.path.append(r"D:\Analysis\predictive_routing_2020\src")
-    try:
+try:
     from preprocessing.oculomotor_controls import get_clean_trials
     from spectral_analysis.vflip_mapper import compute_vflip_profiles, find_vflip_crossover
     from spectral_analysis.csd_mapper import compute_1d_csd
@@ -21,15 +21,17 @@ def main(args=None):
     from statistics.cluster_stats import run_permutation_test
     from statistics.behavioral_glm import run_behavioral_regression
     from models.coherence_metrics import compute_wpli
-    except ImportError as e:
+except ImportError as e:
     print(f"Warning: Failed to import Gamma 1-4 modules. Ensure path is correct. Error: {e}")
-    WORKSPACE = PROJECT_ROOT
-    DATA_DIR = os.path.join(WORKSPACE, "data", "arrays")
-    FIGURES_DIR = os.path.join(WORKSPACE, "figures", "oglo2")
-    LOG_FILE = os.path.join(WORKSPACE, "predictive_routing_pipeline.log")
-    os.makedirs(FIGURES_DIR, exist_ok=True)
-    # Correctly detect sessions and probes from the file system
-    def get_session_probes():
+
+WORKSPACE = PROJECT_ROOT
+DATA_DIR = os.path.join(WORKSPACE, "data", "arrays")
+FIGURES_DIR = os.path.join(WORKSPACE, "figures", "oglo2")
+LOG_FILE = os.path.join(WORKSPACE, "predictive_routing_pipeline.log")
+
+CONDITIONS = ['AAAB', 'AAAX', 'AAXB', 'AXAB', 'BBBA', 'BBBX', 'BBXA', 'BXBA', 'RRRR', 'RRRX', 'RRXR', 'RXRR']
+
+def get_session_probes():
     files = glob.glob(os.path.join(DATA_DIR, "ses*-probe*-lfp-*.npy"))
     session_probes = {}
     for f in files:
@@ -41,13 +43,13 @@ def main(args=None):
             session_probes[ses_id] = set()
         session_probes[ses_id].add(probe_id)
     return {k: sorted(list(v)) for k, v in session_probes.items()}
-    SESSION_PROBES = get_session_probes()
-    CONDITIONS = ['AAAB', 'AAAX', 'AAXB', 'AXAB', 'BBBA', 'BBBX', 'BBXA', 'BXBA', 'RRRR', 'RRRX', 'RRXR', 'RXRR']
-    def log_msg(msg):
+
+def log_msg(msg):
     timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
     formatted = f"[{timestamp}] {msg}"
     print(formatted)
-    def process_probe(session, probe):
+
+def process_probe(session, probe):
     """
     Step 3: vFLIP2 Mapping (One per probe across all conditions)
     """
@@ -62,7 +64,8 @@ def main(args=None):
     profiles = compute_vflip_profiles(lfp_map)
     crossover_ch, _, _ = find_vflip_crossover(profiles, min_consistency=20)
     return crossover_ch
-    def process_condition(session, probe, condition, crossover_ch):
+
+def process_condition(session, probe, condition, crossover_ch):
     log_msg(f"Analyzing {session}-{probe}-{condition} | L4: {crossover_ch:.2f}")
     lfp_path = os.path.join(DATA_DIR, f"ses{session}-probe{probe}-lfp-{condition}.npy")
     if not os.path.exists(lfp_path):
@@ -90,8 +93,10 @@ def main(args=None):
     meta_path = os.path.join(FIGURES_DIR, f"meta_{session}_{probe}_{condition}.json")
     with open(meta_path, 'w') as f:
         json.dump(meta, f)
-    def run_pipeline():
+
+def run_pipeline():
     log_msg("Starting Master Predictive Routing Pipeline (vFLIP2 + Gamma 1-4)")
+    SESSION_PROBES = get_session_probes()
     for session, probes in SESSION_PROBES.items():
         for probe in probes:
             try:
@@ -107,6 +112,9 @@ def main(args=None):
     log_msg("Step 19: Triggering Vision QA Audit")
     # ... (Vision audit call)
     log_msg("Pipeline Complete.")
+
+def main(args=None):
+    os.makedirs(FIGURES_DIR, exist_ok=True)
     run_pipeline()
 
 if __name__ == '__main__':

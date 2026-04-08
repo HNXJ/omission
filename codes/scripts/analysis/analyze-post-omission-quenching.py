@@ -5,7 +5,7 @@ import os
 import numpy as np
 import pandas as pd
 import h5py
-from codes.functions.neuro_variability_suite import NeuroVariabilitySuite, apply_post_hoc_smoothing
+from codes.functions.spiking.neuro_variability_suite import NeuroVariabilitySuite, apply_post_hoc_smoothing
 import json
 
 # Parameters
@@ -91,12 +91,6 @@ def run_post_omit_comparison():
                     results[key] = []
                 results[key].extend(val)
     
-    output_file = os.path.join(CHECKPOINT_DIR, "post_omission_quenching_results.json")
-    with open(output_file, 'w') as f:
-        json.dump(results, f)
-    print(f"Post-omission quenching analysis complete. Results saved to {output_file}")
-                    
-    # Save results
     output_file = os.path.join(CHECKPOINT_DIR, "post_omission_quenching_results.json")
     with open(output_file, 'w') as f:
         json.dump(results, f)

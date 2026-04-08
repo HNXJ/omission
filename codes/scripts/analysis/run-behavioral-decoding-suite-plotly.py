@@ -64,7 +64,7 @@ def plot_identity_decoding_plotly(scores, session_id):
 
 
 def main(args=None):
-    data_dir = str(DATA_DIR)
+    data_dir = DATA_DIR
     session_id = "230629"
     results = analyze_session_eye(data_dir, session_id)
     identity_scores = decode_identity_eye(results)

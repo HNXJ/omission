@@ -12,7 +12,7 @@ The repository is divided into two primary domains: `codes/` (the execution envi
 
 ### `codes/` - Source Code & Analysis Package
 The codebase is structured to enforce separation of concerns, portability, and reproducibility:
-* **`config/`**: Centralized path and environment configuration (`paths.py`, `settings.py`). No hardcoded machine paths exist in active code.
+* **`config/`**: Centralized path and environment configuration (`paths.py`, `settings.py`).
 * **`functions/`**: Reusable, topic-driven subpackages:
   * `lfp/`: 15-step pipeline, preprocessing, TFR, connectivity, and laminar mapping.
   * `spiking/`: Mean-Matched Fano Factor (MMFF) variability quenching and spike-LFP coordination.
@@ -22,27 +22,20 @@ The codebase is structured to enforce separation of concerns, portability, and r
 * **`scripts/`**: Runnable entrypoints organized by intent:
   * `pipelines/`: Canonical orchestrators for major analysis tracks.
   * `analysis/`: Reusable analysis runners (e.g., decoding, manifold trajectories).
-  * `figures/`: Final publication-grade figure generation wrappers.
   * `qc/`: Quality control, timing verification, and data inspection tools.
 * **`tests/`**: Unit and integration tests for core extraction logic.
 
 ### `context/` - Source of Truth Documentation
-Detailed scientific planning and specifications reside in the `context/` directory:
-* **`overview/`**: Project objectives and Session-to-Area anatomical mappings.
-* **`specs/`**: Canonical task logic, condition definitions, and the 15-Step LFP-NWB Pipeline Standard.
-* **`analysis/`**: Roadmaps, decoding frameworks, and spectral/spiking methodologies.
-* **`figures/`**: Aesthetic rules (Vanderbilt Golden Dark + Violet) and figure-by-figure generative briefs.
-* **`manuscript/`**: Synthesized results and key findings.
+Detailed scientific planning and specifications reside in the `context/` directory.
 
 ## Canonical Entrypoints
 
-The analysis workflow is driven by canonical orchestration scripts. See `codes/scripts/__init__.py` for the programmatic registry.
+The analysis workflow is driven by canonical orchestration scripts.
 
 - **LFP 15-Step Pipeline**: `codes/scripts/pipelines/master-lfp-pipeline.py`
 - **Spiking Dynamics & Quenching**: `codes/scripts/pipelines/run-spiking-dynamics-suite.py`
 - **Eye & Behavioral Proxies**: `codes/scripts/pipelines/run-omission-dynamics-lfp-eye.py`
 - **Population Decoding**: `codes/scripts/analysis/decode-omission-identity.py`
-- **Master Figure Generation**: `codes/scripts/figures/generate-figures.py`
 - **Data QC & Validation**: `codes/scripts/qc/verify-trial-counts.py`
 
 ## Data Flow & Reproducibility

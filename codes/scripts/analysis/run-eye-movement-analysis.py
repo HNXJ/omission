@@ -13,15 +13,10 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
 # Path setup
-BHV_DIR = str(BEHAVIORAL_DIR / 'omission_bhv/data')
-DATA_DIR = str(DATA_DIR)
-OUTPUT_DIR = str(FIGURES_DIR / 'behavioral')
+BHV_DIR = BEHAVIORAL_DIR / 'omission_bhv/data'
+OUTPUT_DIR = FIGURES_DIR / 'behavioral'
 
-def main(args=None):
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    SESSION = '230830'
-    MAT_FILE = os.path.join(BHV_DIR, f'{SESSION}_Cajal_glo_omission.bhv2.mat')
-    def extract_eye_features(eye_data, fs=1000):
+def extract_eye_features(eye_data, fs=1000):
     """Extract x, y, dx, dy, d2x, d2y, speed, accel from raw eye trace."""
     x = eye_data[:, 0]
     y = eye_data[:, 1]
@@ -40,9 +35,11 @@ def main(args=None):
         'accel_mean': np.mean(accel), 'accel_max': np.max(accel),
         'displacement': np.sqrt((x[-1]-x[0])**2 + (y[-1]-y[0])**2)
     }
-    def run_eye_analysis():
-    print(f"Loading MonkeyLogic data for session {SESSION}...")
-    data = scipy.io.loadmat(MAT_FILE)
+
+def run_eye_analysis(session_id):
+    print(f"Loading MonkeyLogic data for session {session_id}...")
+    mat_file = BHV_DIR / f'{session_id}_Cajal_glo_omission.bhv2.mat'
+    data = scipy.io.loadmat(mat_file)
     bhv = data['bhvUni'][0]
     results = []
     all_features = []
@@ -90,8 +87,8 @@ def main(args=None):
     df['pca1'] = X_pca[:, 0]
     df['pca2'] = X_pca[:, 1]
     fig_pca = px.scatter(df, x='pca1', y='pca2', color='label', 
-                         title=f"PCA of Eye Movement Features (A vs B) - Session {SESSION}")
-    fig_pca.write_html(os.path.join(OUTPUT_DIR, f"eye_features_pca_{SESSION}.html"))
+                         title=f"PCA of Eye Movement Features (A vs B) - Session {session_id}")
+    fig_pca.write_html(os.path.join(OUTPUT_DIR, f"eye_features_pca_{session_id}.html"))
     # --- 2. SVM Classification ---
     skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
     accs = []
@@ -103,17 +100,20 @@ def main(args=None):
     print(f"SVM Accuracy (Eye Features A vs B): {avg_acc:.3f}")
     # --- 3. Save Markdown Report ---
     report = f"""# Eye Movement Analysis: A vs B Identity
-    - **Session**: {SESSION}
+    - **Session**: {session_id}
     - **Features**: x, y, speed, accel (mean/std/max)
     - **Trials**: {len(df)}
     - **SVM Accuracy**: {avg_acc:.3f}
-    - **PCA Insight**: Visualized in `eye_features_pca_{SESSION}.html`
+    - **PCA Insight**: Visualized in `eye_features_pca_{session_id}.html`
     ## Interpretation
     If accuracy > 0.55, eye movements carry identity-specific information, possibly due to micro-saccadic bias or predictive tracking.
     """
     with open(os.path.join(OUTPUT_DIR, "eye_movement_report.md"), 'w') as f:
         f.write(report)
-    run_eye_analysis()
+
+def main(args=None):
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    run_eye_analysis('230830')
 
 if __name__ == '__main__':
     import argparse

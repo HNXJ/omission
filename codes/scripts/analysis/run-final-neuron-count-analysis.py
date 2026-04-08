@@ -8,6 +8,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from pynwb import NWBHDF5IO
 import numpy as np
+from codes.config.paths import DATA_DIR, FIGURES_DIR
 
 # Mapping dictionary for specific aliases
 AREA_MAPPING = {
@@ -20,7 +21,7 @@ def get_definitive_neuron_counts_v2():
     Iterates through all NWB files and correctly assigns units to areas
     handling combined labels and the DP->V4 mapping.
     """
-    nwb_files = glob.glob('data/sub-*_ses-*_rec.nwb')
+    nwb_files = glob.glob(str(DATA_DIR / 'sub-*_ses-*_rec.nwb'))
     if not nwb_files:
         print("Error: No NWB files found in the 'data/' directory.")
         return None
@@ -102,8 +103,7 @@ def plot_counts(area_counts, area_order, output_dir):
     labels = area_order
     values = [int(round(area_counts.get(area, 0))) for area in labels]
 
-    print("
---- Definitive Neuron Counts Per Area (Corrected Logic) ---")
+    print("--- Definitive Neuron Counts Per Area (Corrected Logic) ---")
     for area, count in zip(labels, values):
         print(f"{area}: {count}")
 
@@ -116,19 +116,17 @@ def plot_counts(area_counts, area_order, output_dir):
     fig_polar.update_layout(title_text='Total Unique Neurons per Area (Circular, Definitive Corrected)')
 
     try:
-        fig_bar.write_html(os.path.join(output_dir, "neuron_counts_bar_definitive_v2.html"))
-        fig_bar.write_image(os.path.join(output_dir, "neuron_counts_bar_definitive_v2.svg"))
-        fig_polar.write_html(os.path.join(output_dir, "neuron_counts_circular_definitive_v2.html"))
-        fig_polar.write_image(os.path.join(output_dir, "neuron_counts_circular_definitive_v2.svg"))
-        print(f"
-Successfully saved all 4 definitive plot files to {output_dir}")
+        fig_bar.write_html(output_dir / "neuron_counts_bar_definitive_v2.html")
+        fig_bar.write_image(output_dir / "neuron_counts_bar_definitive_v2.svg")
+        fig_polar.write_html(output_dir / "neuron_counts_circular_definitive_v2.html")
+        fig_polar.write_image(output_dir / "neuron_counts_circular_definitive_v2.svg")
+        print(f"Successfully saved all 4 definitive plot files to {output_dir}")
     except Exception as e:
-        print(f"
-An error occurred while saving the plots: {e}")
+        print(f"An error occurred while saving the plots: {e}")
 
 def main():
     parser = argparse.ArgumentParser(description="Get and plot definitive neuron counts with area mapping.")
-    parser.add_argument('--output_dir', type=str, default='figures', help='Directory to save the output plots.')
+    parser.add_argument('--output_dir', type=str, default=str(FIGURES_DIR), help='Directory to save the output plots.')
     args = parser.parse_args()
 
     final_counts = get_definitive_neuron_counts_v2()

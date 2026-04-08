@@ -52,8 +52,8 @@ BANDS = {
 }
 
 BAND_COLORS = {
-    'Theta': 'cyan',
-    'Alpha': 'lime',
+    'Theta': '#00FFFF',
+    'Alpha': '#00FF00',
     'Beta': GOLD,
     'Gamma': VIOLET
 }
@@ -109,25 +109,24 @@ def compute_relative_power(lfp, config):
     return traces
 
 def process_extended_batch():
-    data_dir = str(DATA_DIR)
-    bhv_dir = str(BEHAVIORAL_DIR / 'omission_bhv/data')
-    checkpoint_dir = str(PROCESSED_DATA_DIR)
-    output_dir = str(FIGURES_DIR / 'part01')
+    bhv_dir = BEHAVIORAL_DIR / 'omission_bhv/data'
+    checkpoint_dir = PROCESSED_DATA_DIR
+    output_dir = FIGURES_DIR / 'part01'
     os.makedirs(output_dir, exist_ok=True)
     
-    mapping_df = pd.read_csv(os.path.join(checkpoint_dir, 'vflip2_mapping_v3.csv'))
+    mapping_df = pd.read_csv(checkpoint_dir / 'vflip2_mapping_v3.csv')
     
-    bhv_paths = glob.glob(os.path.join(bhv_dir, "*.mat"))
-    sessions = sorted(list(set([os.path.basename(p).split('_')[0] for p in bhv_paths])))
+    bhv_paths = list(bhv_dir.glob("*.mat"))
+    sessions = sorted(list(set([p.name.split('_')[0] for p in bhv_paths])))
     
     print(f"🏺 Found {len(sessions)} sessions for extended analysis: {sessions}")
     
     for sid in sessions:
         print(f"🏺 Extended Batch: Session {sid}")
-        lfp_files = glob.glob(os.path.join(data_dir, f'ses{sid}-probe*-lfp-*.npy'))
+        lfp_files = list(DATA_DIR.glob(f'ses{sid}-probe*-lfp-*.npy'))
         
         for f_path in lfp_files:
-            fname = os.path.basename(f_path)
+            fname = f_path.name
             cond = fname.split('-')[-1].replace('.npy', '')
             probe_id = int(fname.split('-')[1].replace('probe', ''))
             
@@ -159,7 +158,10 @@ def process_extended_batch():
                         fig.add_trace(go.Scatter(
                             x=np.concatenate([t, t[::-1]]),
                             y=np.concatenate([mu + sem, (mu - sem)[::-1]]),
-                            fill='toself', fillcolor=color, opacity=0.2, line=dict(color='rgba(255,255,255,0)'), showlegend=False
+                            fill='toself',
+                            fillcolor=f"rgba({int(color[1:3], 16)}, {int(color[3:5], 16)}, {int(color[5:7], 16)}, 0.2)",
+                            line=dict(color='rgba(255,255,255,0)'),
+                            showlegend=False
                         ))
                         
                         fig.add_trace(go.Scatter(
@@ -179,7 +181,7 @@ def process_extended_batch():
                     )
                     
                     out_name = f"LFP_dB_EXT_{sid}_{area.replace(',', '_').replace(' ', '_')}_P{probe_id}_{cond}.html"
-                    fig.write_html(os.path.join(output_dir, out_name))
+                    fig.write_html(output_dir / out_name)
             except Exception as e:
                 print(f"    Error processing Extended LFP {fname}: {e}")
 

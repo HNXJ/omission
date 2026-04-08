@@ -30,15 +30,13 @@ import networkx as nx
 
 from codes.functions.lfp.lfp_constants import (
     GOLD, BLACK, VIOLET, PINK, TEAL, ORANGE, GRAY, WHITE,
-    SEQUENCE_TIMING, BANDS
+    SEQUENCE_TIMING_MS, BANDS, CANONICAL_AREAS, OMISSION_PATCHES_MS,
+    HIERARCHY
 )
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Canonical constants
-# ─────────────────────────────────────────────────────────────────────────────
-
-# Hierarchy order: low → high (matches row order top→bottom in poster figures)
-AREA_ORDER: List[str] = ["V1", "V2", "V4", "MT", "MST", "TEO", "FST", "V3A", "V3D", "FEF", "PFC"]
+# Use canonical constants
+AREA_ORDER: List[str] = CANONICAL_AREAS
+OMISSION_WINDOWS: Dict[str, Tuple[int, int]] = OMISSION_PATCHES_MS
 
 # Condition color assignments (matches poster color coding)
 CONDITION_COLORS: Dict[str, str] = {
@@ -50,16 +48,6 @@ CONDITION_COLORS: Dict[str, str] = {
     "AXAB":  VIOLET,
     "AAXB":  TEAL,
     "AAAX":  ORANGE,
-}
-
-# Omission window for each condition: (start_ms, end_ms) relative to p1=0ms
-OMISSION_WINDOWS: Dict[str, Tuple[int, int]] = {
-    "RXRR":  (531,  1562),   # omission at position 2 (d1→d2)
-    "AXAB":  (531,  1562),
-    "RRXR":  (1562, 2593),   # omission at position 3 (d2→d3)
-    "AAXB":  (1562, 2593),
-    "RRRX":  (2593, 3624),   # omission at position 4 (d3→d4)
-    "AAAX":  (2593, 3624),
 }
 
 # Band colors for spectral power traces
@@ -119,7 +107,7 @@ def _add_sequence_patches(fig: go.Figure, omission_cond: Optional[str] = None,
                   line_width=0, **kw)
 
     # Sequence event patches + dashed onset lines
-    for ev_name, info in SEQUENCE_TIMING.items():
+    for ev_name, info in SEQUENCE_TIMING_MS.items():
         if info["start"] < x_range[1]:
             fig.add_vrect(x0=info["start"], x1=min(info["end"], x_range[1]),
                           fillcolor=info["color"], opacity=0.12, line_width=0, **kw)
@@ -592,12 +580,12 @@ def plot_spectral_network(
     # ── Node positions ──────────────────────────────────────────────────────
     TIER_X: Dict[str, float] = {
         "V1": 0.1, "V2": 0.2, "V4": 0.3, "MT": 0.45, "MST": 0.55,
-        "TEO": 0.62, "FST": 0.5,  "V3A": 0.72, "V3D": 0.78,
+        "TEO": 0.62, "FST": 0.5,  "V3a": 0.72, "V3d": 0.78,
         "FEF": 0.88, "PFC": 0.95,
     }
     TIER_Y: Dict[str, float] = {
         "V1": 0.1, "V2": 0.25, "V4": 0.35, "MT": 0.4, "MST": 0.5,
-        "TEO": 0.55, "FST": 0.3, "V3A": 0.65, "V3D": 0.7,
+        "TEO": 0.55, "FST": 0.3, "V3a": 0.65, "V3d": 0.7,
         "FEF": 0.8, "PFC": 0.9,
     }
 

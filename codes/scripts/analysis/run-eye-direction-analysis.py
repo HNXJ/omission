@@ -5,23 +5,23 @@ import os
 import matplotlib.pyplot as plt
 
 # Global Aesthetics
+plt.style.use('dark_background')
+plt.rcParams['axes.facecolor'] = '#000000'
+plt.rcParams['figure.facecolor'] = '#000000'
+plt.rcParams['axes.edgecolor'] = '#708090'
+plt.rcParams['text.color'] = '#FFFFFF'
+GOLD = '#CFB87C'
+VIOLET = '#8F00FF'
+SLATE = '#708090'
 
-def main(args=None):
-    plt.style.use('dark_background')
-    plt.rcParams['axes.facecolor'] = '#000000'
-    plt.rcParams['figure.facecolor'] = '#000000'
-    plt.rcParams['axes.edgecolor'] = '#708090'
-    plt.rcParams['text.color'] = '#FFFFFF'
-    GOLD = '#CFB87C'
-    VIOLET = '#8F00FF'
-    SLATE = '#708090'
-    def get_polar_direction(eye_x, eye_y):
+def get_polar_direction(eye_x, eye_y):
     """Calculates the polar direction of eye-movements (dx, dy)."""
     dx = np.diff(eye_x)
     dy = np.diff(eye_y)
     angles = np.arctan2(dy, dx)
     return np.degrees(angles) % 360
-    def plot_rose_directions(directions_dict, session_id):
+
+def plot_rose_directions(directions_dict, session_id):
     """Plots Rose Plots (Polar Histograms) for eye-movement directions."""
     fig, axes = plt.subplots(1, len(directions_dict), subplot_kw={'projection': 'polar'}, figsize=(12, 5))
     if len(directions_dict) == 1:
@@ -38,7 +38,8 @@ def main(args=None):
     fig_path = os.path.join(str(FIGURES_DIR), f"FIG_Eye_Rose_Directions_{session_id}.png")
     plt.savefig(fig_path, dpi=300)
     print(f"Saved rose plot to {fig_path}")
-    def run_analysis(data_dir, session_id):
+
+def run_analysis(data_dir, session_id):
     """Main execution function for directionality analysis."""
     # Target contexts: AAAB (45 deg) vs BBBA (135 deg)
     contexts = ['AAAB', 'BBBA', 'RRRR']
@@ -58,7 +59,9 @@ def main(args=None):
         directions_dict[ctx] = np.array(all_dirs)
     if directions_dict:
         plot_rose_directions(directions_dict, session_id)
-    data_dir = str(DATA_DIR)
+
+def main(args=None):
+    data_dir = DATA_DIR
     session_id = "230629"
     run_analysis(data_dir, session_id)
 

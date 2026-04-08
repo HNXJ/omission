@@ -71,8 +71,8 @@ def plot_rose_directions_grid_plotly(directions_grid, session_id):
     # Clean up polar axes
     fig.update_polars(radialaxis_showticklabels=False, angularaxis_showticklabels=False)
     
-    html_path = os.path.join(str(FIGURES_DIR), f"FIG_Eye_Rose_Grid_{session_id}.html")
-    svg_path = os.path.join(str(FIGURES_DIR), f"FIG_Eye_Rose_Grid_{session_id}.svg")
+    html_path = FIGURES_DIR / f"FIG_Eye_Rose_Grid_{session_id}.html"
+    svg_path = FIGURES_DIR / f"FIG_Eye_Rose_Grid_{session_id}.svg"
     
     fig.write_html(html_path)
     fig.write_image(svg_path)
@@ -104,14 +104,14 @@ def plot_temporal_trajectories_plotly(session_results, session_id):
         fig.add_trace(go.Scatter(x=time_ms, y=mx, line=dict(color=color), name=f'{ctx} X'), row=1, col=1)
         fig.add_trace(go.Scatter(x=time_ms, y=mx+sx, line=dict(width=0), showlegend=False), row=1, col=1)
         fig.add_trace(go.Scatter(x=time_ms, y=mx-sx, fill='tonexty', line=dict(width=0), 
-                                 fillcolor=f"rgba{tuple(list(int(color[1:][i:i+2], 16) for i in (0, 2, 4)) + [0.2])}", 
+                                 fillcolor=f"rgba({int(color[1:3], 16)}, {int(color[3:5], 16)}, {int(color[5:7], 16)}, 0.2)",
                                  showlegend=False), row=1, col=1)
         
         # Y-Trace
         fig.add_trace(go.Scatter(x=time_ms, y=my, line=dict(color=color), name=f'{ctx} Y'), row=2, col=1)
         fig.add_trace(go.Scatter(x=time_ms, y=my+sy, line=dict(width=0), showlegend=False), row=2, col=1)
         fig.add_trace(go.Scatter(x=time_ms, y=my-sy, fill='tonexty', line=dict(width=0), 
-                                 fillcolor=f"rgba{tuple(list(int(color[1:][i:i+2], 16) for i in (0, 2, 4)) + [0.2])}", 
+                                 fillcolor=f"rgba({int(color[1:3], 16)}, {int(color[3:5], 16)}, {int(color[5:7], 16)}, 0.2)",
                                  showlegend=False), row=2, col=1)
         
         all_vals_x.extend([np.min(mx-sx), np.max(mx+sx)])
@@ -129,8 +129,8 @@ def plot_temporal_trajectories_plotly(session_results, session_id):
     fig.update_layout(template='plotly_dark', title=f'Temporal Eye Trajectories: {session_id}',
                       paper_bgcolor=BLACK, plot_bgcolor=BLACK, height=800)
     
-    html_path = os.path.join(str(FIGURES_DIR), f"FIG_Eye_Temporal_Trajectories_{session_id}.html")
-    svg_path = os.path.join(str(FIGURES_DIR), f"FIG_Eye_Temporal_Trajectories_{session_id}.svg")
+    html_path = FIGURES_DIR / f"FIG_Eye_Temporal_Trajectories_{session_id}.html"
+    svg_path = FIGURES_DIR / f"FIG_Eye_Temporal_Trajectories_{session_id}.svg"
     
     fig.write_html(html_path)
     fig.write_image(svg_path)
@@ -162,7 +162,7 @@ def run_eye_consolidated_plotly(data_dir, session_id):
 
 
 def main(args=None):
-    run_eye_consolidated_plotly(str(DATA_DIR), "230629")
+    run_eye_consolidated_plotly(DATA_DIR, "230629")
 
 if __name__ == '__main__':
     import argparse

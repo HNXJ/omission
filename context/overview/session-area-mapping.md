@@ -57,4 +57,32 @@ This document details the anatomical mapping of recording probes to brain areas 
 | 230831 | 2 | V4, TEO | 128 |
 | 230901 | 0 | PFC | 128 |
 | 230901 | 1 | MT, MST | 128 |
-| 230901 | 2 | V3, V4 | 128 |
+
+## Canonical Accessor Contract
+To ensure consistency across LFP, MUAe, and SPK signals, use the following canonical accessor:
+
+```python
+from codes.functions.lfp.lfp_mapping import get_signal_conditional
+
+result = get_signal_conditional(
+    signal_type="MUAe",        # "SPK" | "MUAe" | "LFP"
+    condition="AAAB",
+    area="V1",
+    t_pre_ms=1000,
+    t_post_ms=4000,
+    align_event="p1",          # Canonical anchor
+    target_fs=1000,
+)
+```
+
+## Anatomical Membership Logic
+Use `resolve_area_membership(session_id, probe_id)` for deterministic channel-to-area mapping.
+
+**Example**:
+For session `230629`, Probe 0 (`V1, V2`):
+- `V1`: Channels `0-63`
+- `V2`: Channels `64-127`
+
+For a mixed case (e.g., `V1, V2, V3`):
+- Channel boundaries are calculated using `np.linspace(0, 128, n_labels + 1)`.
+- This ensures deterministic partitioning across all signal types.

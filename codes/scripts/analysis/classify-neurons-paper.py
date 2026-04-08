@@ -6,6 +6,7 @@ import os
 from pynwb import NWBHDF5IO
 from collections import defaultdict
 import re
+from codes.config.paths import DATA_DIR, PROCESSED_DATA_DIR
 
 AREA_MAPPING = {'DP': 'V4', 'V3': ['V3d', 'V3a']}
 CHANNELS_PER_PROBE = 128
@@ -46,11 +47,12 @@ def get_unit_to_area_map(nwb_path):
                     sw = CHANNELS_PER_PROBE / len(mapped)
                     area = mapped[min(int((p_id % CHANNELS_PER_PROBE) // sw), len(mapped)-1)]
                     unit_map[(probe_id, local_idx)] = area
-    except: pass
+    except Exception as e:
+        print(f"Error processing {nwb_path}: {e}")
     return unit_map
 
 def classify():
-    nwb_files = glob.glob('data/sub-*_ses-*_rec.nwb')
+    nwb_files = glob.glob(str(DATA_DIR / 'sub-*_ses-*_rec.nwb'))
     all_classifications = []
 
     for nwb_path in nwb_files:
@@ -64,7 +66,7 @@ def classify():
         for c in ['RRRR', 'RXRR', 'RRXR', 'RRRX']:
             cond_data[c] = {}
             for p in probes:
-                f = glob.glob(f'data/ses{session_id}-units-probe{p}-spk-{c}.npy')
+                f = glob.glob(str(DATA_DIR / f'ses{session_id}-units-probe{p}-spk-{c}.npy'))
                 if f: cond_data[c][p] = np.load(f[0], mmap_mode='r')
 
         for (probe_id, local_idx), area in u_map.items():
@@ -126,8 +128,8 @@ def classify():
             })
 
     df = pd.DataFrame(all_classifications)
-    os.makedirs('checkpoints', exist_ok=True)
-    df.to_csv('checkpoints/neuron_categories.csv', index=False)
+    os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
+    df.to_csv(PROCESSED_DATA_DIR / 'neuron_categories.csv', index=False)
     print(f"Classification complete. {df['category'].value_counts().to_dict()}")
 
 

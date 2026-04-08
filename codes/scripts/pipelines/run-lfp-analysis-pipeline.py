@@ -53,7 +53,6 @@ FIG_03_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 # --- Helper Function for Bipolar Referencing per Area (intermediate step) ---
 def _apply_bipolar_ref_per_area(
     raw_lfp: np.ndarray,
-    channel_areas: Dict[int, str], # This now comes from the updated electrodes
     electrode_df: pd.DataFrame,
     bad_channels: List[int],
 ) -> Dict[str, np.ndarray]:
@@ -580,18 +579,19 @@ Processing session: {session_id}")
                         # Calculate mean firing rate across trials
                         mean_firing_rate_ts = np.nanmean(firing_rate_per_trial, axis=0) # (n_bins,)
 
-                        # Generate corresponding time bins for the firing rate time series
+                        # Generate corresponding time bins for the aring rate time series
                         # This should match the binning used in _epoch_spike_times
-                        window_start_ms = window_ms[0]
-                        window_end_ms = window_ms[1]
+                        spike_bin_size_ms = 50.0
+                        spike_window_ms = (-500, 4000)
+                        window_start_ms = spike_window_ms[0]
                         
                         # Calculate time_bins_ms based on the actual number of bins and bin_size_ms
                         # The start of the first bin is window_start_ms
                         firing_rate_time_bins_ms = np.arange(
                             window_start_ms,
-                            window_start_ms + len(mean_firing_rate_ts) * bin_size_ms,
-                            bin_size_ms
-                        ) + (bin_size_ms / 2.0) # Center of the bins
+                            window_start_ms + len(mean_firing_rate_ts) * spike_bin_size_ms,
+                            spike_bin_size_ms
+                        ) + (spike_bin_size_ms / 2.0) # Center of the bins
 
                         # Store in global_processed_data
                         global_processed_data['spiking_firing_rate'][session_id][unit_area][unit_layer][unit_id][cond] = {
@@ -711,7 +711,6 @@ Processing session: {session_id}")
         # Use updated electrodes here to respect 'bad_channels' and 'layer'
         lfp_by_area_bipolar = _apply_bipolar_ref_per_area(
             session["lfp"],
-            session["channel_areas"], # Note: this is actually unused in _apply_bipolar_ref_per_area, updated_electrodes is used directly. This parameter can be removed.
             session["electrodes"], # Use the updated electrode_df which now has layer info
             bad_channels_global_idx,
         )

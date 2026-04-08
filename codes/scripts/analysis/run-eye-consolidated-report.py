@@ -5,16 +5,16 @@ import os
 import matplotlib.pyplot as plt
 
 # Global Aesthetics
+plt.style.use('dark_background')
+plt.rcParams['axes.facecolor'] = '#000000'
+plt.rcParams['figure.facecolor'] = '#000000'
+plt.rcParams['axes.edgecolor'] = '#708090'
+plt.rcParams['text.color'] = '#FFFFFF'
+GOLD = '#CFB87C'
+VIOLET = '#8F00FF'
+SLATE = '#708090'
 
-def main(args=None):
-    plt.style.use('dark_background')
-    plt.rcParams['axes.facecolor'] = '#000000'
-    plt.rcParams['figure.facecolor'] = '#000000'
-    plt.rcParams['axes.edgecolor'] = SLATE = '#708090'
-    plt.rcParams['text.color'] = '#FFFFFF'
-    GOLD = '#CFB87C'
-    VIOLET = '#8F00FF'
-    def get_polar_direction(eye_x, eye_y, thresh=0.005):
+def get_polar_direction(eye_x, eye_y, thresh=0.005):
     """Calculates polar direction for significant movements."""
     dx = np.diff(eye_x)
     dy = np.diff(eye_y)
@@ -22,7 +22,8 @@ def main(args=None):
     valid = mag > thresh
     angles = np.arctan2(dy[valid], dx[valid])
     return np.degrees(angles) % 360
-    def plot_temporal_eye_trajectories(session_results, session_id):
+
+def plot_temporal_eye_trajectories(session_results, session_id):
     """Plots temporal X and Y eye trajectories for A vs B contexts."""
     fig, axes = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
     time_ms = np.arange(6000) - 1000
@@ -61,10 +62,11 @@ def main(args=None):
         for i in range(1, 5): # P2, P3, P4
             ax.axvline(i*531, color='#FFFFFF', alpha=0.2, linestyle=':')
     plt.tight_layout()
-    fig_path = os.path.join(str(FIGURES_DIR), f"FIG_Eye_Temporal_Trajectories_{session_id}.png")
+    fig_path = FIGURES_DIR / f"FIG_Eye_Temporal_Trajectories_{session_id}.png"
     plt.savefig(fig_path, dpi=300)
     print(f"Saved temporal trajectories to {fig_path}")
-    def run_eye_consolidated(data_dir, session_id):
+
+def run_eye_consolidated(data_dir, session_id):
     """Consolidated oculomotor analysis suite."""
     from run_behavioral_decoding_suite import analyze_session_eye
     results = analyze_session_eye(data_dir, session_id)
@@ -81,7 +83,9 @@ def main(args=None):
         reda.plot_rose_directions(directions_dict, session_id)
     # 2. Temporal Trajectories
     plot_temporal_eye_trajectories(results, session_id)
-    data_dir = str(DATA_DIR)
+
+def main(args=None):
+    data_dir = DATA_DIR
     session_id = "230629"
     run_eye_consolidated(data_dir, session_id)
 

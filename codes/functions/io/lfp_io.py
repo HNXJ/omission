@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional
 import numpy as np
 import pandas as pd
 import json
+import warnings
 
 try:
     from pynwb import NWBHDF5IO  # type: ignore
@@ -31,6 +32,8 @@ def load_session(nwb_path: Path) -> Dict[str, Any]:
         "areas": [],
         "channels": [],
         "photodiode": None,
+        "lfp": None,
+        "lfp_timestamps": None,
     }
     if not nwb_path.exists() or NWBHDF5IO is None:
         return session
@@ -56,7 +59,7 @@ def load_session(nwb_path: Path) -> Dict[str, Any]:
                     for u_idx in range(len(nwb.units))
                 ]
             
-        session["lfp_probes"] = [] # New structure to hold LFP data per probe
+        lfp_probes = [] # New structure to hold LFP data per probe
         # Try to find a single 'lfp' object first (original logic)
         if "lfp" in getattr(nwb, "acquisition", {}):
             lfp_obj = nwb.acquisition["lfp"]
@@ -69,7 +72,7 @@ def load_session(nwb_path: Path) -> Dict[str, Any]:
                 # Need to map electrodes to this 'all' LFP if possible, or assume all electrodes are included
                 'electrodes_ids': session["electrodes"].index.to_list() # Assuming all electrodes belong to this LFP
             }
-            session["lfp_probes"].append(probe_entry)
+            lfp_probes.append(probe_entry)
         
         # If not, try to find probe-specific LFP objects
         probe_keys = sorted([k for k in nwb.acquisition.keys() if "_lfp" in k and isinstance(nwb.acquisition[k], pynwb.ecephys.ElectricalSeries)])
@@ -94,7 +97,23 @@ def load_session(nwb_path: Path) -> Dict[str, Any]:
                 'timestamps': np.asarray(lfp_obj.timestamps),
                 'electrodes_ids': probe_electrode_ids
             }
-            session["lfp_probes"].append(probe_entry)
+            lfp_probes.append(probe_entry)
+            
+        if lfp_probes:
+            # Check if all timestamps are the same
+            first_timestamps = lfp_probes[0]['timestamps']
+            for probe in lfp_probes[1:]:
+                if not np.array_equal(first_timestamps, probe['timestamps']):
+                    warnings.warn("LFP timestamps differ between probes. Using timestamps from the first probe.")
+                    break
+            
+            all_lfp_data = [p['data'] for p in lfp_probes]
+            
+            # This assumes that the channels in each probe are exclusive
+            # and that the order of probes is consistent.
+            session['lfp'] = np.vstack(all_lfp_data)
+            session['lfp_timestamps'] = first_timestamps
+
         
         if not session["electrodes"].empty:
             if "location" in session["electrodes"].columns:

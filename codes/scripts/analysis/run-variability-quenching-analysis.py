@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import h5py
 from concurrent.futures import ProcessPoolExecutor
-from codes.functions.neuro_variability_suite import NeuroVariabilitySuite, apply_post_hoc_smoothing
+from codes.functions.spiking.neuro_variability_suite import NeuroVariabilitySuite, apply_post_hoc_smoothing
 import json
 
 # Parameters from Churchland 2010

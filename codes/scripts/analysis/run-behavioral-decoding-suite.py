@@ -10,17 +10,16 @@ from sklearn.preprocessing import StandardScaler
 from scipy.signal import savgol_filter
 
 # Global Aesthetics
+plt.style.use('dark_background')
+plt.rcParams['axes.facecolor'] = '#000000'
+plt.rcParams['figure.facecolor'] = '#000000'
+plt.rcParams['axes.edgecolor'] = '#708090'
+plt.rcParams['text.color'] = '#FFFFFF'
+GOLD = '#CFB87C'
+VIOLET = '#8F00FF'
+SLATE = '#708090'
 
-def main(args=None):
-    plt.style.use('dark_background')
-    plt.rcParams['axes.facecolor'] = '#000000'
-    plt.rcParams['figure.facecolor'] = '#000000'
-    plt.rcParams['axes.edgecolor'] = '#708090'
-    plt.rcParams['text.color'] = '#FFFFFF'
-    GOLD = '#CFB87C'
-    VIOLET = '#8F00FF'
-    SLATE = '#708090'
-    def detect_saccades_nwb(eye_x, eye_y, fs=1000, thresh=3.5):
+def detect_saccades_nwb(eye_x, eye_y, fs=1000, thresh=3.5):
     """Detects eye-movement events based on Z-scored velocity."""
     vx = np.gradient(eye_x) * fs
     vy = np.gradient(eye_y) * fs
@@ -29,13 +28,15 @@ def main(args=None):
     z_vel = (vel - np.mean(vel)) / np.std(vel)
     indices = np.where(z_vel > thresh)[0]
     return indices, vel
-    def get_polar_direction(eye_x, eye_y):
+
+def get_polar_direction(eye_x, eye_y):
     """Calculates the polar direction of eye-movements."""
     dx = np.diff(eye_x)
     dy = np.diff(eye_y)
     angles = np.arctan2(dy, dx)
     return np.degrees(angles) % 360
-    def analyze_session_eye(data_dir, session_id):
+
+def analyze_session_eye(data_dir, session_id):
     """Analyzes eye signals for a specific session across conditions."""
     files = [f for f in os.listdir(data_dir) if f.startswith(f'ses{session_id}-behavioral') and f.endswith('.npy')]
     results = {}
@@ -56,7 +57,8 @@ def main(args=None):
             'pupil': pupil
         }
     return results
-    def decode_identity_eye(session_results):
+
+def decode_identity_eye(session_results):
     """Decodes Stimulus Identity (AAAB vs BBBA) from eye-signals."""
     if 'AAAB' not in session_results or 'BBBA' not in session_results:
         return None
@@ -105,7 +107,9 @@ def main(args=None):
             scores.append(model.score(X_bin[test_idx], y[test_idx]))
         bin_scores.append(np.mean(scores))
     return np.array(bin_scores)
-    data_dir = str(DATA_DIR)
+
+def main(args=None):
+    data_dir = DATA_DIR
     session_id = "230629"
     results = analyze_session_eye(data_dir, session_id)
     identity_scores = decode_identity_eye(results)
@@ -120,7 +124,7 @@ def main(args=None):
         plt.ylabel('Decoding Accuracy', color=SLATE)
         plt.legend()
         plt.tight_layout()
-        fig_path = os.path.join(str(FIGURES_DIR), f"FIG_Eye_Identity_Decoding_{session_id}.png")
+        fig_path = os.path.join(FIGURES_DIR, f"FIG_Eye_Identity_Decoding_{session_id}.png")
         plt.savefig(fig_path, dpi=300)
         print(f"Saved identity decoding plot to {fig_path}")
 
