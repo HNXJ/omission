@@ -30,7 +30,7 @@ def compute_tfr(epoch: np.ndarray, fs: float = FS_LFP):
 
 def compute_multitaper_tfr(data, fs=1000.0, nperseg=256, noverlap=250):
     """Alias for compute_tfr to maintain repo compatibility."""
-    return compute_tfr(data, fs, nperseg, noverlap)
+    return compute_tfr(data, fs)
 
 
 def get_band_power(freqs: np.ndarray, power: np.ndarray, band_limits: Tuple[int, int]) -> np.ndarray:

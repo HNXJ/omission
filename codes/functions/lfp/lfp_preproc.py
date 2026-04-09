@@ -34,5 +34,4 @@ def baseline_normalize(epoch: np.ndarray, baseline_slice: slice) -> np.ndarray:
 
 def extract_epochs(lfp: np.ndarray, event_table: Any, window_ms: Tuple[int, int] = (-1000, 5000), fs: float = 1000.0) -> np.ndarray:
     """Extract aligned epochs based on event table."""
-    # Placeholder for NWB/NPY aligned extraction
-    return np.asarray(lfp)
+    raise NotImplementedError("Placeholder: extract_epochs not implemented in canonical path")

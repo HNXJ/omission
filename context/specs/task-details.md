@@ -58,6 +58,24 @@ This project investigates the biological implementation of **Active Inference** 
 - **RRXR**: 35, 37, 39, 41
 - **RRRX**: 36, 38, 40, 42, 43-50
 
+## Condition Counts
+The following table summarizes the number of correct trials for each condition across all sessions.
+
+| Condition   |   230630 |   230816 |   230818 |   230823 |   230825 |   230830 |   230831 |   230901 |   230629 |   230714 |   230719 |   230720 |   230721 |   Total |
+|:------------|---------:|---------:|---------:|---------:|---------:|---------:|---------:|---------:|---------:|---------:|---------:|---------:|---------:|--------:|
+| RRRR        |       82 |       84 |      104 |      111 |      109 |      111 |      111 |      106 |       84 |      155 |      136 |      139 |      140 |    1472 |
+| AAAB        |       44 |      207 |      220 |      219 |      238 |      224 |      220 |      233 |       48 |      221 |      238 |      240 |      238 |    2590 |
+| BBBA        |       39 |      209 |      235 |      227 |      218 |      218 |      229 |      216 |       50 |      239 |      232 |      225 |      231 |    2568 |
+| RRRX        |        9 |       72 |      104 |       91 |       92 |       85 |       86 |      104 |        6 |       73 |       90 |       87 |       74 |     973 |
+| BBBX        |        8 |       22 |       30 |       30 |       34 |       32 |       26 |       30 |        2 |       33 |       35 |       32 |       33 |     347 |
+| AXAB        |        7 |       27 |       40 |       41 |       34 |       35 |       38 |       30 |        6 |       38 |       26 |       30 |       27 |     379 |
+| RXRR        |        7 |       45 |       64 |       55 |       72 |       65 |       74 |       50 |        8 |       44 |       57 |       36 |       62 |     639 |
+| BBXA        |        7 |       29 |       29 |       42 |       34 |       39 |       27 |       42 |        3 |       35 |       30 |       39 |       34 |     390 |
+| AAXB        |        6 |       19 |       25 |       42 |       35 |       40 |       32 |       40 |        5 |       33 |       35 |       30 |       32 |     374 |
+| BXBA        |        6 |       34 |       36 |       31 |       44 |       41 |       48 |       42 |        5 |       23 |       33 |       34 |       32 |     409 |
+| AAAX        |        3 |       22 |       45 |       28 |       23 |       31 |       40 |       30 |        1 |       38 |       31 |       30 |       33 |     355 |
+| RRXR        |        2 |       23 |       28 |       43 |       27 |       39 |       29 |       40 |        2 |       28 |       17 |       38 |       24 |     340 |
+
 ## 🔬 Electrophysiological Signal Notes
 - **NWB Alignment Reference**: The "Golden Standard" for alignment in these NWB files is **Code 101.0** (onset of Presentation 1). Aligning to the trial's global `start_time` can lead to jitter or drifts depending on the block type.
 - **Physiological Lag**: In V1, the first significant peak in firing rate occurs **40-60ms after the Photodiode jump**. This lag is consistent across sessions and serves as a primary validity check for temporal synchronization.

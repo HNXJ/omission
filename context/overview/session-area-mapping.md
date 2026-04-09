@@ -62,7 +62,7 @@ This document details the anatomical mapping of recording probes to brain areas 
 To ensure consistency across LFP, MUAe, and SPK signals, use the following canonical accessor:
 
 ```python
-from codes.functions.lfp.lfp_mapping import get_signal_conditional
+from codes.functions.lfp.lfp_pipeline import get_signal_conditional
 
 result = get_signal_conditional(
     signal_type="MUAe",        # "SPK" | "MUAe" | "LFP"

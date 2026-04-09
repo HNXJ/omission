@@ -68,32 +68,4 @@ def resolve_area_membership(session_id, probe_id, n_probe_channels=128):
         
     return membership
 
-def get_signal_conditional(
-    signal_type="MUAe",
-    condition="AAAB",
-    area="V1",
-    t_pre_ms=1000,
-    t_post_ms=4000,
-    align_event="p1",
-    target_fs=1000,
-    spike_bin_ms=1,
-    spike_smooth_ms=None
-):
-    """
-    Canonical accessor for signal data: MUAe, LFP, or SPK.
-    """
-    # Placeholder structure for integration with lfp_io.py / lfp_pipeline.py
-    out = {
-        "signal_type": signal_type,
-        "condition": condition,
-        "area": area,
-        "align_event": align_event,
-        "t_pre_ms": t_pre_ms,
-        "t_post_ms": t_post_ms,
-        "fs": target_fs,
-        "times_ms": np.arange(-t_pre_ms, t_post_ms),
-        "sessions": {}
-    }
-    
-    # Integration logic to be populated by pipeline loops
-    return out
+

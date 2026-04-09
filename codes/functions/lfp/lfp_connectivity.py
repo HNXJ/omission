@@ -24,4 +24,4 @@ def compute_pairwise_coherence(sig_a, sig_b, fs=1000.0):
 
 def compute_granger(*args, **kwargs):
     """Directionality placeholder. (Step 11)."""
-    return np.empty((0, 0))
+    raise NotImplementedError("Placeholder: Granger not implemented in canonical path")
