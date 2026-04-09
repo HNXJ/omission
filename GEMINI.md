@@ -13,3 +13,9 @@
 - **Failure**: Bulk cleanup command deleted active repo folders.
 - **Cause**: Violation of commit mandate; improper scope management.
 - **Correction**: Incremental commits mandatory; bulk destructive ops banned.
+
+## Plotting Standards
+- Library: Plotly
+- Theme: White background, black axis, gray grid.
+- Colors: [Red, Blue, Brown, Green, Orange, Purple, Yellow].
+- Overwrite: Always.
