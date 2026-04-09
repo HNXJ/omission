@@ -55,7 +55,11 @@ def main():
             # extract 230630
             raw_sess = row['session_nwb']
             sess = raw_sess.split('_')[1].split('-')[1]
-            probe = row['probe']
+            
+            # Map probe name to index: probeA -> 0, probeB -> 1, probeC -> 2
+            probe_map = {'probeA': 0, 'probeB': 1, 'probeC': 2}
+            probe_raw = row['probe']
+            probe = probe_map.get(probe_raw, 0) # Fallback to 0
             u_idx = row['unit_id_in_session']
             
             # Construct path (e.g., ses230630-units-probe0-spk-RRRR.npy)
