@@ -29,7 +29,6 @@ def map_area(row):
     return 'V4' if loc == 'DP' else loc
 
 def generate_figure_5():
-    # Load and prep
     df = pd.read_csv(PROFILE_PATH, low_memory=False)
     full_audit = pd.read_csv(AUDIT_PATH)
     
@@ -48,13 +47,12 @@ def generate_figure_5():
     
     unique_sessions = df_stable['ses_tmp'].dropna().unique()
     
-    # 2562 ms total time, 250ms window, 50ms step => 47 bins
-    window_size = 250
-    step_size = 50
+    window_size = 500
+    step_size = 100
     n_bins = (2562 - window_size) // step_size + 1
     
-    area_g1 = {area: [] for area in CANONICAL_AREAS}
-    area_g2 = {area: [] for area in CANONICAL_AREAS}
+    area_G1_trials = {area: [] for area in CANONICAL_AREAS}
+    area_G2_trials = {area: [] for area in CANONICAL_AREAS}
     
     for session in unique_sessions:
         for probe in [0, 1, 2]:
@@ -65,90 +63,126 @@ def generate_figure_5():
             if not path.exists(): continue
             
             data = np.load(path) # (trials, units, time)
-            data_mean = data.mean(axis=0) # average across exact same trials
+            n_trials = data.shape[0]
             
             for _, row in units.iterrows():
                 l_idx = row['local_idx']
-                if l_idx >= data_mean.shape[0]: continue
+                if l_idx >= data.shape[1]: continue
                 
-                # Group 1: 2562 to 5124 (d2-p3-d3-p4-d4)
-                g1_raw = data_mean[l_idx, 2562:5124]
-                # Group 2: 1531 to 4093 (d1-p2-d2-p3-d3)
-                g2_raw = data_mean[l_idx, 1531:4093]
+                g1_raw = data[:, l_idx, 2562:5124]
+                g2_raw = data[:, l_idx, 1531:4093]
                 
-                g1_bins, g2_bins = [], []
+                g1_binned = np.zeros((n_trials, n_bins))
+                g2_binned = np.zeros((n_trials, n_bins))
+                
                 for b in range(n_bins):
                     start = b * step_size
                     end = start + window_size
-                    # Sum and convert to Hz
-                    g1_bins.append(g1_raw[start:end].sum() * (1000.0 / window_size))
-                    g2_bins.append(g2_raw[start:end].sum() * (1000.0 / window_size))
+                    g1_binned[:, b] = g1_raw[:, start:end].sum(axis=1) * (1000.0 / window_size)
+                    g2_binned[:, b] = g2_raw[:, start:end].sum(axis=1) * (1000.0 / window_size)
                     
-                area_g1[row['area_hier']].append(g1_bins)
-                area_g2[row['area_hier']].append(g2_bins)
+                area_G1_trials[row['area_hier']].append(g1_binned)
+                area_G2_trials[row['area_hier']].append(g2_binned)
 
     fig = go.Figure()
+    
+    time_array = np.arange(n_bins)
 
     for area in CANONICAL_AREAS:
-        if len(area_g1[area]) < 3: continue
+        if len(area_G1_trials[area]) < 3: continue
             
-        G1 = np.array(area_g1[area]).T # (47, N_neurons)
-        G2 = np.array(area_g2[area]).T
+        G1_neurons = area_G1_trials[area]
+        G2_neurons = area_G2_trials[area]
         
-        # Soft-standardization across neurons
-        X = np.vstack([G1, G2])
-        X = (X - X.mean(axis=0)) / (X.std(axis=0) + 1e-6)
+        min_t = min([x.shape[0] for x in G1_neurons])
+        if min_t == 0: continue
+            
+        G1_trials = np.stack([x[:min_t, :] for x in G1_neurons], axis=-1) # (min_t, n_bins, N)
+        G2_trials = np.stack([x[:min_t, :] for x in G2_neurons], axis=-1)
+        
+        G1_mean = G1_trials.mean(axis=0) # (n_bins, N)
+        G2_mean = G2_trials.mean(axis=0)
+        
+        X_mean = np.vstack([G1_mean, G2_mean])
+        scaler_mean = X_mean.mean(axis=0)
+        scaler_std = X_mean.std(axis=0) + 1e-6
+        
+        G1_mean_sc = (G1_mean - scaler_mean) / scaler_std
+        G2_mean_sc = (G2_mean - scaler_mean) / scaler_std
         
         pca = PCA(n_components=3)
-        X_pca = pca.fit_transform(X)
+        pca.fit(np.vstack([G1_mean_sc, G2_mean_sc]))
         
-        G1_pca = X_pca[:n_bins]
-        G2_pca = X_pca[n_bins:]
+        G1_mean_pca = pca.transform(G1_mean_sc)
+        G2_mean_pca = pca.transform(G2_mean_sc)
         
-        # Center them to start around the same space for cross-area comparison
-        start_mean = (G1_pca[0] + G2_pca[0]) / 2
-        G1_pca -= start_mean
-        G2_pca -= start_mean
+        start_mean = (G1_mean_pca[0] + G2_mean_pca[0]) / 2
+        G1_mean_pca -= start_mean
+        G2_mean_pca -= start_mean
         
-        # We can add an endpoint marker to show direction clearly
+        # Transform individual trials
+        G1_trials_pca = np.zeros((min_t, n_bins, 3))
+        G2_trials_pca = np.zeros((min_t, n_bins, 3))
+        for t in range(min_t):
+            g1_sc = (G1_trials[t] - scaler_mean) / scaler_std
+            g2_sc = (G2_trials[t] - scaler_mean) / scaler_std
+            G1_trials_pca[t] = pca.transform(g1_sc) - start_mean
+            G2_trials_pca[t] = pca.transform(g2_sc) - start_mean
+
+        # Plot individual trials (thin, semi-transparent)
+        for t in range(min_t):
+            fig.add_trace(go.Scatter3d(
+                x=G1_trials_pca[t,:,0], y=G1_trials_pca[t,:,1], z=G1_trials_pca[t,:,2],
+                mode='lines', line=dict(color='rgba(65, 105, 225, 0.15)', width=2),
+                showlegend=False, hoverinfo='skip'
+            ))
+            fig.add_trace(go.Scatter3d(
+                x=G2_trials_pca[t,:,0], y=G2_trials_pca[t,:,1], z=G2_trials_pca[t,:,2],
+                mode='lines', line=dict(color='rgba(220, 20, 60, 0.15)', width=2),
+                showlegend=False, hoverinfo='skip'
+            ))
+            
+        # Plot mean trajectories (thick, colored by time)
         fig.add_trace(go.Scatter3d(
-            x=G1_pca[:,0], y=G1_pca[:,1], z=G1_pca[:,2],
-            mode='lines',
-            line=dict(color='royalblue', width=4),
-            name=f'{area} Standard',
+            x=G1_mean_pca[:,0], y=G1_mean_pca[:,1], z=G1_mean_pca[:,2],
+            mode='lines+markers',
+            line=dict(color=time_array, colorscale='Blues', width=8),
+            marker=dict(size=4, color=time_array, colorscale='Blues'),
+            name=f'{area} Standard Mean',
             showlegend=False,
-            hovertext=[f'{area} Standard t={b*50}ms' for b in range(n_bins)],
+            hovertext=[f'{area} Standard t={b*step_size}ms' for b in range(n_bins)],
             hoverinfo='text'
         ))
-        
         fig.add_trace(go.Scatter3d(
-            x=[G1_pca[-1,0]], y=[G1_pca[-1,1]], z=[G1_pca[-1,2]],
-            mode='markers', marker=dict(size=4, color='royalblue', symbol='diamond'),
+            x=[G1_mean_pca[-1,0]], y=[G1_mean_pca[-1,1]], z=[G1_mean_pca[-1,2]],
+            mode='markers', marker=dict(size=8, color='darkblue', symbol='diamond'),
             showlegend=False, hoverinfo='skip'
         ))
 
         fig.add_trace(go.Scatter3d(
-            x=G2_pca[:,0], y=G2_pca[:,1], z=G2_pca[:,2],
-            mode='lines',
-            line=dict(color='crimson', width=4),
-            name=f'{area} Omission',
+            x=G2_mean_pca[:,0], y=G2_mean_pca[:,1], z=G2_mean_pca[:,2],
+            mode='lines+markers',
+            line=dict(color=time_array, colorscale='Reds', width=8),
+            marker=dict(size=4, color=time_array, colorscale='Reds'),
+            name=f'{area} Omission Mean',
             showlegend=False,
-            hovertext=[f'{area} Omission t={b*50}ms' for b in range(n_bins)],
+            hovertext=[f'{area} Omission t={b*step_size}ms' for b in range(n_bins)],
             hoverinfo='text'
         ))
-        
         fig.add_trace(go.Scatter3d(
-            x=[G2_pca[-1,0]], y=[G2_pca[-1,1]], z=[G2_pca[-1,2]],
-            mode='markers', marker=dict(size=4, color='crimson', symbol='diamond'),
+            x=[G2_mean_pca[-1,0]], y=[G2_mean_pca[-1,1]], z=[G2_mean_pca[-1,2]],
+            mode='markers', marker=dict(size=8, color='darkred', symbol='diamond'),
             showlegend=False, hoverinfo='skip'
         ))
 
     # Proxy legends
-    fig.add_trace(go.Scatter3d(x=[None], y=[None], z=[None], mode='lines+markers', line=dict(color='royalblue', width=6), marker=dict(color='royalblue', symbol='diamond'), name='Standard (d2-p3-d3-p4-d4)'))
-    fig.add_trace(go.Scatter3d(x=[None], y=[None], z=[None], mode='lines+markers', line=dict(color='crimson', width=6), marker=dict(color='crimson', symbol='diamond'), name='Omission (d1-p2[x]-d2-p3-d3)'))
+    fig.add_trace(go.Scatter3d(x=[None], y=[None], z=[None], mode='lines', line=dict(color='rgba(65, 105, 225, 0.4)', width=2), name='Standard Individual Trials'))
+    fig.add_trace(go.Scatter3d(x=[None], y=[None], z=[None], mode='lines', line=dict(color='rgba(220, 20, 60, 0.4)', width=2), name='Omission Individual Trials'))
+    fig.add_trace(go.Scatter3d(x=[None], y=[None], z=[None], mode='lines+markers', line=dict(color='blue', width=8), marker=dict(color='darkblue', symbol='diamond', size=8), name='Standard Mean Trajectory (Gradient = Time)'))
+    fig.add_trace(go.Scatter3d(x=[None], y=[None], z=[None], mode='lines+markers', line=dict(color='red', width=8), marker=dict(color='darkred', symbol='diamond', size=8), name='Omission Mean Trajectory (Gradient = Time)'))
 
     fig.update_layout(
-        title='Figure 5: Population State-Space Dynamics (PCA Projection)<br><i>Aligned trajectories across 11 areas. Diamond marks end of trajectory.</i>',
+        title='Figure 5: Population State-Space Dynamics (PCA Projection)<br><i>Individual trials (thin) and mean trajectories (thick, colored by time) across 11 areas.</i>',
         scene=dict(
             xaxis_title='PC 1 (Variance)',
             yaxis_title='PC 2 (Variance)',
@@ -160,7 +194,7 @@ def generate_figure_5():
         ),
         margin=dict(l=0, r=0, b=0, t=50),
         legend=dict(yanchor="top", y=0.95, xanchor="left", x=0.05),
-        width=1000, height=800
+        width=1200, height=900
     )
     
     out_html = OUTPUT_DIR / 'figure_5_state_space.html'
