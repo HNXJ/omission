@@ -170,13 +170,13 @@ def generate_figure_5():
             yaxis_title='PC 2 (Variance)',
             zaxis_title='PC 3 (Variance)',
             bgcolor='white',
-            xaxis=dict(showgrid=True, gridcolor='lightgray', zerolinecolor='gray'),
-            yaxis=dict(showgrid=True, gridcolor='lightgray', zerolinecolor='gray'),
-            zaxis=dict(showgrid=True, gridcolor='lightgray', zerolinecolor='gray')
+            xaxis=dict(showgrid=False, zeroline=False, showbackground=False, showline=False),
+            yaxis=dict(showgrid=False, zeroline=False, showbackground=False, showline=False),
+            zaxis=dict(showgrid=False, zeroline=False, showbackground=False, showline=False)
         ),
         margin=dict(l=0, r=0, b=0, t=50),
         legend=dict(yanchor="top", y=0.95, xanchor="left", x=0.05, itemsizing='constant'),
-        width=1200, height=900
+        width=2400, height=1800
     )
     
     out_html = OUTPUT_DIR / 'figure_5_state_space.html'
