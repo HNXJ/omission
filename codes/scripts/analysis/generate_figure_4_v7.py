@@ -180,12 +180,12 @@ def plot_unit_firing_rate_v7(session, probe_id, local_idx, area_label, filename_
     print(f"Saved: {out_base}.png and .html")
 
 if __name__ == "__main__":
-    # Candidates from find_ultimate_neurons.py
-    # Relaxed slightly to ensure coverage across types
+    # Candidates from find_ultimate_neurons.py and find_complex_omission_neurons_v2.py
     tasks = [
         (230714, 0, 0, "V1_V2", "S_plus"),
-        (230629, 0, 55, "V1_V2", "S_minus"), # From S- candidate search
-        (230629, 0, 10, "V1_V2", "O_plus")   # From O+ candidate search
+        (230629, 0, 55, "V1_V2", "S_minus"),
+        (230629, 0, 10, "V1_V2", "O_plus_V1"),
+        (230823, 0, 3, "FEF", "Ultimate_Omission")
     ]
     
     for ses, prb, l_idx, area, tag in tasks:
