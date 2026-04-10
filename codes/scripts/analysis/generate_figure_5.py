@@ -5,6 +5,7 @@ from pathlib import Path
 import re
 from sklearn.decomposition import PCA
 import plotly.graph_objects as go
+import plotly.colors as pc
 
 ARRAY_DIR = Path(r'D:\drive\data\arrays')
 PROFILE_PATH = Path(r'D:\drive\omission\outputs\unit_nwb_profile.csv')
@@ -27,6 +28,19 @@ def map_area(row):
             elif ch_local < 84: return parts[1]
             else: return parts[2]
     return 'V4' if loc == 'DP' else loc
+
+def hex_to_rgba(hex_color, alpha=0.15):
+    hex_color = hex_color.lstrip('#')
+    if len(hex_color) == 6:
+        r, g, b = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+        return f'rgba({r}, {g}, {b}, {alpha})'
+    return hex_color
+
+AREA_COLORS = {
+    'V1': '#1f77b4', 'V2': '#ff7f0e', 'V3d': '#2ca02c', 'V3a': '#d62728', 
+    'V4': '#9467bd', 'MT': '#8c564b', 'MST': '#e377c2', 'TEO': '#7f7f7f', 
+    'FST': '#bcbd22', 'FEF': '#17becf', 'PFC': '#000000'
+}
 
 def generate_figure_5():
     df = pd.read_csv(PROFILE_PATH, low_memory=False)
@@ -85,8 +99,6 @@ def generate_figure_5():
                 area_G2_trials[row['area_hier']].append(g2_binned)
 
     fig = go.Figure()
-    
-    time_array = np.arange(n_bins)
 
     for area in CANONICAL_AREAS:
         if len(area_G1_trials[area]) < 3: continue
@@ -129,60 +141,61 @@ def generate_figure_5():
             G1_trials_pca[t] = pca.transform(g1_sc) - start_mean
             G2_trials_pca[t] = pca.transform(g2_sc) - start_mean
 
+        area_color = AREA_COLORS.get(area, '#333333')
+        area_color_rgba = hex_to_rgba(area_color, 0.15)
+
         # Plot individual trials (thin, semi-transparent)
         for t in range(min_t):
             fig.add_trace(go.Scatter3d(
                 x=G1_trials_pca[t,:,0], y=G1_trials_pca[t,:,1], z=G1_trials_pca[t,:,2],
-                mode='lines', line=dict(color='rgba(65, 105, 225, 0.15)', width=2),
+                mode='lines', line=dict(color=area_color_rgba, width=2, dash='solid'),
                 showlegend=False, hoverinfo='skip'
             ))
             fig.add_trace(go.Scatter3d(
                 x=G2_trials_pca[t,:,0], y=G2_trials_pca[t,:,1], z=G2_trials_pca[t,:,2],
-                mode='lines', line=dict(color='rgba(220, 20, 60, 0.15)', width=2),
+                mode='lines', line=dict(color=area_color_rgba, width=2, dash='dash'),
                 showlegend=False, hoverinfo='skip'
             ))
             
-        # Plot mean trajectories (thick, colored by time)
+        # Plot mean trajectories (thick)
+        # Standard: Solid
         fig.add_trace(go.Scatter3d(
             x=G1_mean_pca[:,0], y=G1_mean_pca[:,1], z=G1_mean_pca[:,2],
-            mode='lines+markers',
-            line=dict(color=time_array, colorscale='Blues', width=8),
-            marker=dict(size=4, color=time_array, colorscale='Blues'),
-            name=f'{area} Standard Mean',
-            showlegend=False,
+            mode='lines',
+            line=dict(color=area_color, width=8, dash='solid'),
+            name=f'{area}',
+            showlegend=True,
             hovertext=[f'{area} Standard t={b*step_size}ms' for b in range(n_bins)],
             hoverinfo='text'
         ))
         fig.add_trace(go.Scatter3d(
             x=[G1_mean_pca[-1,0]], y=[G1_mean_pca[-1,1]], z=[G1_mean_pca[-1,2]],
-            mode='markers', marker=dict(size=8, color='darkblue', symbol='diamond'),
+            mode='markers', marker=dict(size=8, color=area_color, symbol='diamond'),
             showlegend=False, hoverinfo='skip'
         ))
 
+        # Omission: Dashed
         fig.add_trace(go.Scatter3d(
             x=G2_mean_pca[:,0], y=G2_mean_pca[:,1], z=G2_mean_pca[:,2],
-            mode='lines+markers',
-            line=dict(color=time_array, colorscale='Reds', width=8),
-            marker=dict(size=4, color=time_array, colorscale='Reds'),
-            name=f'{area} Omission Mean',
+            mode='lines',
+            line=dict(color=area_color, width=8, dash='dash'),
+            name=f'{area} Omission',
             showlegend=False,
             hovertext=[f'{area} Omission t={b*step_size}ms' for b in range(n_bins)],
             hoverinfo='text'
         ))
         fig.add_trace(go.Scatter3d(
             x=[G2_mean_pca[-1,0]], y=[G2_mean_pca[-1,1]], z=[G2_mean_pca[-1,2]],
-            mode='markers', marker=dict(size=8, color='darkred', symbol='diamond'),
+            mode='markers', marker=dict(size=8, color=area_color, symbol='circle'),
             showlegend=False, hoverinfo='skip'
         ))
 
-    # Proxy legends
-    fig.add_trace(go.Scatter3d(x=[None], y=[None], z=[None], mode='lines', line=dict(color='rgba(65, 105, 225, 0.4)', width=2), name='Standard Individual Trials'))
-    fig.add_trace(go.Scatter3d(x=[None], y=[None], z=[None], mode='lines', line=dict(color='rgba(220, 20, 60, 0.4)', width=2), name='Omission Individual Trials'))
-    fig.add_trace(go.Scatter3d(x=[None], y=[None], z=[None], mode='lines+markers', line=dict(color='blue', width=8), marker=dict(color='darkblue', symbol='diamond', size=8), name='Standard Mean Trajectory (Gradient = Time)'))
-    fig.add_trace(go.Scatter3d(x=[None], y=[None], z=[None], mode='lines+markers', line=dict(color='red', width=8), marker=dict(color='darkred', symbol='diamond', size=8), name='Omission Mean Trajectory (Gradient = Time)'))
+    # Proxy legends for line style
+    fig.add_trace(go.Scatter3d(x=[None], y=[None], z=[None], mode='lines', line=dict(color='black', width=6, dash='solid'), name='Standard Sequence (Solid)'))
+    fig.add_trace(go.Scatter3d(x=[None], y=[None], z=[None], mode='lines', line=dict(color='black', width=6, dash='dash'), name='Omission Sequence (Dashed)'))
 
     fig.update_layout(
-        title='Figure 5: Population State-Space Dynamics (PCA Projection)<br><i>Individual trials (thin) and mean trajectories (thick, colored by time) across 11 areas.</i>',
+        title='Figure 5: Population State-Space Dynamics (PCA Projection)<br><i>Color: Brain Area | Solid: Standard Sequence | Dashed: Omission</i>',
         scene=dict(
             xaxis_title='PC 1 (Variance)',
             yaxis_title='PC 2 (Variance)',
@@ -193,7 +206,7 @@ def generate_figure_5():
             zaxis=dict(showgrid=True, gridcolor='lightgray', zerolinecolor='gray')
         ),
         margin=dict(l=0, r=0, b=0, t=50),
-        legend=dict(yanchor="top", y=0.95, xanchor="left", x=0.05),
+        legend=dict(yanchor="top", y=0.95, xanchor="left", x=0.05, itemsizing='constant'),
         width=1200, height=900
     )
     
