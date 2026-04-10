@@ -1,4 +1,3 @@
-
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -28,13 +27,6 @@ def map_area(row):
             elif ch_local < 84: return parts[1]
             else: return parts[2]
     return 'V4' if loc == 'DP' else loc
-
-def hex_to_rgba(hex_color, alpha=0.15):
-    hex_color = hex_color.lstrip('#')
-    if len(hex_color) == 6:
-        r, g, b = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
-        return f'rgba({r}, {g}, {b}, {alpha})'
-    return hex_color
 
 AREA_COLORS = {
     'V1': '#1f77b4', 'V2': '#ff7f0e', 'V3d': '#2ca02c', 'V3a': '#d62728', 
@@ -131,46 +123,23 @@ def generate_figure_5():
         start_mean = (G1_mean_pca[0] + G2_mean_pca[0]) / 2
         G1_mean_pca -= start_mean
         G2_mean_pca -= start_mean
-        
-        # Transform individual trials
-        G1_trials_pca = np.zeros((min_t, n_bins, 3))
-        G2_trials_pca = np.zeros((min_t, n_bins, 3))
-        for t in range(min_t):
-            g1_sc = (G1_trials[t] - scaler_mean) / scaler_std
-            g2_sc = (G2_trials[t] - scaler_mean) / scaler_std
-            G1_trials_pca[t] = pca.transform(g1_sc) - start_mean
-            G2_trials_pca[t] = pca.transform(g2_sc) - start_mean
 
         area_color = AREA_COLORS.get(area, '#333333')
-        area_color_rgba = hex_to_rgba(area_color, 0.15)
 
-        # Plot individual trials (thin, semi-transparent)
-        for t in range(min_t):
-            fig.add_trace(go.Scatter3d(
-                x=G1_trials_pca[t,:,0], y=G1_trials_pca[t,:,1], z=G1_trials_pca[t,:,2],
-                mode='lines', line=dict(color=area_color_rgba, width=2, dash='solid'),
-                showlegend=False, hoverinfo='skip'
-            ))
-            fig.add_trace(go.Scatter3d(
-                x=G2_trials_pca[t,:,0], y=G2_trials_pca[t,:,1], z=G2_trials_pca[t,:,2],
-                mode='lines', line=dict(color=area_color_rgba, width=2, dash='dash'),
-                showlegend=False, hoverinfo='skip'
-            ))
-            
         # Plot mean trajectories (thick)
         # Standard: Solid
         fig.add_trace(go.Scatter3d(
             x=G1_mean_pca[:,0], y=G1_mean_pca[:,1], z=G1_mean_pca[:,2],
             mode='lines',
-            line=dict(color=area_color, width=8, dash='solid'),
-            name=f'{area}',
+            line=dict(color=area_color, width=6, dash='solid'),
+            name=f'{area} Standard',
             showlegend=True,
             hovertext=[f'{area} Standard t={b*step_size}ms' for b in range(n_bins)],
             hoverinfo='text'
         ))
         fig.add_trace(go.Scatter3d(
             x=[G1_mean_pca[-1,0]], y=[G1_mean_pca[-1,1]], z=[G1_mean_pca[-1,2]],
-            mode='markers', marker=dict(size=8, color=area_color, symbol='diamond'),
+            mode='markers', marker=dict(size=6, color=area_color, symbol='diamond'),
             showlegend=False, hoverinfo='skip'
         ))
 
@@ -178,7 +147,7 @@ def generate_figure_5():
         fig.add_trace(go.Scatter3d(
             x=G2_mean_pca[:,0], y=G2_mean_pca[:,1], z=G2_mean_pca[:,2],
             mode='lines',
-            line=dict(color=area_color, width=8, dash='dash'),
+            line=dict(color=area_color, width=6, dash='dash'),
             name=f'{area} Omission',
             showlegend=False,
             hovertext=[f'{area} Omission t={b*step_size}ms' for b in range(n_bins)],
@@ -186,7 +155,7 @@ def generate_figure_5():
         ))
         fig.add_trace(go.Scatter3d(
             x=[G2_mean_pca[-1,0]], y=[G2_mean_pca[-1,1]], z=[G2_mean_pca[-1,2]],
-            mode='markers', marker=dict(size=8, color=area_color, symbol='circle'),
+            mode='markers', marker=dict(size=6, color=area_color, symbol='circle'),
             showlegend=False, hoverinfo='skip'
         ))
 
