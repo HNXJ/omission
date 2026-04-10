@@ -26,7 +26,6 @@ SLATE = "#444444"
 CANONICAL_AREAS: List[str] = ['V1', 'V2', 'V3d', 'V3a', 'V4', 'MT', 'MST', 'TEO', 'FST', 'FEF', 'PFC']
 
 AREA_ALIAS_MAP: Dict[str, str] = {
-    'V3': 'V3d', # Default V3 to V3d, can be refined
     'DP': 'V4',
 }
 
@@ -39,16 +38,7 @@ HIERARCHY: Dict[str, List[str]] = {
 AREA_TIERS: Dict[str, List[str]] = {k.lower(): v for k, v in HIERARCHY.items()}
 
 # --- Timing Constants (in milliseconds from P1 onset = 0ms) ---
-# Cycle = 1031ms (P: 531ms, D: 500ms) - This seems to be incorrect, p1 is 531, d1 is 500, p2 is 531, ...
-# The end times are not consistent with the cycle length. I will correct them.
-# P1: 0 to 531 (531ms)
-# D1: 531 to 1031 (500ms)
-# P2: 1031 to 1562 (531ms)
-# D2: 1562 to 2062 (500ms)
-# P3: 2062 to 2593 (531ms)
-# D3: 2593 to 3093 (500ms)
-# P4: 3093 to 3624 (531ms)
-# D4: 3624 to 4124 (500ms)
+
 
 SEQUENCE_TIMING_MS: Dict[str, Dict[str, Any]] = {
     "p1": {"start": 0, "end": 531, "color": GOLD},
@@ -66,8 +56,8 @@ TIMING_MS["fx"] = -500    # fixation window: -500ms to 0ms (baseline)
 
 EVENT_LINES_MS: Dict[str, int] = TIMING_MS.copy()
 
-# Omission timings for patches (ms, from p1 onset = 0ms)
-OMISSION_PATCHES_MS: Dict[str, Tuple[int, int]] = {
+# Omission timings for analysis windows (ms, from p1 onset = 0ms)
+OMISSION_ANALYSIS_WINDOWS_MS: Dict[str, Tuple[int, int]] = {
     'AXAB': (SEQUENCE_TIMING_MS['p2']['start'], SEQUENCE_TIMING_MS['p2']['end']),
     'BXBA': (SEQUENCE_TIMING_MS['p2']['start'], SEQUENCE_TIMING_MS['p2']['end']),
     'RXRR': (SEQUENCE_TIMING_MS['p2']['start'], SEQUENCE_TIMING_MS['p2']['end']),

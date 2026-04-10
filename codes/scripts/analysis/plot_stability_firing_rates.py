@@ -10,9 +10,9 @@ from pathlib import Path
 from scipy.ndimage import gaussian_filter1d
 
 # Paths
-ARRAY_DIR = Path(r'D:\drive\data\arrays')
-META_PATH = Path(r'D:\drive\omission\outputs\unit_nwb_profile.csv')
-OUTPUT_DIR = Path(r'D:\drive\omission\outputs\stability-analysis')
+ARRAY_DIR = Path('data/arrays')
+META_PATH = Path('outputs/unit_nwb_profile.csv')
+OUTPUT_DIR = Path('outputs/stability-analysis')
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Define Presence Ratio Bins

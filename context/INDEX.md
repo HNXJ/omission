@@ -20,11 +20,7 @@ This index provides a one-line description of every active document in the `cont
 - **`analysis/methods-rsa-cka.md`**: Representational Similarity Analysis and CKA standards.
 - **`analysis/methods-behavior.md`**: Oculomotor analysis rules (DVA, Pupil, Saccades).
 
-## 🟠 Figures (Working/Canonical)
-- **`figures/figure-suite.md`**: Inventory, aesthetic mandates, and visual identity. (Source of Truth)
-- **`figures/figure-03-population-firing.md`**: Brief for Fig 03 (Population PSTHs).
-- **`figures/figure-05-tfr.md`**: Brief for Fig 05 (LFP heatmaps).
-- **`figures/figure-06-band-summary.md`**: Brief for Fig 06 (Spectral trajectories).
+.
 
 ## 🟣 Manuscript (Working)
 - **`manuscript/results-summary.md`**: Synthesis of findings for Figures 1-6. (Source of Truth)

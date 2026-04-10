@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 
 ARRAY_DIR = Path(r'D:\drive\data\arrays')
-OUTPUT_CSV = Path(r'D:\drive\omission\outputs\all_units_master_index.csv')
+OUTPUT_CSV = Path('outputs/all_units_master_index.csv')
 
 def create_master_index():
     all_units = []

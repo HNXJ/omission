@@ -22,7 +22,7 @@ The **Omission** project is a large-scale neurophysiological investigation into 
 - `overview/` — High-level project summaries, data availability, and area mappings.
 - `specs/` — Canonical task definitions, pipeline standards, and reproducibility rules.
 - `analysis/` — Roadmaps, decoding frameworks, and methodology-specific subdocs.
-- `figures/` — Figure suite inventory and detailed briefs for each paper panel.
+
 - `manuscript/` — Results summaries, poster content, and draft material.
 - `operations/` — Troubleshooting notes and implementation history logs.
 - `archive/` — Legacy material, prompts, and logs separated from the active source-of-truth.
@@ -34,7 +34,7 @@ The **Omission** project is a large-scale neurophysiological investigation into 
 
 ## Repository & Context Conventions
 - **Root Integrity**: No new folders or files in the root of any git directory without explicit confirmation.
-- **Naming**: `src/functions/` (underscores) for modules; `src/scripts/` (hyphens) for entrypoints. No uppercase.
+- **Naming**: `codes/functions/` (underscores) for modules; `codes/scripts/` (hyphens) for entrypoints. No uppercase.
 - **Versioning**: No version suffixes (`_v1`, `_v2`) in filenames.
 - **Documentation**: All active non-code context is organized in `context/` with YAML frontmatter.
 - **Scientific Integrity**: Prefer Gaussian smoothing for PSTHs and cluster-based permutations for spectral statistics to avoid phase-shifts and false positives.

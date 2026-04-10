@@ -74,6 +74,6 @@ def plot_omission_validation(units_path, summary_path, output_svg):
 if __name__ == "__main__":
     plot_omission_validation(
         units_path=r'D:\oxm0818_units.npy',
-        summary_path=str(PROJECT_ROOT / 'ses-230818_part1_summary.csv'),
-        output_svg=r'D:\figures\ses-230818_omission_validation.svg'
+        summary_path=str(PROJECT_ROOT / 'outputs/ses-230818_part1_summary.csv'),
+        output_svg=str(PROJECT_ROOT / 'outputs/plots/ses-230818_omission_validation.svg')
     )

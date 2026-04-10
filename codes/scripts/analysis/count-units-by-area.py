@@ -6,7 +6,7 @@ from codes.functions.lfp.lfp_mapping import resolve_area_membership
 
 # Path setup
 NWB_DIR = r"D:\analysis\nwb"
-OUTPUT_FILE = r"D:\drive\omission\output\unit-counts-by-area.csv"
+OUTPUT_FILE = Path('output/unit-counts-by-area.csv')
 
 # Mapping logic: Need to map peak_channel_id to area per session
 def get_unit_area(session_id, peak_channel_id):

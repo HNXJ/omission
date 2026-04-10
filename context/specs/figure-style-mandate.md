@@ -1,51 +1,82 @@
 # OMISSION REPO FIGURE STYLE MANDATE
-Version: repo-aware, p1-locked, publication-facing
-Applies to: codes/functions/visualization/*, codes/scripts/analysis/*, poster/manuscript exports
+Version: 2.0 (Publication-Grade)
+Status: Canonical
+Applies to: `codes/functions/visualization/*`, `codes/scripts/analysis/*`, poster/manuscript exports
 
-Purpose: Scientifically faithful, visually consistent figures aligned to canonical timing/area conventions.
+## 1. Global Mandates
 
-──────────────────────────────────────────────────────────────────────
-A. SOURCE OF TRUTH AND CONFLICT RESOLUTION
-──────────────────────────────────────────────────────────────────────
-1. Primary Source: codes/functions/lfp/lfp_constants.py, codes/functions/visualization/poster_figures.py, codes/functions/events/lfp_events.py.
-2. Canonical Constants: Never redefine core constants (area order, condition list, timing windows) locally.
-3. Timing Axis: Always use p1-relative time (p1=0ms) on axes. Export-array indices are for internal logic only.
-4. Conflicts: Prioritize lfp_constants.py and poster_figures.py over stale scripts.
+1. **Self-Containment**: Every figure must be interpretable without the main text. Use explicit axis labels, units, legends, panel labels, and short in-panel annotations.
+2. **Typography**: Use Arial or Helvetica. Never outline text. Maintain legibility at final export size.
+3. **Accessibility**: Use the color-blind-safe palette (see below). Never rely on color alone; pair with line style, marker shape, or direct labels.
+4. **Minimalism**: No drop shadows, 3D embellishment, glossy effects, or unnecessary gridlines.
+5. **Color/Text**: Use black or dark gray text. Legends must use black text with colored swatches.
+6. **Uncertainty**: Explicitly report error representation (e.g., `mean ± SEM`, `95% CI`).
+7. **Statistics**: Report in compact format: `test, statistic, df, p, N, correction`.
+8. **Sample Size**: Clearly distinguish `N` (independent units/sessions) from `n` (observations/neurons/trials).
+9. **Consistency**: Condition colors and area ordering must remain fixed across the entire project.
+10. **Events**: Event-locked plots must show timing explicitly (lines or shaded windows).
 
-──────────────────────────────────────────────────────────────────────
-B. CANONICAL SEMANTICS
-──────────────────────────────────────────────────────────────────────
-1. Area Order: V1, V2, V3d, V3a, V4, MT, MST, TEO, FST, FEF, PFC.
-2. Timing (p1=0ms):
-   fx: -500-0, p1: 0-531, d1: 531-1031, p2: 1031-1562, d2: 1562-2062, p3: 2062-2593, d3: 2593-3093, p4: 3093-3624, d4: 3624-4124.
-3. Timing Conversion: If using 6000-sample export (p1 at 1000), `ms = sample - 1000`.
-4. Shapes: [Trial x Channel/Unit x Time].
-5. Summary: Default to session-balanced averaging unless inferring on units/channels.
+## 2. Default Accessible Palette
 
-──────────────────────────────────────────────────────────────────────
-C. STYLE RULES
-──────────────────────────────────────────────────────────────────────
-1. Legibility: Readable without text. Axis labels, units, panel labels, legends/direct labels required.
-2. Typography: Arial/Helvetica, black text. No outline.
-3. Contrast: No color-only encoding. Use line style, markers, or labels.
-4. Minimalism: No clutter (gradients, bevels, 3D, chartjunk). Avoid gridlines unless essential.
-5. Uncertainty: Must define (SEM, SD, CI). Label axes N (replicates) vs n (observations).
-6. Statistical Reporting: Test, statistic, df, p, N, correction.
-7. Smoothing: State kernel width and method if applied.
-8. Color System: 
-   - Neutral: Black/Gray/White.
-   - Patch: p1=GOLD, p2=VIOLET, p3=TEAL, p4=ORANGE, Omission=PINK.
-   - Condition: AAAB=blue, BBBA=vermillion, RRRR=gold.
-   - Families: p2(violet), p3(teal), p4(orange).
-   - Bands: Theta(Red), Alpha(Orange), Beta(Violet), Gamma(Gold).
-9. Consistency: Never change color semantics across figures.
+Unless project-specific Omission colors (Section 4) are required, use:
+- **Black**: `#000000`
+- **Orange**: `#E69F00`
+- **Sky Blue**: `#56B4E9`
+- **Bluish Green**: `#009E73`
+- **Yellow**: `#F0E442`
+- **Blue**: `#0072B2`
+- **Vermillion**: `#D55E00`
+- **Reddish Purple**: `#CC79A7`
 
-──────────────────────────────────────────────────────────────────────
-D. IMPLEMENTATION
-──────────────────────────────────────────────────────────────────────
-1. Helpers: Reuse poster_figures.py helpers.
-2. Multi-panel: Vertical stacks V1(top) to PFC(bottom) unless inverse justified.
-3. Export: 
-   - Plotly: HTML(QC), SVG/PDF(Pub).
-   - Matplotlib: SVG/PDF(Pub).
-4. No raw sample indices on axes. Always convert to p1-relative ms.
+## 3. Plot-Specific Rules
+
+### 2D Trace-Line Plots
+- Summary band default: `mean ± 1.0 SEM` with low opacity.
+- Line thickness: Thin (individual), Thicker (means), Thickest (focal condition).
+- Show baseline/zero-line clearly if relevant.
+- Use significance bars/strips instead of many p-values on curves.
+
+### 2D Image Plots (Spectrograms/Heatmaps)
+- Use perceptually uniform colormaps (avoid rainbow/jet).
+- Center diverging colormaps on zero/reference value.
+- Explicitly label color bar units (e.g., dB, z-score, normalized power).
+- Draw event lines/epoch boundaries.
+
+### 2D Bar/Violin Plots
+- Barplots: Use only for aggregate summaries; show raw data points if sample size allows.
+- Violin plots: Overlay raw points, box, or median line. Same kernel bandwidth across groups.
+
+## 4. Omission Project Specifics (The "Golden Standard")
+
+### Canonical Area Order (V1 -> PFC)
+`V1, V2, V3d, V3a, V4, MT, MST, TEO, FST, FEF, PFC`
+
+### Canonical Timing (p1 onset = 0ms)
+| Epoch | Window (ms) | Note |
+|:---|:---:|:---|
+| **fx** (Fixation) | -500 to 0 | Pre-stimulus baseline |
+| **p1** | 0 to 531 | Stimulus 1 |
+| **d1** | 531 to 1031 | Delay 1 |
+| **p2 / x** | 1031 to 1562 | Stimulus 2 or Omission |
+| **d2** | 1562 to 2062 | Delay 2 |
+| **p3 / x** | 2062 to 2593 | Stimulus 3 or Omission |
+| **d3** | 2593 to 3093 | Delay 3 |
+| **p4 / x** | 3093 to 3624 | Stimulus 4 or Omission |
+| **d4** | 3624 to 4124 | Delay 4 |
+
+### Omission Color System
+- **Event Patches**: p1=GOLD, p2=VIOLET, p3=TEAL, p4=ORANGE, Omission=PINK.
+- **Conditions**: 
+  - **AAAB**: Blue (`#0072B2`)
+  - **BBBA**: Vermillion (`#D55E00`)
+  - **RRRR**: Gold/Yellow (`#F0E442`)
+- **Spectral Bands**:
+  - **Theta**: Red
+  - **Alpha**: Orange
+  - **Beta**: Violet (Top-down)
+  - **Gamma**: Gold (Bottom-up)
+
+## 5. Implementation Notes
+- **Source of Truth**: `codes/functions/lfp/lfp_constants.py`.
+- **Export**: Vector (SVG/PDF) for publication; HTML for QC.
+- **Normalization**: Standard is $10 \cdot \log_{10}(P / P_{base})$ (dB).

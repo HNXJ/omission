@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # --- Config ---
 INPUT_H5 = r'D:\OmissionAnalysis\spikes_by_condition_ses-230818.h5'
 TARGET_CONDITION = 'AAAB'
-OUTPUT_PNG = r'D:/OmissionAnalysis/timing_validation_plot.png'
+OUTPUT_PNG = r'omission/outputs/plots/timing_validation_plot.png'
 
 # Event timings relative to Stimulus 1 onset (t=0) in seconds
 # Stimuli are ~1000ms apart

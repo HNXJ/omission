@@ -6,8 +6,8 @@ from codes.functions.lfp.lfp_mapping import resolve_area_membership
 
 # Path setup
 NWB_DIR = r"D:\analysis\nwb"
-OUTPUT_FILE = r"D:\drive\omission\output\unit-counts.csv"
-GAMMA_LOG = r"D:\drive\omission\.gemini\gamma\unit-counting-errors.md"
+OUTPUT_FILE = Path('output/unit-counts.csv')
+GAMMA_LOG = Path('.gemini/gamma/unit-counting-errors.md')
 
 def log_error(session_id, error):
     os.makedirs(os.path.dirname(GAMMA_LOG), exist_ok=True)

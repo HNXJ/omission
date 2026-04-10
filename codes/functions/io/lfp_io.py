@@ -21,6 +21,18 @@ from codes.functions.lfp.lfp_constants import ALL_CONDITIONS
 from codes.functions.lfp.lfp_laminar_mapping import CHANNEL_SPACING
 
 
+def filter_good_units(units_df: pd.DataFrame, policy: str = "stable_good") -> pd.DataFrame:
+    """Filters units based on a predefined quality policy."""
+    if policy == "stable_good":
+        # Example policy, adjust criteria as needed
+        return units_df[
+            (units_df['quality'] == 1.0) &
+            (units_df['presence_ratio'] >= 0.95) &
+            (units_df['firing_rate'] >= 1.0)
+        ]
+    # Add other policies as needed
+    return units_df
+
 def load_session(nwb_path: Path) -> Dict[str, Any]:
     """Load a session from NWB or return a stub structure."""
     session: Dict[str, Any] = {
@@ -59,60 +71,47 @@ def load_session(nwb_path: Path) -> Dict[str, Any]:
                     for u_idx in range(len(nwb.units))
                 ]
             
-        lfp_probes = [] # New structure to hold LFP data per probe
-        # Try to find a single 'lfp' object first (original logic)
-        if "lfp" in getattr(nwb, "acquisition", {}):
-            lfp_obj = nwb.acquisition["lfp"]
-            # Assuming 'lfp' object directly contains all channels and their electrodes
-            # This case might need to be refined if 'lfp' itself is a collection of ElectricalSeries
-            probe_entry = {
-                'id': 'all', # A generic ID for this combined LFP
-                'data': np.asarray(lfp_obj.data),
-                'timestamps': np.asarray(lfp_obj.timestamps),
-                # Need to map electrodes to this 'all' LFP if possible, or assume all electrodes are included
-                'electrodes_ids': session["electrodes"].index.to_list() # Assuming all electrodes belong to this LFP
-            }
-            lfp_probes.append(probe_entry)
-        
-        # If not, try to find probe-specific LFP objects
+        lfp_probes = []
+        session['lfp_source'] = 'None'
+
+        # Prioritize probe-specific LFP objects
         probe_keys = sorted([k for k in nwb.acquisition.keys() if "_lfp" in k and isinstance(nwb.acquisition[k], pynwb.ecephys.ElectricalSeries)])
-        for key in probe_keys:
-            lfp_obj = nwb.acquisition[key]
+        if probe_keys:
+            session['lfp_source'] = 'probe_specific'
+            for key in probe_keys:
+                lfp_obj = nwb.acquisition[key]
+                
+                if hasattr(lfp_obj, 'electrodes') and lfp_obj.electrodes is not None:
+                    electrode_indices = lfp_obj.electrodes.data[:]
+                    probe_electrode_ids = session["electrodes"].iloc[electrode_indices].index.to_list()
+                else:
+                    probe_electrode_ids = []
+
+                probe_entry = {
+                    'id': key.replace('_lfp', ''),
+                    'data': np.asarray(lfp_obj.data),
+                    'timestamps': np.asarray(lfp_obj.timestamps),
+                    'electrodes_ids': probe_electrode_ids
+                }
+                lfp_probes.append(probe_entry)
             
-            # Extract electrode IDs associated with this ElectricalSeries
-            # This assumes that lfp_obj.electrodes is a DynamicTableRegion
-            # and that it contains references to the main electrodes table.
-            if hasattr(lfp_obj, 'electrodes') and lfp_obj.electrodes is not None:
-                # Get the electrode indices from the DynamicTableRegion
-                electrode_indices = lfp_obj.electrodes.data[:]
-                # Use these indices to get the corresponding original electrode IDs from session["electrodes"]
-                # Assuming session["electrodes"]'s index matches the original NWB electrode IDs
-                probe_electrode_ids = session["electrodes"].iloc[electrode_indices].index.to_list()
-            else:
-                probe_electrode_ids = [] # No specific electrodes found for this LFP object
-            
-            probe_entry = {
-                'id': key.replace('_lfp', ''), # e.g., 'probe_0'
-                'data': np.asarray(lfp_obj.data),
-                'timestamps': np.asarray(lfp_obj.timestamps),
-                'electrodes_ids': probe_electrode_ids
-            }
-            lfp_probes.append(probe_entry)
-            
-        if lfp_probes:
-            # Check if all timestamps are the same
+            # Validation before concatenation
             first_timestamps = lfp_probes[0]['timestamps']
             for probe in lfp_probes[1:]:
                 if not np.array_equal(first_timestamps, probe['timestamps']):
-                    warnings.warn("LFP timestamps differ between probes. Using timestamps from the first probe.")
-                    break
-            
+                    raise ValueError("LFP timestamps differ between probes.")
+                # Add more validation here if needed (e.g., channel counts)
+
             all_lfp_data = [p['data'] for p in lfp_probes]
-            
-            # This assumes that the channels in each probe are exclusive
-            # and that the order of probes is consistent.
             session['lfp'] = np.vstack(all_lfp_data)
             session['lfp_timestamps'] = first_timestamps
+
+        # If no probe-specific LFP, check for a combined 'lfp' object
+        elif "lfp" in getattr(nwb, "acquisition", {}):
+            session['lfp_source'] = 'combined'
+            lfp_obj = nwb.acquisition["lfp"]
+            session['lfp'] = np.asarray(lfp_obj.data)
+            session['lfp_timestamps'] = np.asarray(lfp_obj.timestamps)
 
         
         if not session["electrodes"].empty:

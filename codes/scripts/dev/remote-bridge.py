@@ -1,3 +1,6 @@
+# Local-only
+# This script is for local development and contains machine-specific paths and configurations.
+
 import os
 import json
 import time

@@ -9,12 +9,12 @@ from scipy.ndimage import gaussian_filter1d
 from collections import defaultdict
 
 # Add omission repo to path
-sys.path.append(r'D:\drive\omission')
+sys.path.append(str(Path(__file__).parents[3]))
 
 # Paths
-METADATA_PATH = Path(r'D:\drive\omission\outputs\all_units_metadata.csv')
-ARRAY_DIR = Path(r'D:\drive\data\arrays')
-OUTPUT_DIR = Path(r'D:\drive\omission\outputs\oglo-figures\figure-3')
+METADATA_PATH = Path('outputs/all_units_metadata.csv')
+ARRAY_DIR = Path('data/arrays')
+OUTPUT_DIR = Path('outputs/oglo-figures/figure-3')
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Configuration & Constants

@@ -64,8 +64,25 @@ All times are relative to the onset of $p1$ (**Code 101.0**).
 ## 5. Behavioral Task Control
 - **System**: MonkeyLogic 2.2 (NIMH).
 - **Requirement**: Maintain eye fixation within a small window (~1-2° radius) for ~4500ms.
-- **Inputs**: Eye position sampled at 1000Hz, calibrated to Degrees of Visual Angle (DVA).
+- **Inputs**: Eye position sampled at 1000Hz, calibrated to **Degrees of Visual Angle (DVA)** (57 cm screen distance).
 - **Paradigm**: No-report (passive observation during fixation).
+- **Classification**:
+  - **Saccades**: Velocity > 30 DVA/s and Amplitude > 1.5°.
+  - **Microsaccades**: Amplitude < 1.5° during stable fixation periods.
+
+### Condition Number Mapping (NWB `task_condition_number`)
+- **AAAB**: 1, 2
+- **AXAB**: 3
+- **AAXB**: 4
+- **AAAX**: 5
+- **BBBA**: 6, 7
+- **BXBA**: 8
+- **BBXA**: 9
+- **BBBX**: 10
+- **RRRR**: 11-26
+- **RXRR**: 27-34
+- **RRXR**: 35, 37, 39, 41
+- **RRRX**: 36, 38, 40, 42, 43-50
 
 ## 6. Neural Interpretation Notes
 - **Gamma Band**: Associated with feedforward sensory processing; expected to be stable/absent during omission.

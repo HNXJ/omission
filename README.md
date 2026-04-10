@@ -23,7 +23,7 @@ The codebase is structured to enforce separation of concerns, portability, and r
   * `pipelines/`: Canonical orchestrators for major analysis tracks.
   * `analysis/`: Reusable analysis runners (e.g., decoding, manifold trajectories).
   * `qc/`: Quality control, timing verification, and data inspection tools.
-* **`tests/`**: Unit and integration tests for core extraction logic.
+* **`tests/`**: Unit and integration tests for core extraction logic and debug validation scripts.
 
 ### `context/` - Source of Truth Documentation
 Detailed scientific planning and specifications reside in the `context/` directory.

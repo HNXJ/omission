@@ -63,3 +63,4 @@ The canonical sequence is: `fixation` -> `p1` -> `d1` -> `p2/om` -> `d2` -> `p3/
 - **JSON Manifest**: Records `fs`, `nperseg`, bands, and conditions used.
 - **CSV Summary**: Band-limited power and coherence metrics for group-level analysis.
 - **Plots**: TFR grids, network adjacency graphs, and Granger directionality diagrams.
+  - **Mandate**: All figures MUST strictly adhere to `context/specs/figure-style-mandate.md` (e.g., Arial/Helvetica, p1-relative timing, standardized Omission color system).

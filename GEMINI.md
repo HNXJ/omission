@@ -2,7 +2,6 @@
 
 ## Status
 - **Phase 1**: Partial (Cleanup in progress).
-- **Core Accessor**: get_signal_conditional in codes/functions/lfp/lfp_pipeline.py.
 
 ## Rules
 1. **Safety**: Commit-Pull-Push after EVERY action.
@@ -15,7 +14,4 @@
 - **Correction**: Incremental commits mandatory; bulk destructive ops banned.
 
 ## Plotting Standards
-- Library: Plotly
-- Theme: White background, black axis, gray grid.
-- Colors: [Red, Blue, Brown, Green, Orange, Purple, Yellow].
-- Overwrite: Always.
+Refer to `context/specs/figure-style-mandate.md` for canonical plotting standards.

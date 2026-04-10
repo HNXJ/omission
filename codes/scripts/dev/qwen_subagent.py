@@ -1,3 +1,6 @@
+# Local-only
+# This script is for local development and contains machine-specific paths and configurations.
+
 import requests
 import sys
 import time
@@ -26,10 +29,12 @@ def call_qwen(prompt, system_prompt="You are a senior neuroscience and ML expert
     system_tokens = estimate_tokens(system_prompt)
     total_tokens = prompt_tokens + system_tokens
     
-    print(f"\n[Context Check] Prompt: ~{prompt_tokens} | System: ~{system_tokens} | Total: ~{total_tokens} (Limit: {MAX_CONTEXT_TOKENS})")
+    print(f"
+[Context Check] Prompt: ~{prompt_tokens} | System: ~{system_tokens} | Total: ~{total_tokens} (Limit: {MAX_CONTEXT_TOKENS})")
 
     if total_tokens > MAX_CONTEXT_TOKENS:
-        print(f"\n[CRITICAL WARNING] Prompt exceeds safety limit ({total_tokens} > {MAX_CONTEXT_TOKENS}).")
+        print(f"
+[CRITICAL WARNING] Prompt exceeds safety limit ({total_tokens} > {MAX_CONTEXT_TOKENS}).")
         print("To prevent a Segmentation Fault on the Office Mac, I will truncate the prompt.")
         # Truncate keeping the most recent part (end of prompt)
         chars_to_keep = MAX_CONTEXT_TOKENS * 4
@@ -51,7 +56,8 @@ def call_qwen(prompt, system_prompt="You are a senior neuroscience and ML expert
     }
 
     current_host = platform.node()
-    print(f"\n[Qwen 3.5 Agent] Initiating request from {current_host} to Office M3 Max...")
+    print(f"
+[Qwen 3.5 Agent] Initiating request from {current_host} to Office M3 Max...")
 
     while True:
         try:
@@ -66,11 +72,14 @@ def call_qwen(prompt, system_prompt="You are a senior neuroscience and ML expert
             return content
 
         except requests.exceptions.Timeout:
-            print(f"\n[ERROR] Request to Qwen 3.5 timed out after {TIMEOUT}s.")
+            print(f"
+[ERROR] Request to Qwen 3.5 timed out after {TIMEOUT}s.")
         except requests.exceptions.ConnectionError:
-            print(f"\n[ERROR] Could not connect to {API_URL}. Is the Cloudflare tunnel/Office Mac active?")
+            print(f"
+[ERROR] Could not connect to {API_URL}. Is the Cloudflare tunnel/Office Mac active?")
         except Exception as e:
-            print(f"\n[ERROR] Unexpected error: {e}")
+            print(f"
+[ERROR] Unexpected error: {e}")
 
         # Interactive Recovery Protocol
         print("-" * 40)
@@ -86,7 +95,7 @@ def call_qwen(prompt, system_prompt="You are a senior neuroscience and ML expert
             continue
         elif choice == 'b':
             print(f"Relaying prompt to OfficeMac via GitHub Bridge...")
-            bridge_cmd = f'python D:/hnxj-gemini/scripts/send_task.py "OfficeMac" "{prompt.replace('"', '\\"')}"'
+            bridge_cmd = f'python D:/hnxj-gemini/scripts/send_task.py "OfficeMac" "{prompt.replace('"', '"')}"'
             subprocess.run(bridge_cmd, shell=True)
             return "[RELAYED] Prompt sent to OfficeMac via Bridge. Check COMMAND_BUS.json for results."
         elif choice == 's' or not choice:
@@ -120,8 +129,10 @@ if __name__ == "__main__":
             sys.exit(0)
             
         user_prompt = " ".join(args)
-        print("\n" + "="*50)
+        print("
+" + "="*50)
         print(result)
-        print("="*50 + "\n")
+        print("="*50 + "
+")
     else:
         print("Usage: python qwen_subagent.py 'your prompt here'")

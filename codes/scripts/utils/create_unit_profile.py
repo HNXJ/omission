@@ -6,7 +6,7 @@ from pathlib import Path
 
 # NWB and Output
 NWB_DIR = Path(r'D:\analysis\nwb')
-OUTPUT_PATH = Path(r'D:\drive\omission\outputs\unit_nwb_profile.csv')
+OUTPUT_PATH = Path('outputs/unit_nwb_profile.csv')
 
 def create_unit_profile():
     nwb_files = [f for f in os.listdir(NWB_DIR) if f.endswith('.nwb')]

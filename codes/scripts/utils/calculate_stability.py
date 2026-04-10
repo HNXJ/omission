@@ -9,8 +9,8 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 
-METADATA_PATH = Path(r'D:\drive\omission\outputs\all_units_metadata_v2.csv')
-OUTPUT_PATH = Path(r'D:\drive\omission\outputs\stable_neurons_index.csv')
+METADATA_PATH = Path('outputs/all_units_metadata_v2.csv')
+OUTPUT_PATH = Path('outputs/stable_neurons_index.csv')
 
 def calculate_stability():
     print("Loading master metadata...")
