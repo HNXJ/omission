@@ -23,5 +23,12 @@ def compute_pairwise_coherence(sig_a, sig_b, fs=1000.0):
 
 
 def compute_granger(*args, **kwargs):
-    """Directionality placeholder. (Step 11)."""
+    \"\"\"
+    Directionality/Granger causality calculation.
+    
+    WARNING: Not currently implemented in the canonical repository.
+    
+    Raises:
+        NotImplementedError: Always, as this functionality is not yet available.
+    \"\"\"
     raise NotImplementedError("Placeholder: Granger not implemented in canonical path")
