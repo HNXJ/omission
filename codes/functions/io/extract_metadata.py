@@ -6,7 +6,7 @@ import os
 import sys
 
 def extract_trial_metadata(nwb_path, session_id):
-    output_path = fstr(PROJECT_ROOT / 'ses-{session_id}_trials.csv')
+    output_path = f"{PROJECT_ROOT}/ses-{session_id}_trials.csv"
     
     if os.path.exists(output_path):
         print(f"Metadata already exists for {session_id}. Skipping.")
