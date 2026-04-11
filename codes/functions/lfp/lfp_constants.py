@@ -69,6 +69,13 @@ OMISSION_ANALYSIS_WINDOWS_MS: Dict[str, Tuple[int, int]] = {
     'RRRX': (SEQUENCE_TIMING_MS['p4']['start'], SEQUENCE_TIMING_MS['p4']['end'])
 }
 
+# Patch windows for specific analysis
+OMISSION_PATCH_WINDOWS_MS: Dict[str, Tuple[int, int]] = {
+    'p2': (SEQUENCE_TIMING_MS['p2']['start'], SEQUENCE_TIMING_MS['p2']['end']),
+    'p3': (SEQUENCE_TIMING_MS['p3']['start'], SEQUENCE_TIMING_MS['p3']['end']),
+    'p4': (SEQUENCE_TIMING_MS['p4']['start'], SEQUENCE_TIMING_MS['p4']['end'])
+}
+
 # --- Other Constants ---
 
 # Standard Frequency Bands
