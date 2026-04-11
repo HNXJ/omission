@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from codes.functions.lfp.lfp_constants import (
     GOLD, BLACK, VIOLET, PINK, TEAL, ORANGE, GRAY, WHITE,
-    SEQUENCE_TIMING, BANDS
+    SEQUENCE_TIMING_MS as SEQUENCE_TIMING, BANDS
 )
 
 
