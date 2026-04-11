@@ -12,7 +12,7 @@ from codes.functions.events.lfp_events import build_event_table
 from codes.functions.lfp.lfp_preproc import preprocess_lfp, extract_epochs, baseline_normalize
 from codes.functions.lfp.lfp_tfr import compute_tfr, collapse_band_power
 from codes.functions.lfp.lfp_connectivity import compute_coherence, compute_granger
-from codes.functions.lfp.lfp_stats import cluster_permutation_test, mean_sem
+from codes.functions.lfp.lfp_stats import run_cluster_permutation, mean_sem
 from codes.functions.visualization.lfp_plotting import plot_tfr_grid, plot_band_trajectories, plot_coherence_network
 from codes.functions.lfp.lfp_constants import ALL_CONDITIONS, OMISSION_CONDITIONS, WHITE
 
@@ -28,7 +28,7 @@ def run_one_session(nwb_path: Path, out_dir: Path) -> Dict[str, Any]:
 
     coh = None
     gc = None
-    stats = cluster_permutation_test(power, power)
+    stats = run_cluster_permutation(power, power)
 
     out_dir.mkdir(parents=True, exist_ok=True)
     manifest = {
