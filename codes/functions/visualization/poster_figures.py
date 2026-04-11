@@ -30,13 +30,13 @@ import networkx as nx
 
 from codes.functions.lfp.lfp_constants import (
     GOLD, BLACK, VIOLET, PINK, TEAL, ORANGE, GRAY, WHITE,
-    SEQUENCE_TIMING_MS, BANDS, CANONICAL_AREAS, OMISSION_PATCHES_MS,
-    HIERARCHY
+    SEQUENCE_TIMING_MS, BANDS, CANONICAL_AREAS, OMISSION_ANALYSIS_WINDOWS_MS,
+    OMISSION_PATCH_WINDOWS_MS, HIERARCHY
 )
 
 # Use canonical constants
 AREA_ORDER: List[str] = CANONICAL_AREAS
-OMISSION_WINDOWS: Dict[str, Tuple[int, int]] = OMISSION_PATCHES_MS
+OMISSION_WINDOWS: Dict[str, Tuple[int, int]] = OMISSION_ANALYSIS_WINDOWS_MS
 
 # Condition color assignments (matches poster color coding)
 CONDITION_COLORS: Dict[str, str] = {
