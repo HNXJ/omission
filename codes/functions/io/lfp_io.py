@@ -75,7 +75,10 @@ def load_session(nwb_path: Path) -> Dict[str, Any]:
         session['lfp_source'] = 'None'
 
         # Prioritize probe-specific LFP objects
-        probe_keys = sorted([k for k in nwb.acquisition.keys() if "_lfp" in k and isinstance(nwb.acquisition[k], pynwb.ecephys.ElectricalSeries)])
+        print(f"[infile] lfp_io.py [doing] Inspecting NWB acquisition keys: {list(nwb.acquisition.keys())}")
+        # Robust key matching for probe LFP data (e.g., probe_0_lfp, probe_1_lfp)
+        probe_keys = sorted([k for k in nwb.acquisition.keys() if "lfp" in k.lower() and isinstance(nwb.acquisition[k], pynwb.ecephys.ElectricalSeries)])
+        print(f"[infile] lfp_io.py [doing] Identified probe_keys: {probe_keys}")
         if probe_keys:
             session['lfp_source'] = 'probe_specific'
             for key in probe_keys:

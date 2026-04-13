@@ -15,3 +15,10 @@
 
 ## Plotting Standards
 Refer to `context/specs/figure-style-mandate.md` for canonical plotting standards.
+
+## Directory Structure
+- NWB Files: `D:\analysis\nwb\`
+- Git Repo (Omission): `D:\drive\omission\`
+- Progress Reports: `D:\drive\progress-report\`
+- Data Arrays: `D:\drive\data\arrays\`
+- Outputs: `D:\drive\omission\outputs\`
