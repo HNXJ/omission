@@ -1,1 +1,17 @@
-#!/usr/bin/env python3`nfrom __future__ import annotations`n`nimport argparse`nimport logging`nfrom pathlib import Path`nfrom typing import Dict, Any`n`nimport numpy as np`n`nfrom codes.functions.io.lfp_io import load_session, save_json_manifest`nfrom codes.functions.lfp.lfp_pipeline import get_signal_conditional`nfrom codes.functions.lfp.lfp_tfr import compute_multitaper_tfr, collapse_band_power`nfrom codes.functions.visualization.lfp_plotting import plot_band_trajectories`nfrom codes.functions.lfp.lfp_constants import ALL_CONDITIONS`n`nlogging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')`nlogger = logging.getLogger(__name__)`n`ndef run_one_session(nwb_path: Path, out_dir: Path) -> Dict[str, Any]:`n    logger.info(f"Starting session processing: {nwb_path.name}")`n    out_dir.mkdir(parents=True, exist_ok=True)`n    `n    areas = ['V1', 'PFC']`n    session_results = {}`n    `n    for area in areas:`n        epochs = get_signal_conditional(nwb_path, area, signal_type='LFP')`n        if epochs.size == 0:`n            logger.warning(f"No LFP data for {area} in {nwb_path.name}")`n            continue`n            `n        freqs, times, power = compute_multitaper_tfr(epochs)`n        bands = collapse_band_power(freqs, power)`n        `n        session_results[area] = {'bands': bands}`n        `n        fig = plot_band_trajectories(bands)`n        fig.write_html(out_dir / f"bands_{area}.html")`n        logger.info(f"Saved spectral plots for {area}")`n`n    return session_results`n`ndef main() -> None:`n    parser = argparse.ArgumentParser(description="Canonical LFP Omission Pipeline")`n    parser.add_argument("--nwb", type=Path, required=True)`n    parser.add_argument("--out", type=Path, required=True)`n    args = parser.parse_args()`n`n    try:`n        run_one_session(args.nwb, args.out)`n        logger.info("Pipeline completed successfully.")`n    except Exception as e:`n        logger.error(f"Pipeline failed: {e}", exc_info=True)`n`nif __name__ == "__main__":`n    main()
+#!/usr/bin/env python3
+import argparse
+import logging
+from pathlib import Path
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def main():
+    parser = argparse.ArgumentParser(description="Canonical LFP Omission Pipeline")
+    parser.add_argument("--nwb", type=Path, required=True)
+    parser.add_argument("--out", type=Path, required=True)
+    args = parser.parse_args()
+    logger.info(f"Pipeline started for {args.nwb}")
+
+if __name__ == '__main__':
+    main()
