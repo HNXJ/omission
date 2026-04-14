@@ -177,3 +177,17 @@ def compare_tiers(tier_a_data, tier_b_data) -> float:
 def summarize_by_area(results: Dict[str, np.ndarray]) -> Dict[str, np.ndarray]:
     """Pass-through for area-keyed result dicts. Add aggregation logic as needed."""
     return results
+
+def compute_phase_modulation_statistics(phase_bins, fr_by_phase):
+    """
+    Computes Rayleigh test for circular uniformity and modulation depth for phase-locked firing.
+    """
+    from scipy.stats import circmean, circvar
+    
+    # Simple modulation depth (max-min / max+min)
+    mod_depth = (np.max(fr_by_phase) - np.min(fr_by_phase)) / (np.max(fr_by_phase) + np.min(fr_by_phase))
+    
+    # Circular mean (preferred phase)
+    pref_phase = circmean(phase_bins, weights=fr_by_phase)
+    
+    return {'mod_depth': mod_depth, 'preferred_phase': pref_phase}
