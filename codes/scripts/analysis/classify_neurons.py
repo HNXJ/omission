@@ -68,6 +68,16 @@ def classify_neurons(nwb_path: Path, out_dir: Path):
         
         metrics_list = []
         for unit_id, unit_data in units.iterrows():
+            # Apply quality filters
+            presence_ratio = unit_data.get('presence_ratio', 0.0)
+            firing_rate = unit_data.get('firing_rate', 0.0)
+            
+            if presence_ratio <= 0.95 or firing_rate < 1.0:
+                print(f"""[action] Filtering out unit {unit_id} (PR: {presence_ratio}, FR: {firing_rate})""")
+                continue
+                
+            print(f"""[action] Processing unit {unit_id} (PR: {presence_ratio}, FR: {firing_rate})""")
+            
             # In a real implementation, extract waveform mean from unit_data
             waveform = unit_data.get('waveform_mean', np.zeros(100))
             metrics = compute_waveform_metrics(waveform)
