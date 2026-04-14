@@ -68,9 +68,10 @@ def classify_neurons(nwb_path: Path, out_dir: Path):
         
         metrics_list = []
         for unit_id, unit_data in units.iterrows():
-            # Apply quality filters
-            presence_ratio = unit_data.get('presence_ratio', 0.0)
-            firing_rate = unit_data.get('firing_rate', 0.0)
+            # Apply quality filters, ensuring numeric type
+            presence_ratio = float(unit_data.get('presence_ratio', 0.0))
+            firing_rate = float(unit_data.get('firing_rate', 0.0))
+            print(f"""[action] Unit {unit_id}: parsed PR={presence_ratio}, FR={firing_rate}""")
             
             if presence_ratio <= 0.95 or firing_rate < 1.0:
                 print(f"""[action] Filtering out unit {unit_id} (PR: {presence_ratio}, FR: {firing_rate})""")
