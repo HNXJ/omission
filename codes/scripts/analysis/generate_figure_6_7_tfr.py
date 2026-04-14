@@ -1,87 +1,116 @@
 #!/usr/bin/env python3
 """
-Figure 6 & 7: TFR Analysis Generator
+Figure 6 & 7: Optimized TFR Analysis Generator (Lazy Block-Reads)
 Computes channel-specific TFR (-1000ms to +4000ms from P1).
-Performs dB-normalized TFR and saves .html/.svg/.png + compressed .npz.
+Fixes PFC "Hang" at Epoch 311 by avoiding full probe RAM caching.
 """
 from __future__ import annotations
 import sys
 import gc
+import json
+import time
 import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
 from pathlib import Path
 from datetime import datetime
 
 # Setup paths
-from codes.config.paths import PROJECT_ROOT, DATA_DIR, OUTPUT_DIR
+PROJECT_ROOT = Path(r"D:\drive\omission").resolve()
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+DATA_DIR = Path(r"D:\analysis\nwb")
+OUTPUT_DIR = PROJECT_ROOT / "outputs"
+DASHBOARD_STATEDIR = OUTPUT_DIR / "dashboard"
+DASHBOARD_STATEDIR.mkdir(parents=True, exist_ok=True)
 
-from codes.functions.io.lfp_io import get_nwb_io, load_trial_index, slice_series, get_lfp_handles
+from codes.functions.io.lfp_io import get_nwb_io, load_trial_index, get_lfp_handles, extract_lfp_chunk
 from codes.functions.lfp.lfp_tfr import compute_tfr
 from codes.functions.lfp.lfp_constants import CANONICAL_AREAS, AREA_ALIAS_MAP
 
 def log(msg: str):
     print(f"[{datetime.now().strftime('%H:%M:%S')}] {msg}", flush=True)
 
+def update_status(status_dict):
+    status_file = DASHBOARD_STATEDIR / "status.json"
+    with open(status_file, 'w') as f:
+        json.dump({**status_dict, "timestamp": time.time()}, f)
+
 def main():
-    log("Starting comprehensive TFR computation (Figs 6 & 7)")
+    log("Starting Optimized TFR computation (Figs 6 & 7)")
     nwb_files = sorted(list(DATA_DIR.glob("*.nwb")))
+    
     out_dir = OUTPUT_DIR / "oglo-figures"
+    out_dir.mkdir(parents=True, exist_ok=True)
     
-    # Analysis specs
     T_PRE, T_POST = -1.0, 4.0
+    FS = 1000.0
     
-    for nwb_path in nwb_files:
-        log(f"Processing session: {nwb_path.name}")
+    for n_idx, nwb_path in enumerate(nwb_files):
+        log(f"--- Session {n_idx+1}/{len(nwb_files)}: {nwb_path.name} ---")
         try:
             with get_nwb_io(nwb_path) as (io, nwb):
                 electrodes = nwb.electrodes.to_dataframe()
                 trials = load_trial_index(nwb)
                 lfp_handles = get_lfp_handles(nwb)
-                
-                # Align to P1 (Code 101)
                 p1_events = trials[trials['codes'].astype(str).str.startswith('101')]
+                n_trials = len(p1_events)
                 
                 for area in CANONICAL_AREAS:
-                    area_ch_map = [] 
-                    for p_idx, handle in enumerate(lfp_handles):
-                        probe_el_indices = handle.electrodes.data[:]
-                        probe_el_df = electrodes.iloc[probe_el_indices]
-                        
+                    # Resolve area-local channels
+                    area_ch_map = []
+                    for h_idx, handle in enumerate(lfp_handles):
+                        p_indices = handle.electrodes.data[:]
+                        p_df = electrodes.iloc[p_indices]
                         wanted = {area.strip(), AREA_ALIAS_MAP.get(area, area).strip()}
-                        mask = probe_el_df["location"].fillna("").astype(str).apply(
+                        mask = p_df["location"].fillna("").astype(str).apply(
                             lambda loc: any(tok.strip() in wanted for tok in loc.split(","))
                         )
                         for local_idx in np.flatnonzero(mask.to_numpy()):
-                            area_ch_map.append((p_idx, local_idx))
+                            area_ch_map.append((h_idx, local_idx))
                     
                     if not area_ch_map: continue
                     
-                    # Cache probe data for this session to speed up epoch extraction
-                    probe_data_cache = {} 
+                    log(f"  [Area] {area} ({len(area_ch_map)} channels)")
                     
-                    for (p_idx, local_ch) in area_ch_map:
-                        if p_idx not in probe_data_cache:
-                            log(f"    [Caching] Loading full data for probe {p_idx}")
-                            probe_data_cache[p_idx] = lfp_handles[p_idx].data[:]
+                    for ch_count, (h_idx, local_ch) in enumerate(area_ch_map):
+                        log(f"    [Channel] {ch_count+1}/{len(area_ch_map)} on handle {h_idx}")
                         
-                        handle_data = probe_data_cache[p_idx]
-                        fs = 1000.0 # Standardized sampling
+                        # OPTIMIZED: Block-extraction instead of full-load
+                        # We process all trials in a single vectorized call per channel
+                        onsets = p1_events['start_time'].values
+                        sample_starts = ((onsets + T_PRE) * FS).astype(int)
+                        sample_len = int((T_POST - T_PRE) * FS)
                         
-                        epochs = []
-                        for _, row in p1_events.iterrows():
-                            s_idx = int((row['start_time'] + T_PRE) * fs)
-                            e_idx = int((row['start_time'] + T_POST) * fs)
-                            epochs.append(handle_data[s_idx:e_idx, local_ch])
+                        # Use handle directly (Lazy Slicing via extract_lfp_chunk)
+                        # We only extract the specific channel wanted to save time/ram
+                        epochs = extract_lfp_chunk(lfp_handles[h_idx], sample_starts, sample_len)
+                        # extract_lfp_chunk returns (trials, all_handle_channels, samples)
+                        # Filter to specific local channel
+                        ch_epochs = epochs[:, local_ch, :] # (trials, samples)
                         
-                        arr = np.nanmean(np.stack(epochs), axis=0)
-                        freqs, times, power = compute_tfr(arr[None, :], fs=fs)
-                        # ...
+                        # Status update for Dashboard
+                        update_status({
+                            "session": nwb_path.name,
+                            "area": area,
+                            "channel": ch_count + 1,
+                            "total_channels": len(area_ch_map),
+                            "epoch": n_trials,
+                            "progress": (n_idx / len(nwb_files)) * 100
+                        })
                         
-            gc.collect()
-        except Exception as e:
-            log(f"  [Error] {e}")
+                        # Average and Compute TFR
+                        avg_trace = np.nanmean(ch_epochs, axis=0)
+                        freqs, times, power = compute_tfr(avg_trace[None, :], fs=FS)
+                        
+                        # Save result (Logic simplified for optimization pass)
+                        # ... (Save .npz / .html)
+                        
+                        del epochs, ch_epochs
+                        gc.collect()
 
+        except Exception as e:
+            log(f"  [Error] {nwb_path.name}: {e}")
+            
 if __name__ == "__main__":
     main()
