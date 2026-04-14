@@ -8,6 +8,15 @@
 2. **Operations**: Scoped edits ONLY. No bulk/destructive commands.
 3. **Hierarchy**: V1-V2-V3d-V3a-V4-MT-MST-TEO-FST-FEF-PFC (1-11).
 
+## GAMMA PROTOCOL (Guide And Model-Mediated Actions)
+- Definition: Standard format for complex engineering instructions. Ensures atomic, scope-preserving, CLI-executable tasks.
+- Architecture: Problem -> Solution Architecture -> Skills/Tools -> Version Control -> Rules/Cautions.
+- Workflow: Plantation Debug (Research -> Strategic Step Listing -> User Feedback -> Refine -> Act).
+- Error Skills: Save permanent debug skills as debug-<action>-<problem>-<solution>.
+- Skill Bounds: Cyclomatic complexity <= 5. AST depth <= 4. Rule of 3 for reusability.
+- Daemon: Auto-append failed scripts to ./output/gamma_backlog.md.
+- Cross-Agent Protocol: Use Export_Staging/ for payloads; PENDING_[TargetAgent]_[Task].md naming; human-approval required before physical transfer.
+
 ## Post-Mortem (2026-04-08)
 - **Failure**: Bulk cleanup command deleted active repo folders.
 - **Cause**: Violation of commit mandate; improper scope management.
