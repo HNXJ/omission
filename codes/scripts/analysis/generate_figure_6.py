@@ -68,7 +68,19 @@ def generate_figure_6(session_file=None):
             for slot in ['P2', 'P3', 'P4']:
                 mask = (slots == slot)
                 if np.sum(mask) == 0: continue
-                # Proceed with plotting logic...
+                            # Calculate dB power contrasts per band
+            fig = go.Figure()
+            for band, power in omit_powers.items():
+                # dB = 10 * log10(Omit / Baseline)
+                db_trace = 10 * np.log10(np.maximum(power, 1e-6) / np.maximum(base_mean, 1e-6))
+                fig.add_trace(go.Scatter(x=time_vec, y=db_trace, name=band))
+            
+            fig.update_layout(title=f'Figure 6: Omission dB Power | {area} | {slot}', 
+                              template='plotly_dark')
+            
+            fig.write_html(OUTPUT_DIR / f'figure_6_{session_file.stem}_{area}_{slot}.html')
+            fig.write_image(OUTPUT_DIR / f'figure_6_{session_file.stem}_{area}_{slot}.svg')
+            fig.write_image(OUTPUT_DIR / f'figure_6_{session_file.stem}_{area}_{slot}.png')
             
             print(f"[infile] generate_figure_6.py [doing] Saved contrast plots for {area}")
         except Exception as e:
@@ -79,3 +91,4 @@ def generate_figure_6(session_file=None):
 
 if __name__ == '__main__':
     generate_figure_6()
+
