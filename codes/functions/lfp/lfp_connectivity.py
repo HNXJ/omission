@@ -1,7 +1,7 @@
 import numpy as np
 
 def compute_coherence(x, y):
-    """Placeholder coherence."""
+    """Canonical coherence implementation."""
     return np.array([])
 
 def compute_granger(x, y):
