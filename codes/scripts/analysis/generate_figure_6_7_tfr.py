@@ -99,12 +99,14 @@ def main():
                             "progress": (n_idx / len(nwb_files)) * 100
                         })
                         
-                        # Average and Compute TFR
+                        # Compute TFR
                         avg_trace = np.nanmean(ch_epochs, axis=0)
                         freqs, times, power = compute_tfr(avg_trace[None, :], fs=FS)
                         
-                        # Save result (Logic simplified for optimization pass)
-                        # ... (Save .npz / .html)
+                        # Save result
+                        out_name = f"{area}_ch{local_ch}_sess{nwb_path.name[:8]}.npz"
+                        np.savez(out_dir / out_name, power=power, freqs=freqs, times=times)
+                        log(f"      [Saved] {out_name}")
                         
                         del epochs, ch_epochs
                         gc.collect()
