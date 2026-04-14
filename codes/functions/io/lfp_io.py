@@ -138,7 +138,11 @@ def load_session_metadata(nwb_path: Path) -> Dict[str, Any]:
         }
 
 def load_session(nwb_path: Path) -> Dict[str, Any]:
-    """Compatibility wrapper for load_session_metadata."""
+    """
+    Metadata-only loader.
+    WARNING: Does NOT return LFP data. Access LFP data via get_lfp_handles()
+    within an open get_nwb_io() context.
+    """
     return load_session_metadata(nwb_path)
 
 # --- Extraction Utilities ---
