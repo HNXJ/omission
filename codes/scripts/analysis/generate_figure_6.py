@@ -1,13 +1,15 @@
+import sys; sys.path.insert(0, 'D:/drive/omission')
 import numpy as np
+import os
 from pathlib import Path
 from scipy.signal import butter, filtfilt, hilbert
 import plotly.graph_objects as go
 from codes.functions.lfp.lfp_pipeline import get_signal_conditional
 from codes.scripts.analysis.count_conditions import get_condition_map, get_condition_name
 
-OUTPUT_DIR = Path(r'D:\drive\omission\outputs\oglo-figures\figure-6')
+OUTPUT_DIR = Path(os.environ.get("OUTPUT_DIR", "outputs/oglo-figures/figure-6"))
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-NWB_DIR = Path(r'D:\analysis\nwb')
+NWB_DIR = Path(os.environ.get("NWB_DATA_DIR", "D:/analysis/nwb"))
 
 CANONICAL_AREAS = ['V1', 'V2', 'V3d', 'V3a', 'V4', 'MT', 'MST', 'TEO', 'FST', 'FEF', 'PFC']
 BANDS = {'Theta': (4, 8), 'Alpha': (8, 12), 'Beta': (15, 30), 'Gamma': (30, 80)}
@@ -71,3 +73,9 @@ def generate_figure_6(session_file=None):
             print(f"[infile] generate_figure_6.py [doing] Saved contrast plots for {area}")
         except Exception as e:
             print(f"Error processing {area}: {e}")
+
+
+
+
+if __name__ == '__main__':
+    generate_figure_6()

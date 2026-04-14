@@ -32,33 +32,37 @@ def get_condition_name(condition_number, condition_map):
         return 'Unknown'
     return 'Unknown'
 
-# Use the same NWB file as before for consistency
-nwb_path = Path('D:/analysis/nwb/sub-C31o_ses-230630_rec.nwb')
+def main():
+    # Use the same NWB file as before for consistency
+    nwb_path = Path('D:/analysis/nwb/sub-C31o_ses-230630_rec.nwb')
 
-print(f"Processing NWB file: {nwb_path}")
+    print(f"Processing NWB file: {nwb_path}")
 
-with NWBHDF5IO(str(nwb_path), 'r') as io:
-    nwb = io.read()
+    with NWBHDF5IO(str(nwb_path), 'r') as io:
+        nwb = io.read()
 
-    intervals = nwb.intervals['omission_glo_passive'].to_dataframe()
+        intervals = nwb.intervals['omission_glo_passive'].to_dataframe()
 
-    # Filter for correct trials
-    correct_trials = intervals[intervals['correct'] == '1.0'].copy()
+        # Filter for correct trials
+        correct_trials = intervals[intervals['correct'] == '1.0'].copy()
 
-    # Get condition map
-    condition_map = get_condition_map()
-    
-    # Get condition names
-    correct_trials['condition_name'] = correct_trials['task_condition_number'].apply(
-        lambda x: get_condition_name(x, condition_map)
-    )
+        # Get condition map
+        condition_map = get_condition_map()
+        
+        # Get condition names
+        correct_trials['condition_name'] = correct_trials['task_condition_number'].apply(
+            lambda x: get_condition_name(x, condition_map)
+        )
 
-    # We only need to count each trial once. Let's group by trial_num
-    # and take the first condition name for each trial.
-    trial_conditions = correct_trials.groupby('trial_num')['condition_name'].first()
+        # We only need to count each trial once. Let's group by trial_num
+        # and take the first condition name for each trial.
+        trial_conditions = correct_trials.groupby('trial_num')['condition_name'].first()
 
-    # Count the occurrences of each condition
-    condition_counts = trial_conditions.value_counts()
+        # Count the occurrences of each condition
+        condition_counts = trial_conditions.value_counts()
 
-    print("Correct trials per condition:")
-    print(condition_counts)
+        print("Correct trials per condition:")
+        print(condition_counts)
+
+if __name__ == "__main__":
+    main()
