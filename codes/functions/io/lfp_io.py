@@ -103,9 +103,10 @@ def load_session(nwb_path: Path) -> Dict[str, Any]:
             for probe in lfp_probes[1:]:
                 if not np.array_equal(first_timestamps, probe['timestamps']):
                     raise ValueError("LFP timestamps differ between probes.")
-                # Add more validation here if needed (e.g., channel counts)
 
-            all_lfp_data = [p['data'] for p in lfp_probes]
+            # Correctly stack probe data: (channels, time)
+            # NWB data is usually (time, channels), so we transpose each probe
+            all_lfp_data = [p['data'].T for p in lfp_probes]
             session['lfp'] = np.vstack(all_lfp_data)
             session['lfp_timestamps'] = first_timestamps
 

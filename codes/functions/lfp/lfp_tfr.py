@@ -24,6 +24,9 @@ def compute_multitaper_tfr(
     times_ms = np.linspace(0, data.shape[-1]/fs*1000, data.shape[-1])
     return freqs, times_ms, 10.0 * np.log10(power + 1e-12)
 
+# Alias for compatibility with legacy and user scripts
+compute_tfr = compute_multitaper_tfr
+
 def get_band_power(freqs: np.ndarray, power: np.ndarray, band_limits: Tuple[int, int]) -> np.ndarray:
     mask = (freqs >= band_limits[0]) & (freqs <= band_limits[1])
     return np.nanmean(power[..., mask, :], axis=-2)

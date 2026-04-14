@@ -18,7 +18,8 @@ This document details the anatomical mapping of recording probes to brain areas 
    - Probe 1: 128-255
    - Probe 2: 256-383
 2. **Area Division**: Labels like `V1, V2` imply a 50/50 split of the 128 channels (0-63 for V1, 64-127 for V2).
-3. **Aliases**: `DP` is mapped to **V4**.
+3. **Source Metadata**: Area assignments are derived from the NWB `electrodes` table `location` column; laminar positions are derived from the `depth` column.
+4. **Aliases**: `DP` is mapped to **V4**.
 
 ## Master Mapping Table
 | Session | Probe | Areas | Channels |
