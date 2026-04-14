@@ -1,13 +1,16 @@
-
 import numpy as np
 import pandas as pd
 from pathlib import Path
 import re
+import sys
 from scipy.stats import ttest_rel
+from codes.config.paths import DATA_DIR, OUTPUT_DIR, PROJECT_ROOT
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
-ARRAY_DIR = Path(r'D:\drive\data\arrays')
-PROFILE_PATH = Path(r'D:\drive\omission\outputs\unit_nwb_profile.csv')
-OUTPUT_PATH = Path(r'D:\drive\omission\outputs\unit_refined_categories_v3.csv')
+ARRAY_DIR = DATA_DIR / "arrays"
+PROFILE_PATH = OUTPUT_DIR / "unit_nwb_profile.csv"
+OUTPUT_PATH = OUTPUT_DIR / "unit_refined_categories_v3.csv"
 
 def perform_ultimate_omission_audit():
     df = pd.read_csv(PROFILE_PATH)

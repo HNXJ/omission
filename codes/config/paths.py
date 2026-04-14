@@ -2,10 +2,15 @@ import os
 from pathlib import Path
 
 # Base directories
-PROJECT_ROOT = Path(os.environ.get("OMISSION_PROJECT_ROOT", Path(__file__).resolve().parent.parent.parent.parent))
+# Base directories
+PROJECT_ROOT = Path(os.environ.get("OMISSION_PROJECT_ROOT", r"D:\drive\omission")).resolve()
 
-DATA_DIR = Path(os.environ.get("OMISSION_DATA_DIR", PROJECT_ROOT / "data"))
-OUTPUT_DIR = Path(os.environ.get("OMISSION_OUTPUT_DIR", PROJECT_ROOT / "outputs"))
+# NWB Data usually sits in a specific 'analysis/nwb' path on the workstation
+DATA_DIR = Path(os.environ.get("OMISSION_DATA_DIR", r"D:\analysis\nwb")).resolve()
+if not DATA_DIR.exists():
+    DATA_DIR = (PROJECT_ROOT / "data").resolve()
+
+OUTPUT_DIR = Path(os.environ.get("OMISSION_OUTPUT_DIR", PROJECT_ROOT / "outputs")).resolve()
 
 # Data subdirectories
 RAW_DATA_DIR = DATA_DIR / "raw"

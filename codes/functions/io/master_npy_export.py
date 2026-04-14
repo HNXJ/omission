@@ -11,13 +11,15 @@ from pynwb import NWBHDF5IO
 import gc
 from pathlib import Path
 
-# Add jnwb to path
-sys.path.append(r'D:\Analysis\jnwb\repos\jnwb')
-from jnwb.oglo_v2 import get_oglo_trial_masks_v2 as get_trial_masks
+from codes.config.paths import DATA_DIR, PROJECT_ROOT
 
-# Configuration
-NWB_DIR = Path(__file__).parents[2] / "data"
-DATA_DIR = Path(__file__).parents[2] / "data"
+# Ensure jnwb path is correct from config or env
+sys.path.append(os.environ.get("JNWB_PATH", r'D:\Analysis\jnwb\repos\jnwb'))
+try:
+    from jnwb.oglo_v2 import get_oglo_trial_masks_v2 as get_trial_masks
+except ImportError:
+    print("Warning: jnwb not found. Using dummy mask.")
+    def get_trial_masks(df): return {"all": np.ones(len(df), dtype=bool)}
 
 def export_session_granular(nwb_path, session_id):
     print(f"\n>>> Optimized Granular Export: {session_id}")
@@ -59,6 +61,9 @@ def export_session_granular(nwb_path, session_id):
             lfp_cond_arrays = {k: np.zeros((n_cond_trials, 128, 6000), dtype=np.float32) for k in lfp_keys}
             unique_probes = sorted(list(set(unit_probe_map)))
             unit_cond_arrays = {p: np.zeros((n_cond_trials, unit_probe_map.count(p), 6000), dtype=np.uint8) for p in unique_probes}
+            
+            # Precompute unit indices once per condition
+            indices_by_probe = {p: [idx for idx, probe_val in enumerate(unit_probe_map) if probe_val == p] for p in unique_probes}
 
             TRIAL_CHUNK_SIZE = 50
             for start_idx in range(0, n_cond_trials, TRIAL_CHUNK_SIZE):
@@ -111,7 +116,7 @@ def export_session_granular(nwb_path, session_id):
                         slice_from_block(lfp_blocks[l_key], lfp_cond_arrays[l_key], global_i)
 
                     for p_idx in unique_probes:
-                        unit_indices = [idx for idx, p in enumerate(unit_probe_map) if p == p_idx]
+                        unit_indices = indices_by_probe[p_idx]
                         for local_u_idx, global_u_idx in enumerate(unit_indices):
                             st = all_spike_times[global_u_idx]
                             trial_st = st[(st >= ts) & (st < ts + 6.0)]

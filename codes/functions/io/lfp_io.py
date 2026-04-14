@@ -91,57 +91,81 @@ def slice_series(series: pynwb.ecephys.ElectricalSeries, t_start: float, t_end: 
 
 # --- Compatibility Layer (Less Eager) ---
 
-def load_session(nwb_path: Path) -> Dict[str, Any]:
+# --- Metadata Loading (Context-Safe) ---
+
+def load_session_metadata(nwb_path: Path) -> Dict[str, Any]:
     """
-    Load a session from NWB. 
-    Refactored to avoid eager LFP loading while preserving legacy API.
+    Extract session metadata (trials, units, electrodes) without full LFP load.
+    Ensures no IO objects are returned, making it safe for lazy workflows.
     """
-    session: Dict[str, Any] = {
-        "nwb_path": nwb_path,
-        "session_id": nwb_path.stem,
-        "electrodes": pd.DataFrame(),
-        "trials": pd.DataFrame(),
-        "units": pd.DataFrame(),
-        "areas": [],
-        "channels": [],
-        "lfp": None, # Will be None if not explicitly loaded
-        "lfp_timestamps": None,
-    }
-    
     if not nwb_path.exists() or NWBHDF5IO is None:
-        return session
+        raise FileNotFoundError(f"NWB not found: {nwb_path}")
 
     with NWBHDF5IO(str(nwb_path), "r", load_namespaces=True) as io:
         nwb = io.read()
         
-        session["electrodes"] = load_electrode_map(nwb)
-        session["trials"] = load_trial_index(nwb)
+        # 1. Trial Metadata
+        trials = load_trial_index(nwb)
         
+        # 2. Units (Spikes) Metadata
+        units = pd.DataFrame()
         if hasattr(nwb, "units") and nwb.units is not None:
-            session["units"] = nwb.units.to_dataframe()
+            units = nwb.units.to_dataframe()
             
+        # 3. Electrodes Metadata
+        electrodes = load_electrode_map(nwb)
+        
+        # 4. Probe Metadata
         handles = get_lfp_handles(nwb)
-        if handles:
-            # We still provide timestamps if possible without full load
-            # Note: series.timestamps[:] would load all. We return the handle or first sample
-            if handles[0].timestamps is not None:
-                # Still a bit eager, but timestamps are smaller than LFP data
-                session["lfp_timestamps"] = handles[0].timestamps[:]
-            else:
-                # Construct from rate/starting_time
-                rate = handles[0].rate
-                t0 = handles[0].starting_time
-                n_samples = handles[0].data.shape[0]
-                session["lfp_timestamps"] = np.linspace(t0, t0 + (n_samples-1)/rate, n_samples)
-            
-            session["lfp_handles"] = handles
-            
-        if not session["electrodes"].empty:
-            if "location" in session["electrodes"].columns:
-                session["areas"] = sorted(session["electrodes"]["location"].dropna().astype(str).unique().tolist())
-            session["channels"] = session["electrodes"].index.to_list()
-            
-    return session
+        probes = []
+        for h in handles:
+            probes.append({
+                "id": h.name,
+                "description": h.description,
+                "n_samples": h.data.shape[0],
+                "n_channels": h.data.shape[1],
+                "fs": h.rate or (1.0 / np.mean(np.diff(h.timestamps[:100]))),
+                "electrode_ids": h.electrodes.data[:].tolist() if hasattr(h.electrodes, 'data') else [],
+            })
+
+        return {
+            "session_id": nwb_path.stem,
+            "trials": trials,
+            "units": units,
+            "electrodes": electrodes,
+            "probes": probes,
+            "fs_lfp": probes[0]["fs"] if probes else 1000.0
+        }
+
+def load_session(nwb_path: Path) -> Dict[str, Any]:
+    """Compatibility wrapper for load_session_metadata."""
+    return load_session_metadata(nwb_path)
+
+# --- Extraction Utilities ---
+
+def extract_lfp_chunk(handle: Any, starts: np.ndarray, length: int) -> np.ndarray:
+    """
+    Perform a vectorized (block) read from an ElectricalSeries.
+    'starts' are sample indices. Returns (n_trials, n_channels, n_samples).
+    """
+    n_trials = len(starts)
+    n_channels = handle.data.shape[1]
+    
+    # HDF5 performs best with contiguous blocks or specific hyperslabs.
+    # For now, we iterate to avoid overloading RAM, but use slicing.
+    out = np.empty((n_trials, n_channels, length), dtype=handle.data.dtype)
+    for i, s in enumerate(starts):
+        # Transpose to (channels, time) for pipeline consistency
+        out[i] = handle.data[s : s + length, :].T
+        
+    return out
+
+def load_condition_table(search_path: Path) -> pd.DataFrame:
+    """Implement the missing condition table loader."""
+    path = search_path / "condition_table.csv"
+    if path.exists():
+        return pd.read_csv(path)
+    return pd.DataFrame()
 
 # --- Utilities ---
 

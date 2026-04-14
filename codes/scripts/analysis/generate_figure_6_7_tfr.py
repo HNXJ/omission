@@ -13,9 +13,9 @@ from pathlib import Path
 from datetime import datetime
 
 # Setup paths
-REPO_ROOT = Path(r"D:\drive\omission").resolve()
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
+from codes.config.paths import PROJECT_ROOT, DATA_DIR, OUTPUT_DIR
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from codes.functions.io.lfp_io import get_nwb_io, load_trial_index, slice_series, get_lfp_handles
 from codes.functions.lfp.lfp_tfr import compute_tfr
@@ -26,8 +26,8 @@ def log(msg: str):
 
 def main():
     log("Starting comprehensive TFR computation (Figs 6 & 7)")
-    nwb_files = sorted(list(Path(r"D:\analysis\nwb").glob("*.nwb")))
-    out_dir = REPO_ROOT / "outputs" / "oglo-figures"
+    nwb_files = sorted(list(DATA_DIR.glob("*.nwb")))
+    out_dir = OUTPUT_DIR / "oglo-figures"
     
     # Analysis specs
     T_PRE, T_POST = -1.0, 4.0
@@ -44,11 +44,8 @@ def main():
                 p1_events = trials[trials['codes'].astype(str).str.startswith('101')]
                 
                 for area in CANONICAL_AREAS:
-                    # Resolve channels for this area across probes
-                    area_ch_map = [] # List of (probe_handle_idx, local_ch_idx)
+                    area_ch_map = [] 
                     for p_idx, handle in enumerate(lfp_handles):
-                        # Get electrode indices for this probe
-                        # (Assumes handle.electrodes exists; fallback to probe division)
                         probe_el_indices = handle.electrodes.data[:]
                         probe_el_df = electrodes.iloc[probe_el_indices]
                         
@@ -60,19 +57,26 @@ def main():
                             area_ch_map.append((p_idx, local_idx))
                     
                     if not area_ch_map: continue
-                    log(f"  [Area {area}] Processing {len(area_ch_map)} channels")
+                    
+                    # Cache probe data for this session to speed up epoch extraction
+                    probe_data_cache = {} 
                     
                     for (p_idx, local_ch) in area_ch_map:
-                        handle = lfp_handles[p_idx]
+                        if p_idx not in probe_data_cache:
+                            log(f"    [Caching] Loading full data for probe {p_idx}")
+                            probe_data_cache[p_idx] = lfp_handles[p_idx].data[:]
+                        
+                        handle_data = probe_data_cache[p_idx]
+                        fs = 1000.0 # Standardized sampling
+                        
                         epochs = []
                         for _, row in p1_events.iterrows():
-                            # Slice 1000ms before to 4000ms after P1
-                            seg = slice_series(handle, row['start_time'] + T_PRE, row['start_time'] + T_POST)
-                            epochs.append(seg[:, local_ch])
+                            s_idx = int((row['start_time'] + T_PRE) * fs)
+                            e_idx = int((row['start_time'] + T_POST) * fs)
+                            epochs.append(handle_data[s_idx:e_idx, local_ch])
                         
-                        # Compute & Save
                         arr = np.nanmean(np.stack(epochs), axis=0)
-                        freqs, times, power = compute_tfr(arr[None, :], fs=1000.0)
+                        freqs, times, power = compute_tfr(arr[None, :], fs=fs)
                         # ...
                         
             gc.collect()

@@ -95,6 +95,29 @@ ALL_CONDITIONS: List[str] = [
 
 OMISSION_CONDITIONS: List[str] = [c for c in ALL_CONDITIONS if "X" in c]
 
+# Map Labels to task_condition_number as found in NWB intervals
+CONDITION_MAP: Dict[str, List[int]] = {
+    # Sequence P2 Omission (AXAB family)
+    "AXAB": [3],
+    "BXBA": [8],
+    "RXRR": list(range(27, 35)),
+    
+    # Sequence P3 Omission (AAXB family)
+    "AAXB": [4],
+    "BBXA": [9],
+    "RRXR": [35, 37, 39, 41],
+    
+    # Sequence P4 Omission (AAAX family)
+    "AAAX": [5],
+    "BBBX": [10],
+    "RRRX": [36, 38, 40, 42] + list(range(43, 51)),
+    
+    # Control/Standard (Non-omission)
+    "AAAB": [1, 2],
+    "BBBA": [6, 7],
+    "RRRR": list(range(11, 27))
+}
+
 DEFAULT_WF_PARAMS: Dict[str, Any] = {
     "window": "hann",
     "nperseg": 256,
