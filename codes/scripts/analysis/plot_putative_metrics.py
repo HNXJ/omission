@@ -18,8 +18,10 @@ def plot_distributions(metrics_dir: Path, output_dir: Path):
     df_list = [pd.read_csv(f) for f in files]
     df = pd.concat(df_list, ignore_index=True)
     
-    # Generate E/I distribution plot
-    fig = px.histogram(df, x="duration", color="ei_type", nbins=50, 
+    # Generate E/I distribution plot with specific binning
+    fig = px.histogram(df, x="duration", color="ei_type", 
+                       range_x=[50, 1000],
+                       nbins=int((1000 - 50) / 50),
                        title="Putative E/I Distribution (Waveform Duration)",
                        labels={"duration": "Waveform Duration (ms)", "ei_type": "Classification"})
     
