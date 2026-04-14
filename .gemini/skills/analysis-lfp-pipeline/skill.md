@@ -6,7 +6,7 @@ description: Modular LFP pipeline for sequential visual omission tasks. Covers N
 # skill: analysis-lfp-pipeline
 
 ## architecture (codes/functions/)
-- `lfp_io`: NWB/NPY loading with mandatory `np.nan_to_num` sanitation.
+- `lfp_io`: NWB/NPY loading with lazy NWB reads; apply `np.nan_to_num` only after extracting the required in-memory slice.
 - `lfp_events`: Canonical timeline reconstruction aligned to p1 onset (0ms).
 - `lfp_preproc`: Bipolar referencing, baseline normalization (% dB change), epoch extraction.
 - `lfp_tfr`: Hanning-windowed spectrograms — 98% overlap, 1–150Hz, ms x-axis.
@@ -16,11 +16,24 @@ description: Modular LFP pipeline for sequential visual omission tasks. Covers N
 
 ## standards
 - **Timing**: p1 = 0ms (Sample 1000). p2 = 1031ms, p3 = 2062ms, p4 = 3093ms.
-- **Sanitation**: `np.nan_to_num` on all LFP arrays before any operation.
+- **Sanitation**: apply `np.nan_to_num` to extracted epochs or derived arrays, not as a reason to materialize full-session NWB datasets.
 - **Normalization**: dB change — `10*log10(P/P_baseline)` vs. fixation window (-500 to 0ms).
 - **Connectivity**: Spectral Granger, Ch0=V1 Ch1=PFC pairwise. PLI and Coherence for cross-area.
 - **PPC**: Pairwise Phase Consistency for spike-field coupling (firing-rate bias free).
 - **Reproducibility**: Save `.metadata.json` sidecar for every derived `.npy` array.
+
+## hard nwb access rules
+- Open an NWB file once per session-level analysis and pass derived handles or metadata downward.
+- Never call `load_session()` inside per-area, per-band, per-condition, or per-figure loops.
+- Do not convert full LFP datasets to NumPy at file-open time unless a task explicitly needs the full session matrix.
+- For trial-aligned analysis, compute event onsets once, then slice the NWB dataset per epoch.
+- Cache per-session maps (`trial_df`, `area_channel_indices`, `unit_probe_map`, `unit_area_map`) and reuse them across all figure computations.
+
+## anti-patterns to avoid
+- Reopening the same NWB file inside helper functions called from nested loops.
+- Calling `to_dataframe()` multiple times for the same session table in one analysis pass.
+- Building area or channel masks repeatedly from scratch inside plotting code.
+- Sanitizing or copying the full LFP matrix before trial slicing.
 
 ## plotting standards (revision v4)
 - **Theme**: `plotly_white`, Arial font, pure black axes.

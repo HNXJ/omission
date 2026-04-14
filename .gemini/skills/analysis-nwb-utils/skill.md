@@ -43,6 +43,12 @@ description: Utility and admin functions for NWB data management, session summar
 | `call_qwen(prompt, system_prompt)` | `qwen_subagent.py` | Sends inference request to Office M3-Max via remote bridge |
 | `manage_model(action, model_name)` | `qwen_subagent.py` | Load/unload model on remote server via API |
 
+## read-only nwb validation
+- Run `pynwb-validate` on every session file before large export or batch analysis runs.
+- Run NWBInspector for best-practice checks in addition to schema validation.
+- Treat validation as read-only QC; never rewrite the NWB file to "fix" issues inside this repo.
+- Store validation reports outside the NWB files, alongside other derived outputs.
+
 ## lfp extraction testing
 | Function | File | Purpose |
 |---|---|---|

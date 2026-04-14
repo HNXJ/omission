@@ -21,6 +21,9 @@ This document details the anatomical mapping of recording probes to brain areas 
 3. **Source Metadata**: Area assignments are derived from the NWB `electrodes` table `location` column; laminar positions are derived from the `depth` column.
 4. **Aliases**: `DP` is mapped to **V4**.
 
+## Metadata Source Rules
+Area assignments are derived deterministically from the NWB `electrodes` table `location` column. Laminar positions are mapped using the `depth` column. If `depth` is missing, it is estimated from the channel index and canonical spacing.
+
 ## Master Mapping Table
 | Session | Probe | Areas | Channels |
 |:---:|:---:|:---|:---:|

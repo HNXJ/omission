@@ -31,3 +31,7 @@ description: Development standards and manuscript generation suite for the omiss
 - Alignment: always Code 101.0 = p1 onset = Sample 1000 = 0ms.
 - Use `pynwb.NWBHDF5IO` for reads; always `load_namespaces=True`.
 - Trial interval table key: `omission_glo_passive`.
+- For figure scripts, build the per-session trial index once and reuse it for all areas/conditions.
+- Resolve per-session area -> channel indices once before looping over conditions.
+- Never reopen the same NWB file inside `process_*`, `plot_*`, or `get_*` helpers that are called from nested loops.
+- If a figure compares many areas/conditions from one session, keep NWB access outside the nested loops and pass precomputed session metadata inward.

@@ -9,6 +9,11 @@ cross-ref: analysis-npy-export-pipeline (orchestration and save logic)
 ## purpose
 Reads raw NWB files and extracts windowed data blocks efficiently into memory for downstream export.
 
+## mandatory performance rules
+- Keep block reads lazy and windowed; do not replace block slicing with full-session `[:]` reads.
+- Precompute `unit_indices_by_probe` once per session before the trial loop.
+- Read only the columns needed from trial logic; avoid repeated whole-table conversions after the initial session parse.
+
 ## core functions
 
 ### `get_oglo_trial_masks(trials_df)`
@@ -69,10 +74,13 @@ All saved to `data/arrays/`.
 3. Call `get_oglo_trial_masks` for condition split.
 4. Find p1 onsets (Code 101.0) per trial.
 5. Pre-load spike times for all units.
-6. For each condition: allocate output arrays (float32/uint8).
-7. Chunked loop (`TRIAL_CHUNK_SIZE`): call `get_block`, `slice_from_block`.
-8. Save `.npy` arrays + `.metadata.json` sidecar (session, condition, shape, date).
-9. `gc.collect()` after each condition.
+6. Build `unit_indices_by_probe = {probe: [unit_idx, ...]}` once before entering the trial loop.
+7. Reuse precomputed probe/unit maps across all conditions in the session.
+8. For each condition: allocate output arrays (float32/uint8).
+9. Chunked loop (`TRIAL_CHUNK_SIZE`): call `get_block`, `slice_from_block`.
+10. Save `.npy` arrays + `.metadata.json` sidecar (session, condition, shape, date).
+11. Save sidecar metadata for every export batch, including source NWB path, session ID, condition, window, and code anchor.
+12. `gc.collect()` after each condition.
 
 ## unit → probe mapping
 ```python
