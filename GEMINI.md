@@ -22,3 +22,6 @@ Refer to `context/specs/figure-style-mandate.md` for canonical plotting standard
 - Progress Reports: `D:\drive\progress-report\`
 - Data Arrays: `D:\drive\data\arrays\`
 - Outputs: `D:\drive\omission\outputs\`
+
+## Skills
+Refer to `skills/GEMINI.md` for detailed project-specific skills (Science, Coding, Design).
