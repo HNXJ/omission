@@ -78,6 +78,7 @@ Publication-quality plotting and manuscript preparation.
 Safety, reproducibility, and environment management.
 
 ### Skill Inventory:
+ - **system-gamma-handoff**: The **GAMMA Protocol** for explicit hand-offs via the `Export_Staging` area.
 - **bridger-actions**: Peer-to-peer messaging and data relay protocols.
 - **github-management-actions**: Mandatory Commit-Pull-Push safety workflows.
 - **hardware-neuro-omission-lab-infrastructure**: Lab-specific compute and storage management.
