@@ -92,3 +92,20 @@ def compute_spike_lfp_power_corr(spikes, lfp_power, win_size=200, step=50):
             corr_trace[i] = np.nan
             
     return corr_trace, time_bins
+
+def fit_phase_modulation(spikes, phase, n_bins=10):
+    """Fits firing rate as a function of LFP phase using circular statistics."""
+    # Bin phases and compute mean spike rate in each bin
+    bins = np.linspace(-np.pi, np.pi, n_bins + 1)
+    bin_centers = (bins[:-1] + bins[1:]) / 2
+    fr_by_phase = np.zeros(n_bins)
+    
+    for i in range(n_bins):
+        mask = (phase >= bins[i]) & (phase < bins[i+1])
+        if np.sum(mask) > 0:
+            fr_by_phase[i] = np.mean(spikes[mask])
+            
+    # Calculate modulation depth/preferred phase (simplified)
+    # Fit simple sinusoid: FR = A * cos(phi - phi_pref) + B
+    # ...
+    return bin_centers, fr_by_phase
