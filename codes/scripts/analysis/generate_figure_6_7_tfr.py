@@ -47,88 +47,68 @@ def update_status(status_dict):
         json.dump({**status_dict, "timestamp": time.time()}, f)
         print(f"""[action] Dumped status to JSON""")
 
-def main():
-    log("Starting Optimized TFR computation (Probe-level saving)")
-    nwb_files = sorted(list(DATA_DIR.glob("*.nwb")))
-    print(f"""[action] Globbed {len(nwb_files)} NWB files""")
-    
+from concurrent.futures import ProcessPoolExecutor
+import multiprocessing
+
+VERBOSITY_LEVEL = 2
+
+def log(msg: str, level: int = 1):
+    if VERBOSITY_LEVEL >= level:
+        print(f"""[{datetime.now().strftime('%H:%M:%S')}] {msg}""", flush=True)
+
+def process_session(nwb_path: Path):
+    """Processes a single session to allow parallel execution."""
     out_dir = OUTPUT_DIR / "oglo-figures"
     out_dir.mkdir(parents=True, exist_ok=True)
-    print(f"""[action] Created output directory {out_dir}""")
-    
     T_PRE, T_POST = -1.0, 4.0
     FS = 1000.0
-    print(f"""[action] Set constants T_PRE={T_PRE}, T_POST={T_POST}, FS={FS}""")
     
-    for n_idx, nwb_path in enumerate(nwb_files):
-        log(f"--- Session {n_idx+1}/{len(nwb_files)}: {nwb_path.name} ---")
-        try:
-            with get_nwb_io(nwb_path) as (io, nwb):
-                print(f"""[action] Opened NWB io handle for {nwb_path.name}""")
-                electrodes = nwb.electrodes.to_dataframe()
-                print(f"""[action] Converted electrodes to dataframe""")
-                trials = load_trial_index(nwb)
-                print(f"""[action] Loaded trial index""")
-                lfp_handles = get_lfp_handles(nwb)
-                print(f"""[action] Loaded LFP handles""")
-                p1_events = trials[trials['codes'].astype(str).str.startswith('101')]
-                print(f"""[action] Filtered P1 events""")
-                
-                for area in CANONICAL_AREAS:
-                    print(f"""[action] Starting area loop for {area}""")
-                    for h_idx, handle in enumerate(lfp_handles):
-                        print(f"""[action] Processing handle index {h_idx}""")
-                        p_indices = handle.electrodes.data[:]
-                        print(f"""[action] Retrieved probe indices""")
-                        p_df = electrodes.iloc[p_indices]
-                        print(f"""[action] Indexed electrodes dataframe""")
-                        wanted = {area.strip(), AREA_ALIAS_MAP.get(area, area).strip()}
-                        print(f"""[action] Set target areas: {wanted}""")
-                        mask = p_df["location"].fillna("").astype(str).apply(
-                            lambda loc: any(tok.strip() in wanted for tok in loc.split(","))
-                        )
-                        print(f"""[action] Generated mask for area""")
-                        target_ch_indices = np.flatnonzero(mask.to_numpy())
-                        print(f"""[action] Found {len(target_ch_indices)} target channels""")
-                        if target_ch_indices.size == 0:
-                            print(f"""[action] Skipping probe with no target channels""")
-                            continue
-                        
-                        log(f"  [Area] {area} | [Probe] {h_idx} ({len(target_ch_indices)} channels)")
-                        
-                        probe_power = []
-                        print(f"""[action] Initialized probe power list""")
-                        for ch in target_ch_indices:
-                            print(f"""[action] Starting loop for channel {ch}""")
-                            onsets = p1_events['start_time'].values
-                            print(f"""[action] Extracted onsets""")
-                            sample_starts = ((onsets + T_PRE) * FS).astype(int)
-                            print(f"""[action] Calculated sample starts""")
-                            sample_len = int((T_POST - T_PRE) * FS)
-                            print(f"""[action] Calculated sample length""")
-                            
-                            epochs = extract_lfp_chunk(handle, sample_starts, sample_len)
-                            print(f"""[action] Extracted LFP chunk""")
-                            avg_trace = np.nanmean(epochs[:, ch, :], axis=0)
-                            print(f"""[action] Calculated average trace""")
-                            _, _, power = compute_tfr(avg_trace[None, :], fs=FS)
-                            print(f"""[action] Computed TFR power""")
-                            probe_power.append(power)
-                            print(f"""[action] Appended power to probe list""")
-                        
-                        out_name = f"{area}_probe{h_idx}_sess{nwb_path.name[:8]}.npz"
-                        print(f"""[action] Setting output filename to {out_name}""")
-                        np.savez(out_dir / out_name, power=np.array(probe_power), channels=target_ch_indices)
-                        print(f"""[action] Saved NPZ file to {out_dir / out_name}""")
-                        log(f"    [Saved] {out_name}")
-                        
-                        gc.collect()
-                        print(f"""[action] Garbage collected""")
-
-        except Exception as e:
-            log(f"  [Error] {nwb_path.name}: {e}")
-            print(f"""[action] Logged error {e}""")
+    try:
+        with get_nwb_io(nwb_path) as (io, nwb):
+            electrodes = nwb.electrodes.to_dataframe()
+            trials = load_trial_index(nwb)
+            lfp_handles = get_lfp_handles(nwb)
+            p1_events = trials[trials['codes'].astype(str).str.startswith('101')]
             
-if __name__ == "__main__":
-    main()
-    print(f"""[action] Script execution completed""")
+            for area in CANONICAL_AREAS:
+                for h_idx, handle in enumerate(lfp_handles):
+                    p_indices = handle.electrodes.data[:]
+                    p_df = electrodes.iloc[p_indices]
+                    wanted = {area.strip(), AREA_ALIAS_MAP.get(area, area).strip()}
+                    mask = p_df["location"].fillna("").astype(str).apply(
+                        lambda loc: any(tok.strip() in wanted for tok in loc.split(","))
+                    )
+                    target_ch_indices = np.flatnonzero(mask.to_numpy())
+                    if target_ch_indices.size == 0: continue
+                    
+                    probe_power = []
+                    for ch in target_ch_indices:
+                        onsets = p1_events['start_time'].values
+                        sample_starts = ((onsets + T_PRE) * FS).astype(int)
+                        sample_len = int((T_POST - T_PRE) * FS)
+                        
+                        epochs = extract_lfp_chunk(handle, sample_starts, sample_len)
+                        avg_trace = np.nanmean(epochs[:, ch, :], axis=0)
+                        _, _, power = compute_tfr(avg_trace[None, :], fs=FS)
+                        probe_power.append(power)
+                    
+                    out_name = f"{area}_probe{h_idx}_sess{nwb_path.name[:8]}.npz"
+                    np.savez(out_dir / out_name, power=np.array(probe_power), channels=target_ch_indices)
+                    gc.collect()
+        return f"Completed {nwb_path.name}"
+    except Exception as e:
+        return f"Error {nwb_path.name}: {e}"
+
+def main():
+    log("Starting Parallel TFR computation (A400-optimized)", 1)
+    nwb_files = sorted(list(DATA_DIR.glob("*.nwb")))
+    
+    # Use max available cores
+    max_workers = min(multiprocessing.cpu_count(), 8)
+    print(f"""[action] Starting ProcessPoolExecutor with {max_workers} workers""")
+    
+    with ProcessPoolExecutor(max_workers=max_workers) as executor:
+        results = list(executor.map(process_session, nwb_files))
+        
+    for res in results:
+        log(res, 1)

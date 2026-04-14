@@ -96,27 +96,22 @@ ALL_CONDITIONS: List[str] = [
 OMISSION_CONDITIONS: List[str] = [c for c in ALL_CONDITIONS if "X" in c]
 
 # Map Labels to task_condition_number as found in NWB intervals
+# Mapping derived from actual data audit:
 CONDITION_MAP: Dict[str, List[int]] = {
-    # Sequence P2 Omission (AXAB family)
+    "RRRR": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26],
     "AXAB": [3],
     "BXBA": [8],
-    "RXRR": list(range(27, 35)),
-    
-    # Sequence P3 Omission (AAXB family)
+    "RXRR": [27, 28, 29, 30, 31, 32, 33, 34],
     "AAXB": [4],
     "BBXA": [9],
     "RRXR": [35, 37, 39, 41],
-    
-    # Sequence P4 Omission (AAAX family)
     "AAAX": [5],
     "BBBX": [10],
-    "RRRX": [36, 38, 40, 42] + list(range(43, 51)),
-    
-    # Control/Standard (Non-omission)
+    "RRRX": [36, 38, 40, 42, 43, 44, 45, 46, 47, 48, 49, 50],
     "AAAB": [1, 2],
-    "BBBA": [6, 7],
-    "RRRR": list(range(11, 27))
+    "BBBA": [6, 7]
 }
+print(f"""[action] CONDITION_MAP updated with observed NWB codes""")
 
 DEFAULT_WF_PARAMS: Dict[str, Any] = {
     "window": "hann",

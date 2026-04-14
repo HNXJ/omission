@@ -12,7 +12,8 @@ from collections import defaultdict
 sys.path.append(str(Path(__file__).parents[3]))
 
 # Paths
-METADATA_PATH = Path('outputs/all_units_metadata.csv')
+METADATA_PATH = Path(r'D:\drive\omission\outputs\waveforms\all_units_metadata.csv')
+print(f"""[action] METADATA_PATH updated to {METADATA_PATH}""")
 ARRAY_DIR = Path('data/arrays')
 OUTPUT_DIR = Path('outputs/oglo-figures/figure-3')
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

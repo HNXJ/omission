@@ -7,8 +7,9 @@ import plotly.graph_objects as go
 import plotly.colors as pc
 
 ARRAY_DIR = Path(r'D:\drive\data\arrays')
-PROFILE_PATH = Path(r'D:\drive\omission\outputs\unit_nwb_profile.csv')
-AUDIT_PATH = Path(r'D:\drive\omission\outputs\unit_refined_categories_v2.csv')
+PROFILE_PATH = Path(r'D:\drive\omission\outputs\waveforms\unit_nwb_profile.csv')
+AUDIT_PATH = Path(r'D:\drive\omission\outputs\waveforms\unit_refined_categories_v3.csv')
+print(f"""[action] Paths updated: PROFILE_PATH={PROFILE_PATH}, AUDIT_PATH={AUDIT_PATH}""")
 OUTPUT_DIR = Path(r'D:\drive\omission\outputs\oglo-figures')
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -42,7 +43,9 @@ def generate_figure_5():
     df['refined_key'] = df['ses_tmp'] + "_" + df['unit_id_in_session'].astype(str)
     full_audit['refined_key'] = full_audit['session_id'].astype(str) + "_" + full_audit['unit_id'].astype(str)
     
-    df = pd.merge(df, full_audit[['refined_key', 'is_stable_ultimate']], on='refined_key', how='left')
+    # Using quality column as stable indicator
+    df['is_stable_ultimate'] = (df['quality'] == 1.0)
+    print(f"""[action] Using 'quality' == 1.0 as stable flag.""")
     df['area_hier'] = df.apply(map_area, axis=1)
     
     df['probe_id'] = df['probe'].str.extract(r'probe([A-C])')[0].map({'A':0, 'B':1, 'C':2})

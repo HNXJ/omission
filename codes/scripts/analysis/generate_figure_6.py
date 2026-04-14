@@ -14,13 +14,24 @@ from scipy.signal import butter, filtfilt, hilbert
 import plotly.graph_objects as go
 
 # Setup paths
+import sys
+sys.path.insert(0, r'D:\drive\omission')
+print(f"""[action] sys.path updated with D:\drive\omission""")
+
 from codes.config.paths import PROJECT_ROOT, DATA_DIR, OUTPUT_DIR
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
 
 # Imports from project
 from codes.functions.lfp.lfp_pipeline import get_signal_conditional
-from codes.functions.lfp.lfp_constants import CANONICAL_AREAS, BANDS, BAND_COLORS
+from codes.functions.lfp.lfp_constants import CANONICAL_AREAS, BANDS
+print(f"""[action] Imported CANONICAL_AREAS and BANDS""")
+
+BAND_COLORS = {
+    "Theta": "#CFB87C", 
+    "Alpha": "#D3D3D3", 
+    "Beta": "#8F00FF", 
+    "Gamma": "#FF5E00"
+}
+print(f"""[action] Defined local BAND_COLORS""")
 
 # Configuration
 WINDOW = (-1.0, 4.0)
