@@ -89,14 +89,21 @@ def extract_unit_traces(session_id, conds=['RRRR', 'RXRR', 'RRXR', 'RRRX'], sigm
                     
     return session_traces
 
-def baseline_correct(traces, baseline_window=(0, 1000)):
-    """Subtracts mean fixation firing rate from the entire trace."""
-    for unit_key in traces:
-        for cond in traces[unit_key]['traces']:
-            fr = traces[unit_key]['traces'][cond]['fr']
-            baseline_val = np.mean(fr[baseline_window[0]:baseline_window[1]])
-            traces[unit_key]['traces'][cond]['fr_baselined'] = fr - baseline_val
-    return traces
+def classify_unit_types(nwb_path: Path):
+    """
+    Classify units as putative Excitatory (E) or Inhibitory (I) based on waveform duration.
+    Assumes standard NWB unit columns: 'peak_to_trough', 'firing_rate'.
+    """
+    with NWBHDF5IO(nwb_path, 'r', load_namespaces=True) as io:
+        nwb = io.read()
+        units_df = nwb.units.to_dataframe()
+    
+    # Simple classification rule (duration threshold 0.4ms)
+    # This threshold is project-specific; referencing canon as a policy
+    is_inhibitory = units_df['peak_to_trough'] < 0.4
+    units_df['putative_type'] = np.where(is_inhibitory, 'I', 'E')
+    
+    return units_df[['putative_type', 'peak_to_trough', 'firing_rate']]
 
 def compute_area_mmff(all_unit_stats, areas=AREA_ORDER, conds=['RRRR', 'RXRR', 'RRXR', 'RRRX'], win_size=150, step=5):
     """
