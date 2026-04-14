@@ -34,14 +34,14 @@ def get_signal_conditional(
     
     # 2. Filter Trials
     if condition:
-        # Resolve condition mapping (legacy or standard)
-        # Assuming task_condition_number is used for now
-        from codes.scripts.analysis.generate_figure_6_tfr import CONDITION_MAP
+        from codes.functions.lfp.lfp_constants import CONDITION_MAP
         valid_codes = CONDITION_MAP.get(condition, [])
-        if not valid_codes:
-            print(f"   [Error] Unknown condition: {condition}")
-            return np.array([])
+        print(f"""[action] Mapping condition {condition} to codes {valid_codes}""")
+        
+        # Cast to float for comparison as column data is object/float
+        trials['task_condition_number'] = pd.to_numeric(trials['task_condition_number'], errors='coerce')
         target_trials = trials[trials["task_condition_number"].isin(valid_codes)].copy()
+        print(f"""[action] Found {len(target_trials)} matching trials""")
     else:
         target_trials = trials.copy()
 
