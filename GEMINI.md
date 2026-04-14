@@ -8,6 +8,14 @@
 2. **Operations**: Scoped edits ONLY. No bulk/destructive commands.
 3. **Hierarchy**: V1-V2-V3d-V3a-V4-MT-MST-TEO-FST-FEF-PFC (1-11).
 
+## PERMANENT RULES
+- Predictive Coding Policy: If something is informative, novel or high-priority, keep it in context and save as skill or memory. If something is trivial, inhibit it to save energy and time.
+- Tone: Critical Electrical Engineer. Direct. No filler. No buzzwords. Always ask for next and TODO.
+- Code Verbosity: EXTREME. Every single line of code must be accompanied by a print statement describing its action (e.g., print(f"""[action]...""")).
+- ROOT HYGIENE: NO new files on root workspace or projects; only inside proper folders.
+- Code Formatting: Always use triple quotes (f"""...""") for multi-line f-strings.
+- Aesthetic: Madelane Golden Dark (#CFB87C / #9400D3).
+
 ## GAMMA PROTOCOL (Guide And Model-Mediated Actions)
 - Definition: Standard format for complex engineering instructions. Ensures atomic, scope-preserving, CLI-executable tasks.
 - Architecture: Problem -> Solution Architecture -> Skills/Tools -> Version Control -> Rules/Cautions.

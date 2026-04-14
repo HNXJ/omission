@@ -18,15 +18,45 @@ from codes.functions.io.lfp_io import get_nwb_io
 from codes.functions.lfp.lfp_constants import AREA_ALIAS_MAP
 
 def compute_waveform_metrics(waveform: np.ndarray, fs: float = 30000.0) -> dict:
-    """Computes waveform duration and half-width."""
-    # Simplified waveform logic: trough index, then rise time
+    """Computes waveform duration (trough-to-peak) and half-width (at half-maximal amplitude)."""
+    print(f"""[action] Starting waveform metric computation""")
+    
+    # 1. Trough
     trough_idx = np.argmin(waveform)
+    print(f"""[action] Found trough index: {trough_idx}""")
     
-    # Simple metric estimation
-    half_width = 0.0 # Placeholder logic for specific waveform shape extraction
-    duration = 0.0
+    # 2. Peak
+    after_trough = waveform[trough_idx:]
+    peak_idx = trough_idx + np.argmax(after_trough)
+    print(f"""[action] Found peak index: {peak_idx}""")
     
-    return {"duration": duration, "half_width": half_width}
+    # 3. Duration: Trough to Peak
+    duration_samples = peak_idx - trough_idx
+    duration_ms = (duration_samples / fs) * 1000.0
+    print(f"""[action] Calculated duration: {duration_ms} ms""")
+    
+    # 4. Half-Width
+    trough_val = waveform[trough_idx]
+    half_max = trough_val / 2.0
+    print(f"""[action] Calculated half-max: {half_max}""")
+    
+    # Left crossing
+    left_side = waveform[:trough_idx]
+    left_cross = np.where(left_side >= half_max)[0]
+    left_idx = left_cross[-1] if len(left_cross) > 0 else 0
+    print(f"""[action] Found left crossing index: {left_idx}""")
+    
+    # Right crossing
+    right_side = waveform[trough_idx:]
+    right_cross = np.where(right_side >= half_max)[0]
+    right_idx = trough_idx + (right_cross[0] if len(right_cross) > 0 else len(waveform)-1-trough_idx)
+    print(f"""[action] Found right crossing index: {right_idx}""")
+    
+    hw_samples = right_idx - left_idx
+    half_width_ms = (hw_samples / fs) * 1000.0
+    print(f"""[action] Calculated half-width: {half_width_ms} ms""")
+    
+    return {"duration": duration_ms, "half_width": half_width_ms}
 
 def classify_neurons(nwb_path: Path, out_dir: Path):
     """

@@ -19,15 +19,18 @@ def plot_distributions(metrics_dir: Path, output_dir: Path):
     df = pd.concat(df_list, ignore_index=True)
     
     # Generate E/I distribution plot with specific binning
+    print(f"""[action] Setting up histogram with range [0.05, 1.5] and spacing 0.05""")
     fig = px.histogram(df, x="duration", color="ei_type", 
-                       range_x=[50, 1000],
-                       nbins=int((1000 - 50) / 50),
+                       range_x=[0.05, 1.5],
+                       nbins=int((1.5 - 0.05) / 0.05),
                        title="Putative E/I Distribution (Waveform Duration)",
                        labels={"duration": "Waveform Duration (ms)", "ei_type": "Classification"})
+    print(f"""[action] Histogram generated""")
     
     output_dir.mkdir(parents=True, exist_ok=True)
+    print(f"""[action] Verified output directory""")
     fig.write_html(output_dir / "putative_ei_distribution.html")
-    print(f"[Saved] Distribution plot to {output_dir}/putative_ei_distribution.html")
+    print(f"""[action] Saved plot to {output_dir}/putative_ei_distribution.html""")
 
 if __name__ == "__main__":
     metrics_dir = Path(r"D:\drive\omission\outputs\putative_typing")
