@@ -16,12 +16,15 @@
 ## Plotting Standards
 Refer to `context/specs/figure-style-mandate.md` for canonical plotting standards.
 
-## Directory Structure
-- NWB Files: `D:\analysis\nwb\`
-- Git Repo (Omission): `D:\drive\omission\`
-- Progress Reports: `D:\drive\progress-report\`
-- Data Arrays: `D:\drive\data\arrays\`
-- Outputs: `D:\drive\omission\outputs\`
+
+## Workspace Context (D:\drive\omission\context\)
+- `analysis`: Canonical analysis outputs and statistical reports.
+- `archive`: Historical experiment records and legacy data.
+- `manuscript`: Figures, tables, and drafting materials for the paper.
+- `operations`: Execution manifests, logs, and pipeline health reports.
+- `overview`: Project summaries, area-mapping, and high-level docs.
+- `specs`: Canonical design and plotting specifications.
+
 
 ## Skills
 Refer to `skills/GEMINI.md` for detailed project-specific skills (Science, Coding, Design).

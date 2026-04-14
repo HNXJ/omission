@@ -115,3 +115,9 @@ def plot_coherence_network(coh: np.ndarray, band_name: str = "beta") -> go.Figur
     fig = go.Figure()
     fig.add_annotation(text=f"{band_name} network template", x=0.5, y=0.5, showarrow=False)
     return _style(fig, f"Coherence Network: {band_name}")
+
+def make_multi_area_band_figure(grouped, time_ms, out_html, title, area_order):
+    import plotly.graph_objects as go
+    from plotly.subplots import make_subplots
+    # ... logic for plotting multi-area ...
+    pass

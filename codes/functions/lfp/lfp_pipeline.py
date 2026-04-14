@@ -77,3 +77,4 @@ def get_signal_conditional(session_path: Path, area: str, signal_type: str = 'LF
     
     raise ValueError(f"Unsupported signal_type: {signal_type}")
 
+
