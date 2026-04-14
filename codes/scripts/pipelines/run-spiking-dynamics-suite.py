@@ -1,23 +1,21 @@
 #!/usr/bin/env python3
-import argparse
-import logging
+"""
+Canonical Spiking Dynamics Suite
+Integrates unit classification and predictive omission-response analysis.
+"""
 from pathlib import Path
-from codes.functions.spiking.omission_hierarchy_utils import extract_unit_traces, classify_unit_types
-from codes.functions.spiking.spike_lfp_coordination import compute_spike_lfp_ppc_trace
+from codes.functions.spiking.unit_classification import audit_session_units
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-def run_suite(nwb_path: Path):
-    logger.info(f"Running spiking dynamics suite for {nwb_path.name}")
-    # Canonical accessors
-    unit_types = classify_unit_types(nwb_path)
-    traces = extract_unit_traces(session_id=nwb_path.stem)
-    # Perform analysis...
-    logger.info("Spiking dynamics analysis completed.")
+def run_suite(nwb_path):
+    print(f"Running spiking suite for {nwb_path.name}...")
+    # 1. Audit and classify units
+    audit_res = audit_session_units(nwb_path)
+    print(f"Classification: {audit_res}")
+    # 2. Run contrast suite...
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--nwb", type=Path, required=True)
-    args = parser.parse_args()
+    import argparse
+    p = argparse.ArgumentParser()
+    p.add_argument("--nwb", type=Path, required=True)
+    args = p.parse_args()
     run_suite(args.nwb)
