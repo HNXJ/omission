@@ -42,8 +42,10 @@ def plot_distributions(metrics_dir: Path, output_dir: Path):
         subset = df[df['ei_type'] == ei_type]['duration']
         
         # Add histogram
-        fig.add_trace(go.Histogram(x=subset, name=ei_type, autobinx=False, xbincode=dict(start=0.05, end=1.55, size=bin_width), opacity=0.6))
-        print(f"""[action] Added histogram trace for {ei_type}""")
+        print(f"""[action] Setting up xbins dict""")
+        xbins_dict = dict(start=0.05, end=1.55, size=bin_width)
+        fig.add_trace(go.Histogram(x=subset, name=ei_type, autobinx=False, xbins=xbins_dict, opacity=0.6))
+        print(f"""[action] Added histogram trace for {ei_type} with xbins {xbins_dict}""")
         
         # Add KDE (smoothing)
         print(f"""[action] Computing KDE for {ei_type}""")
