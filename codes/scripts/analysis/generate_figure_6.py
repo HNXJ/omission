@@ -1,105 +1,79 @@
-#!/usr/bin/env python3
-"""
-Figure 6: TFR Contrast Analysis
-Computes dB-normalized TFR contrasts between omission slots and baselines.
-Fixes 'omit_powers' undefined variable error.
-"""
-from __future__ import annotations
-import sys
-import os
 import numpy as np
-import pandas as pd
+import h5py
 from pathlib import Path
-from scipy.signal import butter, filtfilt, hilbert
+from scipy.signal import spectrogram
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import logging
 
-# Setup paths
-import sys
-sys.path.insert(0, r'D:\drive\omission')
-print(f"""[action] sys.path updated with D:\drive\omission""")
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
-from codes.config.paths import PROJECT_ROOT, DATA_DIR, OUTPUT_DIR
+ARRAY_DIR = Path(r'D:\drive\data\arrays')
+OUTPUT_DIR = Path(r'D:\drive\omission\outputs\oglo-figures\figure-6')
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# Imports from project
-from codes.functions.lfp.lfp_pipeline import get_signal_conditional
-from codes.functions.lfp.lfp_constants import CANONICAL_AREAS, BANDS
-print(f"""[action] Imported CANONICAL_AREAS and BANDS""")
+CANONICAL_AREAS = ['V1', 'V2', 'V3d', 'V3a', 'V4', 'MT', 'MST', 'TEO', 'FST', 'FEF', 'PFC']
 
-BAND_COLORS = {
-    "Theta": "#CFB87C", 
-    "Alpha": "#D3D3D3", 
-    "Beta": "#8F00FF", 
-    "Gamma": "#FF5E00"
-}
-print(f"""[action] Defined local BAND_COLORS""")
+def get_area_lfp_chunked(area, condition, window_idx):
+    for h5_file in ARRAY_DIR.glob('lfp_by_area_*.h5'):
+        with h5py.File(h5_file, 'r', libver='latest', swmr=True) as f:
+            for k in f.keys():
+                areas = [a.strip() for a in k.split(',')]
+                if area in areas:
+                    if condition in f[k]:
+                        data = f[k][condition]
+                        idx = areas.index(area)
+                        ch_per = data.shape[1] // len(areas)
+                        for t in range(data.shape[0]):
+                            yield data[t, idx*ch_per:(idx+1)*ch_per, window_idx[0]:window_idx[1]]
 
-# Configuration
-WINDOW = (-1.0, 4.0)
-FS = 1000.0
-
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=3):
-    nyq = 0.5 * fs
-    low = lowcut / nyq
-    high = highcut / nyq
-    b, a = butter(order, [low, high], btype='band')
-    return filtfilt(b, a, data, axis=-1)
-
-def compute_band_power(epochs, fs=FS):
-    if epochs is None or epochs.size == 0 or np.all(np.isnan(epochs)):
-        return None
-    powers = {}
-    for band, (low, high) in BANDS.items():
-        filtered = butter_bandpass_filter(epochs, low, high, fs)
-        analytic = hilbert(filtered, axis=-1)
-        power = np.abs(analytic)**2
-        # Average across trials (axis 0) and channels (axis 1)
-        powers[band] = np.nanmean(power, axis=(0, 1))
-    return powers
-
-def generate_figure_6(session_file=None):
-    if session_file is None:
-        session_file = list(DATA_DIR.glob("*.nwb"))[0]
+def generate_figure_6_v8():
+    p2_onset = 2031
+    win_start, win_end = p2_onset - 500, p2_onset + 1000
+    fx_start, fx_end = 500, 1000
     
-    print(f"Generating Figure 6 for session: {session_file.name}")
-    time_vec = np.linspace(WINDOW[0]*1000, WINDOW[1]*1000, int((WINDOW[1]-WINDOW[0])*FS))
-    
-    # Placeholder baseline logic (should be RRRR trials in production)
-    # Extract ALL control trials for baseline
-    base_epochs = get_signal_conditional(session_file, "V1", condition="RRRR", epoch_window=WINDOW)
-    base_powers = compute_band_power(base_epochs)
-
     for area in CANONICAL_AREAS:
-        try:
-            # 1. Extract Omission Trials (e.g., AXAB family)
-            omit_epochs = get_signal_conditional(session_file, area, condition="AXAB", epoch_window=WINDOW)
-            if omit_epochs.size == 0: continue
-            
-            # 2. Compute Power
-            omit_powers = compute_band_power(omit_epochs)
-            if not omit_powers: continue
-            
-            # 3. Plot Contrast
-            fig = go.Figure()
-            for band, power in omit_powers.items():
-                # Normalize by V1 baseline or local baseline as per spec
-                # Simplified to local baseline for this pass
-                base_mean = np.nanmean(base_powers[band]) if base_powers else 1.0
-                db_trace = 10 * np.log10(np.maximum(power, 1e-6) / np.maximum(base_mean, 1e-6))
-                fig.add_trace(go.Scatter(x=time_vec, y=db_trace, name=band, line=dict(color=BAND_COLORS.get(band))))
-            
-            fig.update_layout(
-                title=f'Figure 6: Omission dB Power | {area} | AXAB',
-                xaxis_title="Time (ms)",
-                yaxis_title="Power (dB)",
-                template='plotly_dark'
-            )
-            
-            out_p = OUTPUT_DIR / "oglo-figures" / "figure-6"
-            out_p.mkdir(parents=True, exist_ok=True)
-            fig.write_html(out_p / f'figure_6_{session_file.stem}_{area}_AXAB.html')
-            
-        except Exception as e:
-            print(f"Error processing {area}: {e}")
+        logging.info(f"Computing TFR for {area}...")
+        
+        # 1. Baseline
+        base_powers = []
+        for chunk in get_area_lfp_chunked(area, 'RRRR', (fx_start, fx_end)):
+            # chunk shape (channels, time)
+            f, _, Sxx = spectrogram(chunk, fs=1000, nperseg=64, noverlap=32, nfft=128)
+            # Sxx is (channels, freqs, segments)
+            base_powers.append(np.mean(Sxx, axis=(0, 2)))
+        
+        if not base_powers: continue
+        base_power = np.array(base_powers).mean(axis=0) # (freqs,)
+        
+        # 2. Stim vs Omit (samples)
+        stim_p_acc, omit_p_acc = [], []
+        
+        # Get chunks
+        for i, (s_chunk, o_chunk) in enumerate(zip(get_area_lfp_chunked(area, 'RRRR', (win_start, win_end)),
+                                                   get_area_lfp_chunked(area, 'RXRR', (win_start, win_end)))):
+            if i > 20: break 
+            f, t, S_stim = spectrogram(s_chunk, fs=1000, nperseg=64, noverlap=32, nfft=128)
+            _, _, S_omit = spectrogram(o_chunk, fs=1000, nperseg=64, noverlap=32, nfft=128)
+            # Average over channels (axis 0)
+            stim_p_acc.append(np.mean(S_stim, axis=0)) # (freqs, segments)
+            omit_p_acc.append(np.mean(S_omit, axis=0))
+        
+        stim_p = np.mean(stim_p_acc, axis=0) # (freqs, segments)
+        omit_p = np.mean(omit_p_acc, axis=0)
+        
+        # 3. dB Transform
+        db_stim = 10 * np.log10(np.maximum(stim_p, 1e-10) / np.maximum(base_power[:, np.newaxis], 1e-10))
+        db_omit = 10 * np.log10(np.maximum(omit_p, 1e-10) / np.maximum(base_power[:, np.newaxis], 1e-10))
+        
+        # 4. Plotting
+        fig = make_subplots(rows=3, cols=1, shared_xaxes=True, subplot_titles=(f"Stim", f"Omit", f"Diff"))
+        fig.add_trace(go.Heatmap(x=t*1000, y=f, z=db_stim, colorscale='RdBu_r'), row=1, col=1)
+        fig.add_trace(go.Heatmap(x=t*1000, y=f, z=db_omit, colorscale='RdBu_r'), row=2, col=1)
+        fig.add_trace(go.Heatmap(x=t*1000, y=f, z=db_omit-db_stim, colorscale='PRGn'), row=3, col=1)
+        fig.update_layout(title=f'Figure 6: {area} | Analysis script: github.com/HNXJ/omission/blob/main/codes/scripts/analysis/generate_figure_6.py')
+        fig.write_html(OUTPUT_DIR / f'figure_6_{area}.html')
+        logging.info(f"Saved figure for {area}")
 
-if __name__ == '__main__':
-    generate_figure_6()
+if __name__ == "__main__":
+    generate_figure_6_v8()
