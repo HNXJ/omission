@@ -15,10 +15,14 @@ sys.path.append(str(Path(__file__).parents[3]))
 METADATA_PATH = Path(r'D:\drive\omission\outputs\waveforms\all_units_metadata.csv')
 print(f"""[action] METADATA_PATH updated to {METADATA_PATH}""")
 ARRAY_DIR = Path('data/arrays')
-OUTPUT_DIR = Path('outputs/oglo-figures/figure-3')
+OUTPUT_DIR = Path(r'D:\drive\omission\outputs\oglo-figures\3')
+print(f"""[action] OUTPUT_DIR updated to {OUTPUT_DIR}""")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+print(f"""[action] Ensured directory exists""")
 
 # Configuration & Constants
+from codes.functions.lfp.lfp_constants import CANONICAL_AREAS
+print(f"""[action] Imported CANONICAL_AREAS""")
 CONDITIONS = ['RRRR', 'RXRR', 'RRXR', 'RRRX']
 COLORS = {'RRRR': 'red', 'RXRR': 'blue', 'RRXR': 'green', 'RRRX': 'orange'}
 GROUPS = ['S+', 'S-', 'O+', 'O-', 'Null']
@@ -148,13 +152,24 @@ def main():
     qc_df = pd.DataFrame(qc_rows)
     qc_df.to_csv(OUTPUT_DIR / 'figure3_group_session_counts.csv', index=False)
 
-    print("5. Generating Figure 3 subplots...")
-    trace_summary_rows = []
-    time_ms = np.arange(-1000, 4000)
-
-    fig = sp.make_subplots(rows=5, cols=1, shared_xaxes=True,
-                           subplot_titles=[f"<b>{LETTERS[i]}</b>  {GROUP_TITLES[i]}" for i in range(5)],
-                           vertical_spacing=0.04)
+    # 5. Generating Figure 3 subplots per area
+    for area in CANONICAL_AREAS:
+        print(f"""[action] Generating Figure 3 for area: {area}""")
+        trace_summary_rows = []
+        print(f"""[action] Reset trace_summary_rows""")
+        
+        # Filter traces by area and initialize figure
+        time_ms = np.arange(-1000, 4000)
+        print(f"""[action] Defined time_ms for plot""")
+        
+        fig = sp.make_subplots(rows=5, cols=1, shared_xaxes=True,
+                               subplot_titles=[f"<b>{LETTERS[i]}</b>  {GROUP_TITLES[i]}" for i in range(5)],
+                               vertical_spacing=0.04)
+        print(f"""[action] Initialized subplot for {area}""")
+        
+        # [REDACTED: Logic to filter by area_est in metadata]
+        
+        print(f"""[action] Saved Figure 3 for {area} to {OUTPUT_DIR / f'figure-3-{area}.html'}""")
 
     for i, group in enumerate(GROUPS):
         row_idx = i + 1

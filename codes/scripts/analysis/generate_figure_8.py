@@ -7,8 +7,10 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 ARRAY_DIR = Path(r'D:\drive\data\arrays')
-PROFILE_PATH = Path(r'D:\drive\omission\outputs\unit_nwb_profile.csv')
-OPLUS_PATH = Path(r'D:\drive\omission\outputs\unit_refined_categories_v3.csv')
+PROFILE_PATH = Path(r'D:\drive\omission\outputs\waveforms\unit_nwb_profile.csv')
+print(f"""[action] Updated PROFILE_PATH to {PROFILE_PATH}""")
+OPLUS_PATH = Path(r'D:\drive\omission\outputs\waveforms\unit_refined_categories_v3.csv')
+print(f"""[action] Updated OPLUS_PATH to {OPLUS_PATH}""")
 OUTPUT_DIR = Path(r'D:\drive\omission\outputs\oglo-figures\figure-8')
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
