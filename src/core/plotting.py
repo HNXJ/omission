@@ -84,29 +84,17 @@ class OmissionPlotter:
 
     def save(self, output_dir: str, filename: str):
         """
-        Save the figure efficiently in both Interactive HTML and vector SVG formats.
-        Does not rely on Kaleido (uses native write_html and offline orca/browser fallback if SVG needed, 
-        but Plotly natively supports SVG write_image if configured, here we fallback to HTML for guaranteed success
-        while attempting SVG).
+        Save the figure efficiently in Interactive HTML format ONLY.
+        Strictly adheres to the Kaleido-Free Export mandate. The HTML viewer 
+        is configured natively with a 'Download to SVG' button via modebar_add.
         """
         out_path = Path(output_dir)
         out_path.mkdir(parents=True, exist_ok=True)
         
+        # Configure HTML viewer to include SVG download button
+        self.fig.update_layout(modebar_add=["toImage"])
+        
         # Save HTML (100% reliable, interactive, self-contained)
         html_file = out_path / f"{filename}.html"
         self.fig.write_html(str(html_file), include_plotlyjs="cdn")
-        log.progress(f"Saved interactive HTML figure: {html_file}")
-        
-        # Save SVG natively using MathJax/Plotly.js offline render if possible 
-        # (write_html can also include a download button for SVG).
-        # To avoid kaleido hanging, we configure the HTML to easily export to SVG from the browser
-        self.fig.update_layout(
-            modebar_add=["toImage"]
-        )
-        
-        try:
-            svg_file = out_path / f"{filename}.svg"
-            self.fig.write_image(str(svg_file), format="svg", engine="auto")
-            log.progress(f"Saved vector SVG figure: {svg_file}")
-        except Exception as e:
-            log.warning(f"SVG native export failed (Kaleido/Orca missing). HTML includes SVG export button. Error: {e}")
+        log.progress(f"Saved interactive HTML figure (Kaleido-Free): {html_file}")
