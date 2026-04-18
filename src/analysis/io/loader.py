@@ -4,7 +4,7 @@ import re
 import numpy as np
 from pathlib import Path
 from collections import defaultdict
-from src.core.logger import log
+from src.analysis.io.logger import log
 
 class DataLoader:
     """
@@ -59,71 +59,60 @@ class DataLoader:
                             })
         return dict(area_map)
 
-    def get_signal(self, mode: str, condition: str, area: str, **kwargs):
+    def get_omission_onset(self, condition: str):
+        """Returns the onset of the second stimulus (or omission) relative to p1 start (ms)."""
+        # Based on canonical timing: p1=0, d1=531, p2=1031
+        return 1031.0
+
+    def get_signal(self, mode: str, condition: str, area: str, align_to: str = "p1", **kwargs):
         """
-        Loads concatenated, lazy memory-mapped arrays for a specific area across all valid sessions.
-        Shape returns: (total_trials_across_sessions, channels_or_units_in_area, time)
-        
-        Args:
-            mode: 'lfp' or 'spk'.
-            condition: e.g., 'AAAB', 'AXAB'.
-            area: One of the 11 CANONICAL_AREAS.
+        Loads signals with flexible alignment.
+        align_to: 'p1' (stimulus onset) or 'omission' (1031ms later).
         """
-        log.action(f"""Extracting {mode} signal for area {area} in condition {condition}""")
+        log.action(f"Extracting {mode} signal for area {area} in condition {condition} (Align: {align_to})")
         
-        if area not in self.area_map:
-            log.warning(f"""No mapping found for area: {area}""")
-            return None
+        data_list = self._load_data(mode, condition, area)
+        if not data_list: return None
+        
+        if align_to == "omission":
+            onset = self.get_omission_onset(condition)
+            # Signal is sampled at 1000Hz, so 1031ms = 1031 samples relative to p1 start (sample 1000 in raw?)
+            # Wait, our .npy arrays are already epoched. 
+            # In current scripts, sample 1000 is 0ms (p1 onset).
+            # So omission onset is at sample 2031.
+            aligned_list = []
+            for arr in data_list:
+                # arr shape: (trials, units/ch, time)
+                # Crop to [-1000, +1000] ms relative to omission (Sample 2031)
+                # Omission window: 2031 - 1000 = 1031 to 2031 + 1000 = 3031
+                if arr.shape[-1] >= 3031:
+                    aligned_list.append(arr[:, :, 1031:3031])
+                else:
+                    log.warning(f"Array too short for omission-local alignment: {arr.shape[-1]}")
+            return aligned_list
             
+        return data_list
+
+    def _load_data(self, mode, condition, area):
+        """Internal raw loader."""
+        if area not in self.area_map: return None
         area_entries = self.area_map[area]
-        
-        # We need a list of arrays from different sessions/probes to concatenate.
-        # Since concatenating mmaps drops laziness if not careful, we will yield a list 
-        # or load them into RAM. Usually, returning a list of arrays is safer for large datasets.
-        # However, to keep it simple, we'll return a list of valid arrays.
         data_list = []
         for entry in area_entries:
-            ses = entry["session"]
-            p = entry["probe"]
-            start_ch = entry["start_ch"]
-            end_ch = entry["end_ch"]
-            
-            if mode == "lfp":
-                filename = f"ses{ses}-probe{p}-lfp-{condition}.npy"
-            elif mode == "spk":
-                filename = f"ses{ses}-units-probe{p}-spk-{condition}.npy"
-            else:
-                raise ValueError("mode must be 'lfp' or 'spk'")
-                
+            ses = entry["session"]; p = entry["probe"]; start_ch = entry["start_ch"]; end_ch = entry["end_ch"]
+            filename = f"ses{ses}-{'units-probe'+str(p)+'-spk' if mode=='spk' else 'probe'+str(p)+'-lfp'}-{condition}.npy"
             file_path = self.data_dir / filename
             if file_path.exists():
                 try:
                     arr = np.load(file_path, mmap_mode='r')
-                    # Shape is (trials, units/channels, time)
-                    # Slice the appropriate channels/units
-                    
                     if mode == "lfp":
-                        # LFP strictly maps to 128 channels, so index applies perfectly
                         arr_slice = arr[:, start_ch:end_ch, :]
                     else:
-                        # For SPK, the units are not strictly 1-to-1 with channels, but in the previous pipeline
-                        # we either took all units for that probe or mapped them via a metadata file.
-                        # For now, we take all units on the probe since previous unit mapping might require `all_units_metadata.csv`.
-                        # Since `start_ch` and `end_ch` map strictly to LFP depths, SPK needs a proxy.
-                        # We will take all units from this probe as a proxy if unit metadata isn't available,
-                        # or evenly split them if multiple areas share a probe.
-                        total_units = arr.shape[1]
-                        # fractional slice based on channels
-                        ratio_start = start_ch / 128.0
-                        ratio_end = end_ch / 128.0
-                        u_start = int(total_units * ratio_start)
-                        u_end = int(total_units * ratio_end)
+                        u_start = int(arr.shape[1] * (start_ch/128.0))
+                        u_end = int(arr.shape[1] * (end_ch/128.0))
                         arr_slice = arr[:, u_start:u_end, :]
-                        
                     data_list.append(arr_slice)
-                except Exception as e:
-                    log.warning(f"""Failed to load {file_path}: {e}""")
-                    
+                except Exception: pass
         return data_list
         
     def close_all(self):

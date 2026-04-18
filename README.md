@@ -1,35 +1,37 @@
-# Omission: Neural Dynamics & Predictive Routing
+# Omission: Hierarchical Visual Prediction Pipeline
 
-This repository contains the analysis codebase for investigating neural dynamics during visual omission tasks, as detailed in our research on spectral aspects of predictive routing.
+Canonical repository for the Omission project, implementing hierarchical V1-PFC (1-11) analysis.
 
-## Project Status
+## Repository Architecture (Strict 3-Folder)
+- **`src/`**: Modular analytical logic and figure generators.
+  - `analysis/`: Functional core (LFP, Spiking, IO, Visualization).
+  - `figures/`: Thin wrappers for generating Figures 1-11.
+  - `scripts/`: Pipeline entrypoints (e.g., `run_pipeline.py`).
+- **`context/`**: Foundational mandates and session-area mapping.
+- **`tests/`**: Unit and integration tests for signal processing.
 
-This project is currently in a state of active development and maintenance. The codebase is organized for reproducible analysis, covering LFP preprocessing, TFR computation, and inter-area spectral connectivity.
+## Canonical Pipeline
+The master pipeline generates publication-grade figures from raw NPY arrays.
+```bash
+python -m src.scripts.run_pipeline
+```
 
-## Repository Structure
+## Core Standards
+- **Timing**: Omission-Local alignment (0ms = Omission Onset at 1031ms from P1).
+- **LFP**: Trial-wise STFT (98% overlap), linear power, Relative Power (dB) normalization to [-250, -50]ms baseline.
+- **SFC**: Phase-Locking Value (PLV) using Mean Resultant Vector; Subsampling corrected to equate spike counts.
+- **Filtering**: Units must pass Functional SNR > 1.0 and minimum firing rate (0.5 Hz) for spectral inclusion.
+- **Plotting**: Interactive HTML (Kaleido-Free) with native 'Download to SVG' button.
 
-- `codes/`: Core source code for the project.
-    - `functions/`: Canonical utilities for I/O, LFP preprocessing, TFR analysis, and plotting.
-    - `scripts/`: Analysis entrypoints and pipelines for figure generation and QC.
-    - `tests/`: Basic validation scripts for core components.
-- `context/`: Project documentation, plans, and research notes.
-- `outputs/`: Staging area for figures and analysis results.
-
-## Conventions
-
-- **Time**: P1 onset is the anchor at `0ms`.
-- **Sampling**: Canonical LFP sampling rate (`FS_LFP`) is `1000.0 Hz`.
-- **Areas**: The canonical area order is `['V1', 'V2', 'V3d', 'V3a', 'V4', 'MT', 'MST', 'TEO', 'FST', 'FEF', 'PFC']`.
-- **Plotting**: Standardized figures use the Madelane Golden Dark palette and `plotly_white` theme.
-
-## Getting Started
-
-To set up your environment, ensure you have the necessary dependencies installed (see `requirements.txt`). Use the provided scripts in `codes/scripts/pipelines/` to run standardized analyses on NWB-formatted session data.
-
-## Documentation Map
-
-- `context/overview/project-overview.md`: High-level project goals and roadmap.
-- `context/specs/pipeline-standard.md`: Detailed specification of the analysis pipeline.
-- `context/manuscript/`: Drafts and summaries of related research findings.
-
-For further assistance, consult the repository index report (`omission_repo_index_report.md`) or the individual skill documentation in `.gemini/skills/`.
+## Figure Mapping
+1. Theory Schematic
+2. Experimental Design & CSD
+3. Omission-Local PSTHs (Population)
+4. State-Space Manifolds (PCA)
+5. Time-Frequency Spectrograms (TFR)
+6. Band-Specific Power Dynamics (±SEM)
+7. Spike-Field Coupling (PLV Spectrum)
+8. Spectral Harmony (Cross-Area Power Corr)
+9. Individual SFC (Unit-specific PLV)
+10. SFC Delta (Omission - Stimulus PLV)
+11. Laminar Routing (Beta/Gamma depth profiles)

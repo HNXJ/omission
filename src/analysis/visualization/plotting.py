@@ -2,7 +2,7 @@
 import os
 from pathlib import Path
 import plotly.graph_objects as go
-from src.core.logger import log
+from src.analysis.io.logger import log
 
 class OmissionPlotter:
     """

@@ -7,3 +7,11 @@ from .fig5_tfr import generate_figure_5
 from .fig6_band_power import generate_figure_6
 from .fig7_sfc import generate_figure_7
 from .fig8_coordination import generate_figure_8
+from .fig9_individual_sfc import generate_figure_9
+from .fig10_sfc_delta import generate_figure_10
+from .fig11_laminar import generate_laminar_figure_11
+from .fig12_mi_matrix import generate_figure_12
+from .fig13_connectivity_graph import generate_figure_13
+from .fig14_connectivity_delta import generate_figure_14
+from .fig15_global_dynamics import generate_figure_15
+from .fig16_impedance_profiles import plot_impedance_profiles

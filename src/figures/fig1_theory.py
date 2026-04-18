@@ -1,7 +1,7 @@
 # core
 import plotly.graph_objects as go
-from src.core.plotting import OmissionPlotter
-from src.core.logger import log
+from src.analysis.visualization.plotting import OmissionPlotter
+from src.analysis.io.logger import log
 
 def generate_figure_1(output_dir: str = "D:/drive/outputs/oglo-8figs/f001"):
     """

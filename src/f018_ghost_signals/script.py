@@ -1,0 +1,30 @@
+# beta
+import os
+import numpy as np
+from src.analysis.io.loader import DataLoader
+from src.analysis.io.logger import log
+from src.f018_ghost_signals.analysis import analyze_ghost_signals
+from src.f018_ghost_signals.plot import plot_ghost_signals
+
+def run_f018():
+    """
+    Main execution entry for Figure 18.
+    """
+    log.progress("Starting Analysis f018: Ghost Signals")
+    
+    loader = DataLoader()
+    
+    # Define sessions and areas to analyze
+    sessions = ["230629", "230630", "230714", "230719"]
+    areas = ["V1", "V4", "PFC", "FEF"]
+    
+    # 1. Run Analysis
+    results = analyze_ghost_signals(loader, sessions, areas)
+    
+    # 2. Plot
+    plot_ghost_signals(results)
+    
+    log.progress("Analysis f018 complete.")
+
+if __name__ == "__main__":
+    run_f018()

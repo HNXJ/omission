@@ -1,0 +1,40 @@
+# beta
+import plotly.graph_objects as go
+from src.analysis.visualization.plotting import OmissionPlotter
+from src.analysis.io.logger import log
+import numpy as np
+
+def plot_spectral_fingerprints(freqs: np.ndarray, results: dict):
+    """
+    Plots Figure 23: Spectral Fingerprints.
+    """
+    plotter = OmissionPlotter(
+        title="Figure 23: Spectral Fingerprints",
+        subtitle="Power Spectral Density (PSD) during Omission Window"
+    )
+    plotter.set_axes("Frequency", "Hz", "Power", "dB")
+    
+    # Madelane Golden Dark inspired color palette
+    colors = ["#CFB87C", "#8F00FF", "#FF1493", "#00FFCC", "#FF5E00", "#D3D3D3"]
+    
+    for i, (area, psd) in enumerate(results.items()):
+        # Convert to dB for visualization
+        psd_db = 10 * np.log10(psd + 1e-12)
+        
+        plotter.add_trace(
+            go.Scatter(
+                x=freqs, 
+                y=psd_db, 
+                mode='lines',
+                line=dict(color=colors[i % len(colors)], width=2),
+                name=area
+            ),
+            name=area
+        )
+            
+    # Add band reference lines
+    plotter.add_xline(30, "Beta/Gamma Border", color="gray", dash="dot")
+    plotter.add_xline(13, "Alpha/Beta Border", color="gray", dash="dot")
+    
+    output_dir = "D:/drive/outputs/oglo-8figs"
+    plotter.save(output_dir, "fig23_spectral_fingerprints")

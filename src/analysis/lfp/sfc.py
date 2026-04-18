@@ -1,7 +1,7 @@
 # core
 import numpy as np
 import scipy.signal
-from src.core.logger import log
+from src.analysis.io.logger import log
 
 def calculate_plv(lfp, spikes, fs=1000, freq_band=(13, 30), subsample_spikes=True):
     """
