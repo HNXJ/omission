@@ -1,81 +1,39 @@
 ---
 name: lfp-core
 description: Canonical LFP loading, area selection, TFR computation, and plotting guidance for the omission repo.
-triggers:
-  - extract LFP by area or condition
-  - compute omission-aligned TFRs
-  - reuse canonical LFP functions
-owners:
-  - codes/functions/io/lfp_io.py
-  - codes/functions/lfp/lfp_pipeline.py
-  - codes/functions/lfp/lfp_mapping.py
-  - codes/functions/lfp/lfp_tfr.py
-  - codes/functions/visualization/lfp_plotting.py
-  - codes/functions/visualization/poster_figures.py
-entrypoints:
-  - codes/functions/io/lfp_io.py::load_session
-  - codes/functions/lfp/lfp_pipeline.py::get_signal_conditional
-  - codes/functions/lfp/lfp_tfr.py::compute_tfr
-outputs:
-  - area-filtered LFP epochs
-  - time-frequency power arrays
-  - band-collapsed trajectories
-limitations:
-  - do not rely on Granger unless lfp_connectivity.py is repaired and validated
-  - do not present lfp_preproc.py as stable if it is still parse-broken
 ---
 
 # SKILL: lfp-core
 
 ## Use this when
-- you need omission-task LFP for a specific area
-- you need p1-aligned epochs for plotting or summary analysis
-- you want to reuse the repo’s canonical TFR functions instead of writing new loaders
+- you need omission-task LFP for a specific area from the 11-area hierarchy.
+- you need p1-aligned epochs for plotting or spectral analysis.
+- you want to reuse the repo’s canonical TFR functions or `OmissionPlotter`.
 
-## Do not use this when
-- you need behavioral trial extraction from MonkeyLogic files
-- you need unit-only analyses without LFP
-- you need manuscript-ready Granger without first validating connectivity code
+## Repo Truths
+- **Time Axis**: Always relative to p1 onset (0ms). 
+- **Canonical Areas**: V1, V2, V3d, V3a, V4, MT, MST, TEO, FST, FEF, PFC.
+- **Storage**: Real arrays reside in `D:/drive/data/arrays/` as `ses{S}-probe{P}-lfp-{COND}.npy`.
+- **Loading**: Use `mmap_mode='r'` in `DataLoader` to handle 100GB+ datasets without RAM overflow.
 
-## Repo truths
-- displayed event time is p1-relative milliseconds
-- canonical area order is V1, V2, V3d, V3a, V4, MT, MST, TEO, FST, FEF, PFC
-- multi-area probes must follow deterministic split logic from the mapping rules
+## Execution Steps
+1. Instantiate `src.core.data_loader.DataLoader`.
+2. Use `get_signal(mode="lfp", ...)` for area-specific extraction.
+3. Apply **dB Normalization** using the -1000 to 0ms fixation window.
+4. Generate **Kaleido-Free** interactive HTML figures via `OmissionPlotter`.
 
-## Primary files
-- `codes/functions/io/lfp_io.py` — NWB session loading and manifest saving
-- `codes/functions/lfp/lfp_pipeline.py` — canonical public accessor `get_signal_conditional(...)`
-- `codes/functions/lfp/lfp_mapping.py` — deterministic area membership mapping
-- `codes/functions/lfp/lfp_tfr.py` — spectral decomposition and band collapse
+## Canonical Bands
+- Delta: 1-4 Hz
+- Theta: 4-8 Hz
+- Alpha: 8-13 Hz
+- Beta: 13-30 Hz
+- Low Gamma: 35-55 Hz
+- High Gamma: 65-100 Hz
 
-## Execution steps
-1. Use `load_session()` to inspect whether LFP and electrode metadata exist.
-2. Use `get_signal_conditional()` for area-specific extraction instead of custom slicing.
-3. Use `compute_tfr()` and `collapse_band_power()` for spectral summaries.
-4. Use plotting helpers instead of re-implementing event timing patches.
-
-## Validate before trusting results
-- confirm area labels are canonical after mapping
-- confirm displayed times are p1-relative and not raw sample indices
-- confirm extracted epoch shapes match trials × channels × time
-- confirm missing or partial preprocessing is disclosed if bypassed
-
-## Common failure modes
-- no channels found for area -> audit session mapping first
-- parse error in `lfp_preproc.py` -> bypass or repair before claiming a full preprocessing pipeline
-- placeholder connectivity code -> do not report Granger results as final
-
-## Output contract
-- report the session, area, signal type, window, and array shape used
-- save derived outputs only in appropriate analysis/output paths, not the repo root
-
-## Minimal examples
+## Minimal Example
 ```python
-from pathlib import Path
-from codes.functions.lfp.lfp_pipeline import get_signal_conditional
-from codes.functions.lfp.lfp_tfr import compute_tfr, collapse_band_power
-
-epochs = get_signal_conditional(Path("data/nwb/sub-...nwb"), area="V1", signal_type="LFP")
-freqs, times_ms, power = compute_tfr(epochs.mean(axis=1))
-bands = collapse_band_power(freqs, power)
+from src.core.data_loader import DataLoader
+loader = DataLoader()
+# Extracts list of (trials, channels, time) arrays for V1
+v1_lfp_list = loader.get_signal(mode="lfp", condition="AXAB", area="V1")
 ```

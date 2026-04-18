@@ -1,32 +1,34 @@
 ---
 name: analysis-neuro-omission-functional-connectivity
-description: "Omission analysis skill focusing on analysis neuro omission functional connectivity."
+description: "Omission analysis skill focusing on analysis neuro omission functional connectivity. Includes Spectral Harmony and PPC."
 ---
 
-# Functional Connectivity: Coherence & PLV
+# Functional Connectivity: Coordination & Harmony
 
-Functional connectivity measures the synchronization between different brain areas, revealing the network-level coordination during omissions.
+Functional connectivity measures the synchronization between different brain areas, revealing the network-level coordination during stimulus and omission.
 
-Metrics:
-1. Coherence: Frequency-domain correlation between two LFP signals. Indicates consistent phase and amplitude relationships.
-2. Phase-Locking Value (PLV): Measures the consistency of the phase difference between signals, independent of amplitude.
+## 1. Spectral Harmony (Cross-Area Correlation)
+Instead of raw coherence, we quantify coordination using **Cross-Area Power Envelope Correlations**.
+- **Gamma Harmony**: Dominant inter-area coordination during stimulus presentation (Feedforward flow).
+- **Beta Harmony**: Dominant inter-area coordination during stimulus omission (Feedback Prediction Error).
+- **Analysis**: 11x11 Pearson correlation matrices of band-specific power envelopes during the omission window.
 
-Observations:
-During omissions, we observe an increase in V1-PFC coherence in the Gamma band (40-60Hz). This is paradoxical because Gamma is usually bottom-up. However, this 'Omission Gamma' may represent the high-frequency matching process between the top-down prediction and the (null) bottom-up input.
+## 2. Pairwise Phase Consistency (PPC)
+The preferred metric for Spike-Field Coupling (SFC). 
+- Bias-free regarding trial count and firing rate.
+- Used to contrast the phase-locking of S+ neurons (during stimulus) and O+ neurons (during omission).
 
-Technical Pipeline:
-- Segment LFP into omission windows.
-- Compute Cross-Spectral Density (CSD).
-- Normalize CSD to get Coherence.
+## 3. Directionality
+Directional influence is inferred from the hierarchical lag and spectral profile. 
+- Higher-order areas (PFC/FEF) drive the **Beta Omission Response** down the hierarchy.
+- Lower-order areas (V1-V4) drive the **Gamma Stimulus Response** up the hierarchy.
 
-Code Snippet:
+## Implementation (Figure 8)
 ```python
-from scipy.signal import coherence
-def get_coherence(sig1, sig2, fs=1000):
-    f, Cxy = coherence(sig1, sig2, fs=fs, nperseg=256)
-    return f, Cxy
+# Correlation of envelopes
+corr_mat = np.corrcoef(power_envelopes_matrix) # 11 x 11
 ```
 
 References:
-1. Fries, P. (2015). Rhythms for Cognition: Communication through Coherence. Neuron.
-2. Bastos, A. M., & Schoffelen, J. M. (2016). A Tutorial Review of Functional Connectivity Analysis Methods and Their Interpretational Pitfalls. Frontiers in Systems Neuroscience.
+1. Vinck, M., et al. (2010). The pairwise phase consistency: a bias-free measure of rhythmic neuronal synchronization. NeuroImage.
+2. Bastos, A. M., et al. (2015). Visual areas exert feedforward and feedback influences through distinct frequency channels. Neuron.

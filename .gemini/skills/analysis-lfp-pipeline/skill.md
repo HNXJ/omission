@@ -1,114 +1,39 @@
 ---
 name: analysis-lfp-pipeline
-description: Modular LFP pipeline for sequential visual omission tasks. Covers NWB loading, bipolar referencing, TFR, connectivity, and Plotly visualization standards.
+description: Modular LFP pipeline for sequential visual omission tasks. Covers NPY/NWB loading, TFR, connectivity, and Kaleido-Free Plotly standards.
 ---
 
 # skill: analysis-lfp-pipeline
 
-## architecture (codes/functions/)
-- `lfp_io`: NWB/NPY loading with lazy NWB reads; apply `np.nan_to_num` only after extracting the required in-memory slice.
-- `lfp_events`: Canonical timeline reconstruction aligned to p1 onset (0ms).
-- `lfp_preproc`: Bipolar referencing, baseline normalization (% dB change), epoch extraction.
-- `lfp_tfr`: Hanning-windowed spectrograms — 98% overlap, 1–150Hz, ms x-axis.
-- `lfp_connectivity`: Pairwise coherence and spectral Granger causality (order=15 AR).
-- `lfp_plotting`: Standardized Plotly visualizations with sequence rectangle patches.
-- `lfp_constants`: `SEQUENCE_TIMING` dict with start/end/color per event.
+## Architecture (src/)
+- **Data Loading**: Use `src.core.data_loader.DataLoader`. Supports memory-mapped `.npy` arrays for large session data.
+- **Timing**: Canonical p1-onset at 0ms (Sample 1000). 
+- **Preprocessing**: Baseline normalization (dB change) using -1000ms to 0ms fixation window.
+- **TFR**: Log-spaced frequencies (2–100Hz), ms x-axis, dB relative power.
+- **Connectivity**: 11x11 Cross-area power envelope correlations (Spectral Harmony).
+- **SFC**: Pairwise Phase Consistency (PPC) across the full 1-100Hz spectrum.
+- **Plotting**: Standardized `OmissionPlotter` for Kaleido-Free interactive HTML.
 
-## standards
-- **Timing**: p1 = 0ms (Sample 1000). p2 = 1031ms, p3 = 2062ms, p4 = 3093ms.
-- **Sanitation**: apply `np.nan_to_num` to extracted epochs or derived arrays, not as a reason to materialize full-session NWB datasets.
-- **Normalization**: dB change — `10*log10(P/P_baseline)` vs. fixation window (-500 to 0ms).
-- **Connectivity**: Spectral Granger, Ch0=V1 Ch1=PFC pairwise. PLI and Coherence for cross-area.
-- **PPC**: Pairwise Phase Consistency for spike-field coupling (firing-rate bias free).
-- **Reproducibility**: Save `.metadata.json` sidecar for every derived `.npy` array.
+## Standards
+- **Timing**: p1 = 0ms. p2 (Omission) = 1031ms.
+- **Normalization**: dB change — $10 \times \log_{10}(P/P_{baseline})$ vs. fixation window (-1000 to 0ms).
+- **Bands**: Delta (1-4Hz), Theta (4-8Hz), Alpha (8-13Hz), Beta (13-30Hz), Low-γ (35-55Hz), High-γ (65-100Hz).
+- **Plotting**: Madelane Golden Dark (#CFB87C / #9400D3). Interactive HTML ONLY.
 
-## hard nwb access rules
-- Open an NWB file once per session-level analysis and pass derived handles or metadata downward.
-- Never call `load_session()` inside per-area, per-band, per-condition, or per-figure loops.
-- Do not convert full LFP datasets to NumPy at file-open time unless a task explicitly needs the full session matrix.
-- For trial-aligned analysis, compute event onsets once, then slice the NWB dataset per epoch.
-- Cache per-session maps (`trial_df`, `area_channel_indices`, `unit_probe_map`, `unit_area_map`) and reuse them across all figure computations.
+## Execution Rules
+1. **Memory Efficiency**: Use `mmap_mode='r'` when loading `.npy` arrays from `D:/drive/data/arrays`.
+2. **Deterministic Mapping**: Rely on `session-area-mapping.md` for probe-to-area assignment.
+3. **PPC over Coherence**: Prefer PPC for SFC to avoid firing-rate bias.
 
-## anti-patterns to avoid
-- Reopening the same NWB file inside helper functions called from nested loops.
-- Calling `to_dataframe()` multiple times for the same session table in one analysis pass.
-- Building area or channel masks repeatedly from scratch inside plotting code.
-- Sanitizing or copying the full LFP matrix before trial slicing.
+## Figures Catalog
+- **Fig 5**: TFR Heatmaps (dB normalized).
+- **Fig 6**: Band Power Trajectories (6 bands, ±SEM).
+- **Fig 7**: SFC PPC Spectra (S+ vs O+ ground truth).
+- **Fig 8**: Cross-Area Spectral Harmony (11x11 Matrices).
 
-## plotting standards (revision v4)
-- **Theme**: `plotly_white`, Arial font, pure black axes.
-- **Time axis**: Always ms. Aligned to p1 (0ms).
-- **Bands**: Theta 4–8Hz, Alpha 8–14Hz, Beta 15–30Hz, Low-γ 35–55Hz, High-γ 65–100Hz.
-- **Patches**: Gold p1, Violet p2, Teal p3, Orange p4, Gray delays (see `lfp_constants.SEQUENCE_TIMING`).
-- **Variability**: ±2SEM shaded regions on all power traces.
-- **Spectrograms**: dB normalization; zsmooth='best' for heatmaps.
-- **Fig catalog**: Fig05=TFR heatmap, Fig06=Band traces, Fig07=Spike-LFP corr, Fig08=Quenching.
-
-## quick start
+## Quick Start
 ```python
-from codes.functions.lfp_io import load_session
-from codes.functions.lfp_events import build_event_table
-from codes.functions.lfp_preproc import apply_bipolar_ref
-
-session = load_session(Path("session.nwb"))
-events  = build_event_table(session)
-lfp_bip = apply_bipolar_ref(session["lfp"])
+from src.core.data_loader import DataLoader
+loader = DataLoader()
+lfp = loader.get_signal(mode="lfp", condition="AXAB", area="V1")
 ```
-
-
----
-
-## lfp_io — full api
-| Function | Purpose |
-|---|---|
-| `load_session(nwb_path)` | Opens NWB file, returns session dict with lfp/units/trials |
-| `load_condition_table(root, session_id, cond)` | Loads `.npy` spike/lfp/behavioral array for a condition |
-| `save_json_manifest(path, meta_dict)` | Writes `.metadata.json` sidecar next to any derived array |
-| `save_lfp_results(out_path, data, meta)` | Saves derived LFP `.npy` + auto-generates sidecar |
-
-## lfp_events — full api
-| Function | Purpose |
-|---|---|
-| `build_event_table(session)` | Returns DataFrame of all event codes with ms timestamps |
-| `infer_omission_position(condition)` | Returns 2, 3, or 4 given cond string (e.g. 'RXRR' → 2) |
-
-## lfp_preproc — full api
-| Function | Purpose |
-|---|---|
-| `preprocess_lfp(lfp, fs)` | Full pipeline: bipolar ref → baseline normalize → epoch extract |
-| `apply_bipolar_ref(lfp)` | Adjacent-channel subtraction (shape: `(ch, T)` → `(ch-1, T)`) |
-| `baseline_normalize(epoch, baseline_win)` | dB change: `10*log10(P/P_baseline)`, fixation window -500–0ms |
-| `extract_epochs(lfp, onsets_ms, pre, post, fs)` | Returns `(n_trials, n_ch, T)` windowed array |
-
-## lfp_tfr — full api
-| Function | Purpose |
-|---|---|
-| `compute_tfr(epoch, fs, nperseg, noverlap)` | Hanning STFT TFR — 98% overlap default; returns `(freqs, times, power)` |
-| `compute_multitaper_tfr(data, fs, nperseg, noverlap)` | Alias for `compute_tfr` (compatibility wrapper) |
-| `get_band_power(freqs, power, band)` | Slices TFR to a named band (theta/alpha/beta/gamma) |
-| `collapse_band_power(freqs, power, band)` | Mean across frequency axis for a band → `(trials, T)` |
-
-## lfp_stats — full api
-| Function | Purpose |
-|---|---|
-| `mean_sem(x, axis)` | Returns `(mean, sem)` tuple along axis |
-| `cluster_permutation_test(x, y, n_perm)` | 2D cluster-based permutation; returns p-value mask |
-| `compare_tiers(tier_a, tier_b)` | Rank-sum test between hierarchy tiers; returns p, stat |
-| `summarize_by_area(results, areas)` | Aggregates per-unit results into area-level dict |
-
-## lfp_connectivity — full api
-| Function | Purpose |
-|---|---|
-| `compute_coherence(sig1, sig2, fs)` | Magnitude-squared coherence between two LFP channels |
-| `compute_pairwise_coherence(sig_a, sig_b, fs)` | Alias for `compute_coherence` (compatibility) |
-| `compute_granger(*args, **kwargs)` | Spectral Granger directionality placeholder (Step 11); uses `nitime.GrangerAnalyzer` |
-
-## lfp_plotting — full api
-| Function | Purpose |
-|---|---|
-| `_style(fig)` | Applies `plotly_white`, Arial, black axes to any figure |
-| `create_tfr_figure(freqs, times_ms, power, title)` | TFR heatmap with full sequence event patches |
-| `plot_tfr_grid(tfr_dict, areas)` | Grid of TFR heatmaps across areas |
-| `create_band_plot(times_ms, mean_pwr, sem_pwr, title, color)` | Band trajectory with ±2SEM shading |
-| `plot_band_trajectories(bands, times_ms, area)` | All 5 bands in subplots for one area |
-| `plot_coherence_network(coh_matrix, areas, band)` | 11×11 heatmap of inter-area coherence |

@@ -1,37 +1,33 @@
 ---
 name: analysis-omission-suite
-description: Development standards and manuscript generation suite for the omission hierarchy project. Covers figure pipeline architecture, NWB pipeline dev rules, and paper writing workflow.
+description: Development standards and manuscript generation suite for the omission hierarchy project. Covers the 8-figure pipeline and Kaleido-Free standards.
 ---
 
 # skill: analysis-omission-suite
 
-## figure pipeline architecture (revision v4)
-- **Fig02**: EYE_DVA — trial-averaged Eye-X/Y DVA, ±2SEM, pink omission patch (#FF1493, α=0.2).
-- **Fig03**: SPK_AVG — grand average firing rates (Hz) for 11 canonical brain regions.
-- **Fig04**: SPK_KMEANS — Group0=P1-responders (Gold) + Groups1-4 (k-means, k=4).
-- **Fig05**: LFP_TFR — omission-position-specific TFR (X2: d1-p2-d2, X3: d2-p3-d3).
-- **Fig06**: LFP_BANDS — pooled X2/X3 5-band traces + sorted dB-change bar plots.
-- **Fig07**: LFP_SPK_CORR — Pearson's r (2–150Hz, 2Hz steps), spikes vs LFP power.
-- **Fig08**: OM_EFFECT — neuron-by-neuron two-tailed t-test (p<0.01) matched stimulus pairs.
+## Canonical 8-Figure OGLO Pipeline
+- **Fig 1: Theory**: Predictive Coding / Active Inference conceptual diagrams.
+- **Fig 2: PSTH**: Trial-averaged firing rates (AAAB vs AXAB) for 11 areas.
+- **Fig 3: Surprise**: Single-unit surprise latencies and prediction error magnitudes.
+- **Fig 4: Coding**: Identity coding (A vs B) and population manifolds.
+- **Fig 5: TFR**: Time-Frequency Spectrograms (dB relative power, 2-100Hz).
+- **Fig 6: Bands**: 6-band power dynamics (Delta to High Gamma).
+- **Fig 7: SFC**: Spike-Field Coupling (PPC) spectra for S+ and O+ neurons.
+- **Fig 8: Harmony**: 11x11 Cross-Area Spectral coordination matrices.
 
-## development standards
-- All scripts must reside in `codes/scripts/` (entrypoints) or `codes/functions/` (utilities).
-- Save figures as both `.html` (interactive) and `.svg` (vector).
-- Theme: `plotly_white`. Palette: Vanderbilt Gold `#CFB87C`, Electric Violet `#8F00FF`, Black `#000000`.
-- Never save a figure if all values are NaN or 0 — log a task to `context/queue/` instead.
-- Every derived `.npy` array must have a `.metadata.json` sidecar (provenance).
+## Development Standards
+- **Entry Point**: `run_pipeline.py` at the workspace root.
+- **Logic**: All figure generators must reside in `src/figures/` and use `src.core.plotting.OmissionPlotter`.
+- **Aesthetic**: Madelane Golden Dark (#CFB87C / #9400D3).
+- **Format**: Mandatory **Kaleido-Free** interactive HTML exports (`fig.write_html`).
+- **Data**: Ingest from `D:/drive/data/arrays` using `DataLoader` with `mmap_mode='r'`.
 
-## manuscript (figure-first protocol)
-- Methods: transcribe from `context/docs/` methodology files.
-- Results: transcribe from figure manifest captions and observation notes.
-- Stats: finalize p-values and significance markers before submission draft.
-- Target: BioRxiv preprint (12p, 10f).
+## Manuscript (Figure-First Protocol)
+- **Methods**: Transcribe from `methods-*.md` in `archive/` or `context/`.
+- **Results**: Derived from the 8 generated figures in `D:/drive/outputs/oglo-8figs/`.
+- **Target**: High-impact Neuroscience (e.g., Nature, Neuron).
 
-## nwb pipeline dev rules
-- Alignment: always Code 101.0 = p1 onset = Sample 1000 = 0ms.
-- Use `pynwb.NWBHDF5IO` for reads; always `load_namespaces=True`.
-- Trial interval table key: `omission_glo_passive`.
-- For figure scripts, build the per-session trial index once and reuse it for all areas/conditions.
-- Resolve per-session area -> channel indices once before looping over conditions.
-- Never reopen the same NWB file inside `process_*`, `plot_*`, or `get_*` helpers that are called from nested loops.
-- If a figure compares many areas/conditions from one session, keep NWB access outside the nested loops and pass precomputed session metadata inward.
+## Execution Guardrails
+- **Sanity**: Every figure script must print `[action]`, `[progress]`, and `[info]` logs.
+- **Security**: Never log raw NWB paths or local credentials.
+- **Root Hygiene**: No new files on root; only `run_pipeline.py` is permitted.

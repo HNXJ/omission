@@ -1,30 +1,39 @@
 ---
 name: design-neuro-omission-advanced-plotting
-description: "Omission analysis skill focusing on design neuro omission advanced plotting."
+description: "Omission analysis skill focusing on design neuro omission advanced plotting. Enforces Kaleido-Free standards and Madelane aesthetics."
 ---
 
 # Advanced Plotting Suite
 
-Our analysis requires complex visualizations to capture multi-dimensional data.
+Our analysis requires complex visualizations to capture multi-dimensional data across the 11-area hierarchy.
 
-Specialized Plots:
-1. 2x4 Polar Density: Used to show the distribution of eye movement directionality across conditions.
-2. Rose Plots: Circular histograms showing the preference of saccades/microsaccades for specific orientations (45° vs 135°).
-3. Spectro-laminar MUAe: Depth plots showing the intensity of neural activity across cortical layers over time.
-4. Manifold Exploration: 3D interactive plots showing population state space trajectories.
+## Mandatory Standards
+- **Kaleido-Free Export**: NEVER use Kaleido or standard static SVG/PNG exports (`fig.write_image`). ALWAYS save plots ONLY as interactive HTML files using `fig.write_html`.
+- **Aesthetic**: Madelane Golden Dark (#CFB87C / #9400D3).
+- **Theme**: White background, black axis, gray grid.
 
-Technical Snippet (Rose Plot):
+## Specialized Plots
+1. **Time-Frequency Spectrograms (TFR)**: 
+   - Baseline normalization: $10 \times \log_{10}(P_{time} / P_{baseline})$ using the -1000ms to 0ms window.
+2. **PPC Spectra**: 
+   - Log-frequency X-axis (2-100 Hz). 
+   - Contrasts S+ (Gold) vs O+ (Purple) coupling.
+3. **Cross-Area Harmony (11x11 Matrices)**: 
+   - Heatmaps showing Pearson correlations of power envelopes (Beta/Gamma) across all 11 hierarchy areas.
+
+## OmissionPlotter usage (src/core/plotting.py)
 ```python
-import matplotlib.pyplot as plt
-def plot_rose(angles, bins=36):
-    ax = plt.subplot(111, projection='polar')
-    ax.hist(angles, bins=bins, color='#CFB87C', alpha=0.7)
-    plt.show()
+from src.core.plotting import OmissionPlotter
+plotter = OmissionPlotter(title="Figure X", subtitle="Sub-analysis")
+plotter.set_axes("Time", "ms", "Power", "dB")
+plotter.add_trace(go.Scatter(x=t, y=p, line=dict(color="#CFB87C")), "Signal")
+plotter.save(output_dir, "filename") # Auto-saves HTML with image download button
 ```
 
-Laminar Mapping:
-We use vFLIP2 and MUAe sequence responses to align probes across sessions. Depth is plotted on the Y-axis (Channels) and time on the X-axis.
+## Plotly Modebar Configuration
+Ensure the modebar is configured to allow high-res SVG downloads natively via the browser:
+`fig.update_layout(modebar_add=['toImage'], modebar_remove=['zoom', 'pan'])`
 
 References:
-1. Hunter, J. D. (2007). Matplotlib: A 2D Graphics Environment. Computing in Science & Engineering.
-2. Waskom, M. L. (2021). seaborn: statistical data visualization. Journal of Open Source Software.
+1. Hunter, J. D. (2007). Matplotlib: A 2D Graphics Environment.
+2. Plotly Open Source Graphing Library for Python.

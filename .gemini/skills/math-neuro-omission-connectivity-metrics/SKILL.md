@@ -1,37 +1,40 @@
 ---
 name: math-neuro-omission-connectivity-metrics
-description: "Omission analysis skill focusing on math neuro omission connectivity metrics."
+description: "Omission analysis skill focusing on math neuro omission connectivity metrics. Includes PPC and Spectral Harmony."
 ---
 
 # Connectivity Metrics & Formalisms
 
-Quantitative definitions for connectivity analysis allow for objective assessment of network interactions.
+Quantitative definitions for connectivity analysis allow for objective assessment of network interactions across the 11-area visual hierarchy.
 
-1. Cross-Spectral Density (CSD):
-The Fourier transform of the cross-correlation function. It describes the covariance between two signals in the frequency domain.
+## 1. Pairwise Phase Consistency (PPC)
+A bias-free measure of spike-field coupling (SFC). 
+Formula: $PPC = \frac{\sum_{i<j} \cos(\theta_i - \theta_j)}{\binom{N}{2}}$
+Where $\theta_i$ is the LFP phase at the time of spike $i$. 
+Use PPC to quantify how strongly S+ or O+ neurons lock to rhythmic LFP oscillations without being biased by trial count or firing rates.
 
-2. Coherence (C):
-C_xy(f) = |S_xy(f)|^2 / (S_xx(f) * S_yy(f)). A normalized measure of linear relationship between signals x and y at frequency f.
+## 2. Spectral Harmony (Cross-Area Correlation)
+We quantify "network harmony" by correlating the power envelopes of specific bands (Beta or Gamma) across all 11 areas.
+- **Gamma Harmony**: Dominates during stimulus presentation (Feedforward).
+- **Beta Harmony**: Dominates during stimulus omission (Feedback).
 
-3. Granger Causality (F):
-F = ln(Var_restricted / Var_unrestricted). Quantifies the reduction in prediction error of signal Y when signal X is included in the autoregressive model.
+## 3. Granger Causality (F)
+$F = \ln(\text{Var}_{\text{restricted}} / \text{Var}_{\text{unrestricted}})$. 
+Quantifies the reduction in prediction error of area Y when area X is included.
 
-Adjacency Matrices:
-We represent the 11-area network as an adjacency matrix A where A_ij represents the strength of connection (Coherence or GC) from area i to area j.
-
-Formulae:
-- Phase Difference: theta = angle(S_xy(f))
-- Coherency: s_xy(f) = S_xy(f) / sqrt(S_xx(f) * S_yy(f))
+## Adjacency Matrices
+We represent the 11-area network as a matrix $A$ where $A_{ij}$ is the connectivity strength (PPC or Power Correlation) from source $j$ to target $i$.
 
 Implementation:
 ```python
-# Conceptual implementation
-def bivariate_granger_concept(x, y, p=10):
-    # Simplified AR model fit comparison logic
-    # In practice, use statsmodels.tsa.stattools.grangercausalitytests
-    pass
+# PPC Core Snippet
+sum_cos = np.sum(spk * np.cos(phase))
+sum_sin = np.sum(spk * np.sin(phase))
+sum_w = np.sum(spk)
+sum_w2 = np.sum(spk**2)
+ppc = ((sum_cos**2 + sum_sin**2) - sum_w2) / (sum_w**2 - sum_w2)
 ```
 
 References:
-1. Nolte, G., et al. (2004). Identifying true brain interaction from EEG data using the imaginary part of coherency. Clinical Neurophysiology.
-2. Barrett, A. B., & Seth, A. K. (2011). Practical guidelines for Granger causality analysis of multivariate time series. Journal of Neuroscience Methods.
+1. Vinck, M., et al. (2010). The pairwise phase consistency: a bias-free measure of rhythmic neuronal synchronization. NeuroImage.
+2. Bastos, A. M., & Schoffelen, J. M. (2015). A Tutorial Review of Functional Connectivity Analysis Methods. Frontiers in Systems Neuroscience.
