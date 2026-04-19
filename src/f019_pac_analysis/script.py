@@ -1,3 +1,4 @@
+from pathlib import Path
 # beta
 import os
 import numpy as np
@@ -13,6 +14,7 @@ def run_f019():
     log.progress("Starting Analysis f019: PAC Analysis")
     
     loader = DataLoader()
+    output_dir = loader.get_output_dir("f019_pac_analysis")
     
     # Define sessions and areas to analyze
     sessions = ["230629", "230630", "230714", "230719"]
@@ -22,7 +24,7 @@ def run_f019():
     results = analyze_pac(loader, sessions, areas)
     
     # 2. Plot
-    plot_pac_summary(results)
+    plot_pac_summary(results, output_dir=output_dir)
     
     log.progress("Analysis f019 complete.")
 

@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 from src.analysis.visualization.plotting import OmissionPlotter
 from src.analysis.io.logger import log
 
-def plot_prediction_error_scaling(results: dict):
+def plot_prediction_error_scaling(results: dict, output_dir: str):
     """
     Plots Figure 17: Scaling of Prediction Error (Surprise) across sequence positions.
     results: {area: {pos: [values]}}
@@ -37,6 +37,5 @@ def plot_prediction_error_scaling(results: dict):
             )
             
     # Add timing reference line if applicable (not here as it's X=category)
-    
-    output_dir = "D:/drive/outputs/oglo-8figs"
+
     plotter.save(output_dir, "fig17_prediction_error_scaling")

@@ -1,3 +1,4 @@
+from pathlib import Path
 # beta
 import os
 import numpy as np
@@ -13,6 +14,7 @@ def run_f023():
     log.progress("Starting Analysis f023: Spectral Fingerprints")
     
     loader = DataLoader()
+    output_dir = loader.get_output_dir("f023_spectral_fingerprints")
     
     # Define sessions and areas to analyze
     sessions = ["230629", "230630", "230714", "230719"]
@@ -23,7 +25,7 @@ def run_f023():
     
     # 2. Plot
     if results:
-        plot_spectral_fingerprints(freqs, results)
+        plot_spectral_fingerprints(freqs, results, output_dir=output_dir)
     
     log.progress("Analysis f023 complete.")
 

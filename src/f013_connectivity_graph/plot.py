@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 from src.analysis.visualization.poster_figures import plot_spectral_network
 from src.analysis.io.logger import log
 
-def plot_connectivity_graphs(tensor: dict, areas: list, output_dir: str = "D:/drive/outputs/oglo-8figs/f013"):
+def plot_connectivity_graphs(tensor: dict, areas: list, output_dir: str):
     """
     Plots Figure 13 connectivity graphs for all frames.
     """

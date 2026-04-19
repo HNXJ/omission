@@ -17,29 +17,34 @@ class OmissionPlotter:
     def __init__(self, title: str, subtitle: str = "", template: str = "plotly_white"):
         """
         Initialize a new canonical figure.
-        
-        Args:
-            title: Detailed main title.
-            subtitle: Detailed subtitle for context.
-            template: Default Plotly template (adhering to Madelane Golden Dark aesthetics where applicable).
         """
         self.fig = go.Figure()
         
-        # Combine title and subtitle for Plotly's title structure
         full_title = f"<b>{title}</b><br><sup>{subtitle}</sup>" if subtitle else f"<b>{title}</b>"
         
+        # Colors per mandate: [Red, Blue, Brown, Green, Orange, Purple, Yellow]
+        self.colors = ["#FF0000", "#0000FF", "#A52A2A", "#008000", "#FFA500", "#800080", "#FFFF00"]
+        
         self.fig.update_layout(
-            title=dict(text=full_title, x=0.5, xanchor='center'),
+            title=dict(text=full_title, x=0.5, xanchor='center', font=dict(family="Arial", size=18, color="#000000")),
             template=template,
+            paper_bgcolor="#FFFFFF",
+            plot_bgcolor="#FFFFFF",
+            xaxis=dict(showgrid=True, gridcolor="#D3D3D3", linecolor="#000000", mirror=True, ticks="outside"),
+            yaxis=dict(showgrid=True, gridcolor="#D3D3D3", linecolor="#000000", mirror=True, ticks="outside"),
             legend=dict(
                 title="Legend",
                 orientation="v",
                 yanchor="top",
                 y=0.99,
                 xanchor="left",
-                x=1.02
+                x=1.02,
+                bgcolor="rgba(255,255,255,0.8)",
+                bordercolor="#000000",
+                borderwidth=1
             ),
-            margin=dict(l=60, r=150, t=80, b=60)
+            margin=dict(l=80, r=180, t=100, b=80),
+            modebar_add=['toImage']
         )
         log.action(f"Initialized canonical plot: {title}")
 

@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 from src.analysis.visualization.plotting import OmissionPlotter
 from src.analysis.io.loader import DataLoader
 
-def plot_spectral_harmony(results: dict, areas: list, output_dir: str = "D:/drive/outputs/oglo-8figs/f008"):
+def plot_spectral_harmony(results: dict, areas: list, output_dir: str):
     """
     Plots Figure 8 spectral harmony heatmaps.
     """

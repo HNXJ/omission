@@ -1,3 +1,4 @@
+from pathlib import Path
 # beta
 import os
 import numpy as np
@@ -13,6 +14,7 @@ def run_f022():
     log.progress("Starting Analysis f022: Dimensionality Reduction")
     
     loader = DataLoader()
+    output_dir = loader.get_output_dir("f022_dimensionality_reduction")
     
     # Define sessions and area
     sessions = ["230629", "230630"]
@@ -23,7 +25,7 @@ def run_f022():
     
     # 2. Plot
     if results:
-        plot_pca_trajectories(results)
+        plot_pca_trajectories(results, output_dir=output_dir)
     
     log.progress("Analysis f022 complete.")
 

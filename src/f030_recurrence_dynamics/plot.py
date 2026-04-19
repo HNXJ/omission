@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 from src.analysis.visualization.plotting import OmissionPlotter
 import numpy as np
 
-def plot_recurrence_dynamics(results: dict, output_dir: str = "D:/drive/outputs/oglo-8figs/f030"):
+def plot_recurrence_dynamics(results: dict, output_dir: str):
     """
     Plots Figure 30: Recurrence Dynamics (Spectral Radius).
     """

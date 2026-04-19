@@ -4,7 +4,7 @@ from src.analysis.visualization.plotting import OmissionPlotter
 from src.analysis.io.logger import log
 import numpy as np
 
-def plot_pupil_surprise(results: dict):
+def plot_pupil_surprise(results: dict, output_dir: str):
     """
     Plots Figure 21: Pupil Surprise.
     results: {session: { 'omit': (time,), 'std': (time,) }}
@@ -36,6 +36,5 @@ def plot_pupil_surprise(results: dict):
     # Add timing reference lines
     plotter.add_xline(0, "P1 Onset", color="black")
     plotter.add_xline(1031, "Omission Onset", color="red")
-    
-    output_dir = "D:/drive/outputs/oglo-8figs"
+
     plotter.save(output_dir, "fig21_pupil_surprise")

@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 from src.analysis.visualization.plotting import OmissionPlotter
 from src.analysis.io.loader import DataLoader
 
-def plot_mi_matrix(tensor: dict, areas: list, output_dir: str = "D:/drive/outputs/oglo-8figs/f012"):
+def plot_mi_matrix(tensor: dict, areas: list, output_dir: str):
     """
     Plots the Figure 12 MI connectivity matrix.
     """

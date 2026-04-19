@@ -4,7 +4,7 @@ from src.analysis.visualization.plotting import OmissionPlotter
 from src.analysis.io.logger import log
 import numpy as np
 
-def plot_pac_summary(results: dict):
+def plot_pac_summary(results: dict, output_dir: str):
     """
     Plots Figure 19: PAC (Modulation Index) across Areas.
     results: {area: [mi_values]}
@@ -31,6 +31,5 @@ def plot_pac_summary(results: dict):
         ),
         name="PAC Intensity"
     )
-            
-    output_dir = "D:/drive/outputs/oglo-8figs"
+
     plotter.save(output_dir, "fig19_pac_analysis")

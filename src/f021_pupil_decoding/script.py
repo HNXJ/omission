@@ -1,4 +1,6 @@
+from pathlib import Path
 # beta
+from src.analysis.io.loader import DataLoader
 import os
 import numpy as np
 from src.analysis.io.logger import log
@@ -6,6 +8,8 @@ from src.f021_pupil_decoding.analysis import analyze_pupil_surprise
 from src.f021_pupil_decoding.plot import plot_pupil_surprise
 
 def run_f021():
+    loader = DataLoader()
+    output_dir = loader.get_output_dir("f021_pupil_decoding")
     """
     Main execution entry for Figure 21.
     """
@@ -19,7 +23,7 @@ def run_f021():
     
     # 2. Plot
     if results:
-        plot_pupil_surprise(results)
+        plot_pupil_surprise(results, output_dir=output_dir)
     
     log.progress("Analysis f021 complete.")
 

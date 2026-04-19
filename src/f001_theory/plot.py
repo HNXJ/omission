@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 from src.analysis.visualization.plotting import OmissionPlotter
 from src.analysis.io.logger import log
 
-def plot_theory_schematic(output_dir: str = "D:/drive/outputs/oglo-8figs/f001"):
+def plot_theory_schematic(output_dir: str):
     """
     Plots the Figure 1 theory schematic.
     """

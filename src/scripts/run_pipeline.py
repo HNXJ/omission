@@ -2,13 +2,22 @@
 import sys
 import time
 from src.analysis.io.logger import log
-from src.figures import (
-    fig1_theory, fig2_psth, fig3_surprise, fig4_coding,
-    fig5_tfr, fig6_band_power, fig7_sfc, fig8_coordination,
-    fig9_individual_sfc, fig10_sfc_delta, fig11_laminar,
-    fig12_mi_matrix, fig13_connectivity_graph, fig14_connectivity_delta, fig15_global_dynamics,
-    fig16_impedance_profiles
-)
+from src.f001_theory.script import run_f001
+from src.f002_psth.script import run_f002
+from src.f003_surprise.script import run_f003
+from src.f004_coding.script import run_f004
+from src.f005_tfr.script import run_f005
+from src.f006_band_power.script import run_f006
+from src.f007_sfc.script import run_f007
+from src.f008_coordination.script import run_f008
+from src.f009_individual_sfc.script import run_f009
+from src.f010_sfc_delta.script import run_f010
+from src.f011_laminar.script import run_f011
+from src.f012_mi_matrix.script import run_f012
+from src.f013_connectivity_graph.script import run_f013
+from src.f014_connectivity_delta.script import run_f014
+from src.f015_global_dynamics.script import run_f015
+from src.f016_impedance_profiles.script import run_f016
 
 def run_all():
     """
@@ -20,22 +29,22 @@ def run_all():
     
     # Target directory mapping
     pipeline_steps = [
-        ("Figure 1: Predictive Coding Theory", fig1_theory.generate_figure_1),
-        ("Figure 2: Canonical PSTHs", fig2_psth.generate_figure_2),
-        ("Figure 3: Surprise Latencies", fig3_surprise.generate_figure_3),
-        ("Figure 4: Identity Coding", fig4_coding.generate_figure_4),
-        ("Figure 5: TFR Spectrograms", fig5_tfr.generate_figure_5),
-        ("Figure 6: Band Power Dynamics", fig6_band_power.generate_figure_6),
-        ("Figure 7: Spike-Field Coupling", fig7_sfc.generate_figure_7),
-        ("Figure 8: Cross-Area Coordination", fig8_coordination.generate_figure_8),
-        ("Figure 9: Individual SFC", fig9_individual_sfc.generate_figure_9),
-        ("Figure 10: SFC Delta", fig10_sfc_delta.generate_figure_10),
-        ("Figure 11: Laminar Profiles", fig11_laminar.generate_laminar_figure_11),
-        ("Figure 12: Connectivity Matrix", fig12_mi_matrix.generate_figure_12),
-        ("Figure 13: Connectivity Graphs", fig13_connectivity_graph.generate_figure_13),
-        ("Figure 14: Connectivity Delta", fig14_connectivity_delta.generate_figure_14),
-        ("Figure 15: Global Dynamics", fig15_global_dynamics.generate_figure_15),
-        ("Figure 16: Effective Impedance", fig16_impedance_profiles.plot_impedance_profiles)
+        ("Figure 1: Theory", run_f001),
+        ("Figure 2: PSTH Design", run_f002),
+        ("Figure 3: Surprise", run_f003),
+        ("Figure 4: Coding", run_f004),
+        ("Figure 5: TFR", run_f005),
+        ("Figure 6: Band Power", run_f006),
+        ("Figure 7: SFC", run_f007),
+        ("Figure 8: Coordination", run_f008),
+        ("Figure 9: Individual SFC", run_f009),
+        ("Figure 10: SFC Delta", run_f010),
+        ("Figure 11: Laminar", run_f011),
+        ("Figure 12: MI Matrix", run_f012),
+        ("Figure 13: Connectivity Graph", run_f013),
+        ("Figure 14: Connectivity Delta", run_f014),
+        ("Figure 15: Global Dynamics", run_f015),
+        ("Figure 16: Impedance", run_f016)
     ]
     
     for name, func in pipeline_steps:

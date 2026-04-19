@@ -56,6 +56,65 @@ def get_plv_spectrum(lfp, spikes, fs=1000, n_bins=30):
         
     return freqs, np.array(plv_vals)
 
+def select_top_units(loader, area, mode="omission", top_n=10):
+    """
+    Selects top S+ or O+ units based on firing rate response.
+    """
+    area_entries = loader.area_map.get(area, [])
+    units = []
+    
+    for entry in area_entries:
+        ses = entry["session"]; p = entry["probe"]; start_ch = entry["start_ch"]; end_ch = entry["end_ch"]; total_ch = entry["total_ch"]
+        try:
+            # Standard conditions for selection
+            cond = "AXAB" if mode == "omission" else "AAAB"
+            f_spk = loader.data_dir / f"ses{ses}-units-probe{p}-spk-{cond}.npy"
+            if not f_spk.exists(): continue
+            
+            spk = np.load(f_spk, mmap_mode='r')
+            u_start = int(spk.shape[1] * (start_ch / total_ch))
+            u_end = int(spk.shape[1] * (end_ch / total_ch))
+            
+            # Firing Rate metrics
+            # Omission window p2: 2031-2562 (1000 base + 1031)
+            # Stimulus window p1: 1000-1531
+            win = slice(2031, 2562) if mode == "omission" else slice(1000, 1531)
+            fr = np.mean(spk[:, u_start:u_end, win], axis=(0, 2))
+            
+            for i, val in enumerate(fr):
+                if val > 0.001: # Min rate filter
+                    units.append({
+                        "score": val, 
+                        "session": ses, "probe": p, 
+                        "local_idx": u_start + i,
+                        "area": area
+                    })
+        except Exception: continue
+        
+    units.sort(key=lambda x: x["score"], reverse=True)
+    return units[:top_n]
+
+def get_matched_sfc_data(loader, unit_info):
+    """
+    Loads LFP and SPK for a specific unit and aligns to omission.
+    """
+    ses = unit_info["session"]; p = unit_info["probe"]; u_idx = unit_info["local_idx"]; area = unit_info["area"]
+    
+    # Load AXAB for Omission SFC
+    f_spk = loader.data_dir / f"ses{ses}-units-probe{p}-spk-AXAB.npy"
+    f_lfp = loader.data_dir / f"ses{ses}-probe{p}-lfp-AXAB.npy"
+    
+    if not (f_spk.exists() and f_lfp.exists()): return None, None
+    
+    spk = np.load(f_spk, mmap_mode='r')[:, u_idx, 2031:2562]
+    
+    # Get area mapping for LFP
+    area_mapping = [e for e in loader.area_map[area] if e["session"] == ses and e["probe"] == p][0]
+    lfp_full = np.load(f_lfp, mmap_mode='r')[:, area_mapping["start_ch"]:area_mapping["end_ch"], 2031:2562]
+    lfp = np.mean(lfp_full, axis=1) # Mean LFP for area
+    
+    return lfp, spk
+
 def apply_subsampling(spikes_list, target_count=None):
     """
     Subsamples spikes to match a target count to avoid firing-rate bias in PLV.
@@ -63,7 +122,7 @@ def apply_subsampling(spikes_list, target_count=None):
     """
     counts = [np.sum(s > 0) for s in spikes_list]
     if target_count is None:
-        target_count = min(counts)
+        target_count = min(counts) if counts else 0
         
     log.info(f"[action] Subsampling spikes to target count: {target_count}")
     
@@ -73,9 +132,7 @@ def apply_subsampling(spikes_list, target_count=None):
         total = len(idx[0])
         if total > target_count:
             keep = np.random.choice(total, target_count, replace=False)
-            # Create fresh binary mask
             s_new = np.zeros_like(s)
-            # Multi-dim indexing
             if len(idx) == 2:
                 s_new[idx[0][keep], idx[1][keep]] = 1
             else:

@@ -1,3 +1,4 @@
+from pathlib import Path
 # beta
 from src.analysis.io.loader import DataLoader
 from src.analysis.io.logger import log
@@ -10,13 +11,14 @@ def run_f027():
     """
     log.progress("Starting Analysis f027: Omission Identity Coding")
     loader = DataLoader()
+    output_dir = loader.get_output_dir("f027_identity_coding")
     
     sessions = ["230629", "230630", "230714", "230719"]
     areas = ["V1", "V4", "PFC", "FEF"]
     
     times, results = analyze_omission_identity(loader, sessions, areas)
     if results:
-        plot_identity_decoding(times, results)
+        plot_identity_decoding(times, results, output_dir=output_dir)
     
     log.progress("Analysis f027 complete.")
 

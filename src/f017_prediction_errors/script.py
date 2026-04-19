@@ -1,3 +1,4 @@
+from pathlib import Path
 # beta
 import os
 import numpy as np
@@ -13,6 +14,7 @@ def run_f017():
     log.progress("Starting Analysis f017: Prediction Error Scaling")
     
     loader = DataLoader()
+    output_dir = loader.get_output_dir("f017_prediction_errors")
     
     # Define sessions and areas to analyze
     # For speed in this turn, let's pick a few key sessions
@@ -23,7 +25,7 @@ def run_f017():
     results = analyze_prediction_errors(loader, sessions, areas)
     
     # 2. Plot
-    plot_prediction_error_scaling(results)
+    plot_prediction_error_scaling(results, output_dir=output_dir)
     
     log.progress("Analysis f017 complete.")
 

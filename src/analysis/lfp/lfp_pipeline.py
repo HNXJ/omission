@@ -84,5 +84,7 @@ def run_lfp_spectral_pipeline(area: str, condition: str):
         "freqs": freqs,
         "times": times_local,
         "tfr": avg_power,
-        "bands": {k: np.mean(v, axis=(0, 1)) for k, v in bands.items()}
+        "tfr_full": normed_power, # (trials, channels, freqs, times)
+        "bands": {k: np.mean(v, axis=(0, 1)) for k, v in bands.items()},
+        "bands_full": bands # {band_name: (trials, channels, times)}
     }

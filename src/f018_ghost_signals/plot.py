@@ -4,7 +4,7 @@ from src.analysis.visualization.plotting import OmissionPlotter
 from src.analysis.io.logger import log
 import numpy as np
 
-def plot_ghost_signals(results: dict):
+def plot_ghost_signals(results: dict, output_dir: str):
     """
     Plots Figure 18: Ghost Signals (Anticipatory Ramping).
     results: {area: {'slopes': [], 'avg_psth': (time,)}}
@@ -37,6 +37,5 @@ def plot_ghost_signals(results: dict):
     # Add timing reference lines
     plotter.add_xline(1031, "Expected P2", color="violet")
     plotter.add_xline(531, "D1 Start", color="gray")
-    
-    output_dir = "D:/drive/outputs/oglo-8figs"
+
     plotter.save(output_dir, "fig18_ghost_signals")

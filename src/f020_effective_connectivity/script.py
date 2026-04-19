@@ -1,3 +1,4 @@
+from pathlib import Path
 # beta
 import os
 import numpy as np
@@ -13,6 +14,7 @@ def run_f020():
     log.progress("Starting Analysis f020: Effective Connectivity")
     
     loader = DataLoader()
+    output_dir = loader.get_output_dir("f020_effective_connectivity")
     
     # Define sessions and area pairs
     sessions = ["230629", "230630", "230714", "230719"]
@@ -22,7 +24,7 @@ def run_f020():
     results = analyze_effective_connectivity(loader, sessions, area_pairs)
     
     # 2. Plot
-    plot_effective_connectivity(results)
+    plot_effective_connectivity(results, output_dir=output_dir)
     
     log.progress("Analysis f020 complete.")
 

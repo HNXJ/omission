@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 from src.analysis.visualization.plotting import OmissionPlotter
 import numpy as np
 
-def plot_state_decoding(times: np.ndarray, results: dict):
+def plot_state_decoding(times: np.ndarray, results: dict, output_dir: str):
     """
     Plots Figure 25: State Decoding Accuracy over time.
     """
@@ -25,6 +25,5 @@ def plot_state_decoding(times: np.ndarray, results: dict):
     plotter.add_xline(0, "P1 Onset", color="black")
     plotter.add_xline(1031, "Omission Onset", color="red")
     plotter.add_yline(0.5, "Chance Level", color="gray", dash="dot")
-    
-    output_dir = "D:/drive/outputs/oglo-8figs"
+
     plotter.save(output_dir, "fig25_state_decoding")

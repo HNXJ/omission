@@ -4,7 +4,7 @@ from plotly.subplots import make_subplots
 import numpy as np
 import os
 
-def plot_impedance(results: dict, output_dir: str = "D:/drive/outputs/oglo-8figs/f016"):
+def plot_impedance(results: dict, output_dir: str):
     """
     Plots Figure 16 impedance profile.
     """

@@ -2,13 +2,12 @@
 
 Canonical repository for the Omission project, implementing hierarchical V1-PFC (1-11) analysis.
 
-## Repository Architecture (Strict 3-Folder)
+## Repository Architecture
 - **`src/`**: Modular analytical logic and figure generators.
   - `analysis/`: Functional core (LFP, Spiking, IO, Visualization).
-  - `figures/`: Thin wrappers for generating Figures 1-11.
+  - `f001_theory/` through `f030_recurrence_dynamics/`: Canonical standardized analysis folders.
   - `scripts/`: Pipeline entrypoints (e.g., `run_pipeline.py`).
 - **`context/`**: Foundational mandates and session-area mapping.
-- **`tests/`**: Unit and integration tests for signal processing.
 
 ## Canonical Pipeline
 The master pipeline generates publication-grade figures from raw NPY arrays.
@@ -17,21 +16,15 @@ python -m src.scripts.run_pipeline
 ```
 
 ## Core Standards
-- **Timing**: Omission-Local alignment (0ms = Omission Onset at 1031ms from P1).
+- **Timing**: Omission-Local alignment (0ms = Omission Onset; family-aware: p2, p3, or p4).
 - **LFP**: Trial-wise STFT (98% overlap), linear power, Relative Power (dB) normalization to [-250, -50]ms baseline.
 - **SFC**: Phase-Locking Value (PLV) using Mean Resultant Vector; Subsampling corrected to equate spike counts.
 - **Filtering**: Units must pass Functional SNR > 1.0 and minimum firing rate (0.5 Hz) for spectral inclusion.
 - **Plotting**: Interactive HTML (Kaleido-Free) with native 'Download to SVG' button.
 
-## Figure Mapping
-1. Theory Schematic
-2. Experimental Design & CSD
-3. Omission-Local PSTHs (Population)
-4. State-Space Manifolds (PCA)
-5. Time-Frequency Spectrograms (TFR)
-6. Band-Specific Power Dynamics (±SEM)
-7. Spike-Field Coupling (PLV Spectrum)
-8. Spectral Harmony (Cross-Area Power Corr)
-9. Individual SFC (Unit-specific PLV)
-10. SFC Delta (Omission - Stimulus PLV)
-11. Laminar Routing (Beta/Gamma depth profiles)
+## Figure Mapping (Canonical 1-30)
+1-11: Core Spiking, Spectral, and Laminar Routing.
+12-15: Functional Connectivity (MI) and Network Dynamics.
+16: Impedance Tensor Estimation.
+17-25: Surprise Scaling, Ghost Signals, PAC, Effective Connectivity, Pupil Decoding, Variability.
+26-30: State Latency, Identity Coding, Cross-Area Manifolds, Info Bottleneck, Recurrence.

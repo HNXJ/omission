@@ -64,8 +64,7 @@ def plot_pca_trajectories(results: dict):
             template="plotly_white",
             modebar_add=['toImage']
         )
-        
-        output_dir = "D:/drive/outputs/oglo-8figs"
+
         filename = f"fig22_pca_trajectories_{ses}.html"
         fig.write_html(f"{output_dir}/{filename}")
         log.progress(f"Saved 3D PCA plot to {output_dir}/{filename}")

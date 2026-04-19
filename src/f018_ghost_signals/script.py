@@ -1,3 +1,4 @@
+from pathlib import Path
 # beta
 import os
 import numpy as np
@@ -13,6 +14,7 @@ def run_f018():
     log.progress("Starting Analysis f018: Ghost Signals")
     
     loader = DataLoader()
+    output_dir = loader.get_output_dir("f018_ghost_signals")
     
     # Define sessions and areas to analyze
     sessions = ["230629", "230630", "230714", "230719"]
@@ -22,7 +24,7 @@ def run_f018():
     results = analyze_ghost_signals(loader, sessions, areas)
     
     # 2. Plot
-    plot_ghost_signals(results)
+    plot_ghost_signals(results, output_dir=output_dir)
     
     log.progress("Analysis f018 complete.")
 

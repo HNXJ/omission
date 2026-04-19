@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 from src.analysis.visualization.plotting import OmissionPlotter
 import numpy as np
 
-def plot_global_mi_dynamics(tensor: dict, output_dir: str = "D:/drive/outputs/oglo-8figs/f015"):
+def plot_global_mi_dynamics(tensor: dict, output_dir: str):
     """
     Plots Figure 15 global MI dynamics over 17 frames.
     """

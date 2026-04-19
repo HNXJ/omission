@@ -4,7 +4,7 @@ from src.analysis.visualization.plotting import OmissionPlotter
 from src.analysis.io.logger import log
 import numpy as np
 
-def plot_effective_connectivity(results: dict):
+def plot_effective_connectivity(results: dict, output_dir: str):
     """
     Plots Figure 20: Effective Connectivity (Granger Causality).
     results: { 'A->B': [values], ... }
@@ -31,6 +31,5 @@ def plot_effective_connectivity(results: dict):
         ),
         name="GC Strength"
     )
-            
-    output_dir = "D:/drive/outputs/oglo-8figs"
+
     plotter.save(output_dir, "fig20_effective_connectivity")

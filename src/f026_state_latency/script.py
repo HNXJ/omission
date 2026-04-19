@@ -1,3 +1,4 @@
+from pathlib import Path
 # beta
 from src.analysis.io.loader import DataLoader
 from src.analysis.io.logger import log
@@ -10,6 +11,7 @@ def run_f026():
     """
     log.progress("Starting Analysis f026: State Divergence Latency")
     loader = DataLoader()
+    output_dir = loader.get_output_dir("f026_state_latency")
     
     # Representative sessions
     sessions = ["230629", "230630", "230714", "230719"]
@@ -17,7 +19,7 @@ def run_f026():
     
     results = analyze_area_latencies(loader, sessions, areas)
     if results:
-        plot_divergence_latency(results)
+        plot_divergence_latency(results, output_dir=output_dir)
     
     log.progress("Analysis f026 complete.")
 

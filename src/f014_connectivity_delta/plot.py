@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 from src.analysis.visualization.plotting import OmissionPlotter
 import numpy as np
 
-def plot_connectivity_delta(tensor: dict, areas: list, output_dir: str = "D:/drive/outputs/oglo-8figs/f014"):
+def plot_connectivity_delta(tensor: dict, areas: list, output_dir: str):
     """
     Plots Figure 14 connectivity delta (AXAB - AAAB) heatmaps.
     """

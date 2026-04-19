@@ -1,3 +1,4 @@
+from pathlib import Path
 # beta
 from src.analysis.io.loader import DataLoader
 from src.analysis.io.logger import log
@@ -10,13 +11,14 @@ def run_f024():
     """
     log.progress("Starting Analysis f024: Fano Factor")
     loader = DataLoader()
+    output_dir = loader.get_output_dir("f024_fano_factor")
     
     sessions = ["230629", "230630", "230714", "230719"]
     areas = ["V1", "V4", "PFC", "FEF"]
     
     results = analyze_fano_factor(loader, sessions, areas, condition="AXAB")
     if results:
-        plot_fano_factor(results)
+        plot_fano_factor(results, output_dir=output_dir)
     
     log.progress("Analysis f024 complete.")
 

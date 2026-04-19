@@ -6,15 +6,14 @@ from src.analysis.io.logger import log
 from src.analysis.impedance.muae import extract_muae
 from src.analysis.impedance.estimation import estimate_impedance_tensor
 
-def analyze_impedance(session="230629", probe=0, condition="AAAB"):
+def analyze_impedance(loader: DataLoader, session="230629", probe=0, condition="AAAB"):
     """
     Estimates the complex impedance tensor Z_eff(f, z).
     """
-    data_dir = "D:/drive/data/arrays"
-    lfp_path = os.path.join(data_dir, f"ses{session}-probe{probe}-lfp-{condition}.npy")
-    spk_path = os.path.join(data_dir, f"ses{session}-units-probe{probe}-spk-{condition}.npy")
+    lfp_path = loader.data_dir / f"ses{session}-probe{probe}-lfp-{condition}.npy"
+    spk_path = loader.data_dir / f"ses{session}-units-probe{probe}-spk-{condition}.npy"
     
-    if not os.path.exists(lfp_path) or not os.path.exists(spk_path):
+    if not lfp_path.exists() or not spk_path.exists():
         return None
         
     lfp = np.load(lfp_path, mmap_mode='r')

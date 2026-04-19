@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 from src.analysis.visualization.plotting import OmissionPlotter
 from src.analysis.io.logger import log
 
-def plot_design_summary(output_dir: str = "D:/drive/outputs/oglo-8figs/f002"):
+def plot_design_summary(output_dir: str):
     """
     Plots the Figure 2 design summary.
     """
@@ -33,10 +33,10 @@ def plot_design_summary(output_dir: str = "D:/drive/outputs/oglo-8figs/f002"):
     plotter_timeline.fig.update_yaxes(tickvals=[1, 2], ticktext=["Standard (AAAB)", "Omission (AXAB)"])
     plotter_timeline.save(output_dir, "fig2A_task_timeline")
     
-    # CSD Map
+    # CSD Map (Schematic)
     plotter_csd = OmissionPlotter(
-        title="Figure 2B: Current Source Density (CSD)",
-        subtitle="FLIP/vFLIP spectral layer anchoring"
+        title="Figure 2B: Current Source Density (CSD) [Schematic]",
+        subtitle="Illustrative Sink/Source Dipole for Layer Anchoring"
     )
     plotter_csd.set_axes(x_label="Time from Stimulus", x_unit="ms", y_label="Cortical Depth", y_unit="µm")
     t = np.linspace(-100, 400, 200)
