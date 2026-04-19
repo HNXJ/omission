@@ -19,10 +19,14 @@ def plot_divergence_latency(results: dict, output_dir: str):
     
     for i, area in enumerate(areas):
         data = results[area]
-        plotter.add_trace(
-            go.Scatter(x=data['times'], y=data['accuracy_mean'], mode='lines', line=dict(color=colors[i%len(colors)], width=3), name=area),
-            name=area
+        plotter.add_shaded_error_bar(
+            x=data['times'], 
+            mean=data['accuracy_mean'], 
+            error=data['accuracy_sem'], 
+            name=area, 
+            color=colors[i % len(colors)]
         )
+        print(f"""[action] Plotted shaded accuracy for area {area}""")
         
     plotter.add_xline(0, "Omission Onset", color="red")
     plotter.add_yline(0.5, "Chance", color="gray", dash="dot")

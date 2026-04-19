@@ -12,11 +12,13 @@ def plot_sfc_delta(results: dict, output_dir: str):
         plotter.set_axes("Frequency", "Hz", "PLV Delta", "Magnitude")
         
         freqs = data['freqs']
-        for i, delta in enumerate(data['deltas']):
-            plotter.add_trace(go.Scatter(x=freqs, y=delta, line=dict(color="rgba(148,0,211,0.2)", width=1), showlegend=False), name=f"Delta_{i}")
-            
+        
+        # Mean Delta + SEM
         mean_delta = np.mean(data['deltas'], axis=0)
-        plotter.add_trace(go.Scatter(x=freqs, y=mean_delta, line=dict(color="#9400D3", width=4)), name="Mean Delta")
+        sem_delta = np.std(data['deltas'], axis=0) / np.sqrt(len(data['deltas']))
+        plotter.add_shaded_error_bar(freqs, mean_delta, sem_delta, name="Mean Delta", color="#9400D3")
+        print(f"""[action] Added Mean Delta shaded error bar (Purple) for {area}""")
+
         plotter.fig.add_hline(y=0, line_dash="dash", line_color="black")
         plotter.fig.update_xaxes(type="log", tickvals=[4, 8, 13, 30, 80])
         plotter.save(output_dir, f"fig10_sfc_delta_{area}")

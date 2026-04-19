@@ -12,12 +12,12 @@ def plot_area_psths(results: dict, output_dir: str):
     for area, data in results.items():
         plotter = OmissionPlotter(
             title=f"Figure 3: {area} Omission-Local PSTH",
-            subtitle=f"n={data['n_units']} units | 0ms = Omission Onset"
+            subtitle=f"n={data['n_units']} units | Mean ± SEM | 0ms = Omission Onset"
         )
         plotter.set_axes("Time from Omission", "ms", "Firing Rate", "Hz")
         
-        plotter.add_trace(go.Scatter(x=t_local, y=data['aaab'], line=dict(color="black", width=2, dash="dash")), "Standard (AAAB)")
-        plotter.add_trace(go.Scatter(x=t_local, y=data['axab'], line=dict(color="#9400D3", width=3)), "Omission (AXAB)")
+        plotter.add_shaded_error_bar(t_local, data['aaab'], data['aaab_sem'], "Standard (AAAB)", "#000000")
+        plotter.add_shaded_error_bar(t_local, data['axab'], data['axab_sem'], "Omission (AXAB)", "#9400D3")
         
         plotter.add_xline(0, "Omission/Stim 2", color="red")
         plotter.fig.update_xaxes(range=[-500, 1000])

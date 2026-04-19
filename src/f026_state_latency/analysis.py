@@ -78,7 +78,9 @@ def analyze_area_latencies(loader: DataLoader, sessions: list, areas: list, cond
                 'latency_mean': np.mean(area_latencies) if area_latencies else np.nan,
                 'latency_std': np.std(area_latencies) if area_latencies else 0,
                 'times': times,
-                'accuracy_mean': np.mean(area_accs, axis=0)
+                'accuracy_mean': np.mean(area_accs, axis=0),
+                'accuracy_sem': np.std(area_accs, axis=0) / np.sqrt(len(area_accs))
             }
+            print(f"""[action] Added accuracy_sem for area {area} across {len(area_accs)} sessions""")
             
     return results

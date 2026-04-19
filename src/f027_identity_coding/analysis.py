@@ -65,6 +65,10 @@ def analyze_omission_identity(loader: DataLoader, sessions: list, areas: list):
     final_results = {}
     for area in areas:
         if area in results:
-            final_results[area] = np.mean(results[area], axis=0)
+            arr = np.array(results[area])
+            final_results[area] = {
+                'mean': np.mean(arr, axis=0),
+                'sem': np.std(arr, axis=0) / np.sqrt(len(arr))
+            }
             
     return times, final_results

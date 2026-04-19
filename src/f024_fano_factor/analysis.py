@@ -46,10 +46,14 @@ def analyze_fano_factor(loader: DataLoader, sessions: list, areas: list, conditi
             # Average across units for population summary
             results[area].append(np.mean(ff, axis=0))
             
-    # Final aggregation: average across sessions
+    # Final aggregation
     final_results = {}
     for area in areas:
         if results[area]:
-            final_results[area] = np.mean(results[area], axis=0)
+            arr = np.array(results[area])
+            final_results[area] = {
+                'mean': np.mean(arr, axis=0),
+                'sem': np.std(arr, axis=0) / np.sqrt(len(arr))
+            }
             
     return final_results

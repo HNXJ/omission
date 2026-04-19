@@ -16,10 +16,13 @@ def plot_identity_decoding(times: np.ndarray, results: dict, output_dir: str):
     colors = ["#CFB87C", "#8F00FF", "#FF1493", "#00FFCC", "#FF5E00", "#D3D3D3"]
     times_adj = times - 1000
     
-    for i, (area, acc) in enumerate(results.items()):
-        plotter.add_trace(
-            go.Scatter(x=times_adj, y=acc, mode='lines+markers', line=dict(color=colors[i%len(colors)], width=3), name=area),
-            name=area
+    for i, (area, data) in enumerate(results.items()):
+        plotter.add_shaded_error_bar(
+            times_adj, 
+            data['mean'], 
+            data['sem'], 
+            area, 
+            colors[i%len(colors)]
         )
         
     plotter.add_xline(0, "P1 Onset", color="black")

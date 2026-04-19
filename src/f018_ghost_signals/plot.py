@@ -22,16 +22,14 @@ def plot_ghost_signals(results: dict, output_dir: str):
     
     for i, (area, data) in enumerate(results.items()):
         psth = data['avg_psth']
+        sem = data['psth_sem']
         
-        plotter.add_trace(
-            go.Scatter(
-                x=times, 
-                y=psth, 
-                mode='lines',
-                line=dict(color=colors[i % len(colors)], width=2),
-                name=f"{area} (N={len(data['slopes'])})"
-            ),
-            name=area
+        plotter.add_shaded_error_bar(
+            times, 
+            psth, 
+            sem, 
+            f"{area} (N={len(data['slopes'])})",
+            colors[i % len(colors)]
         )
             
     # Add timing reference lines

@@ -14,11 +14,29 @@ def plot_information_bottleneck(results: dict, output_dir: str):
     plotter.set_axes("Area", "Hierarchy", "Mutual Information (bits)", "bits")
     
     areas = list(results.keys())
-    past_mi = [results[area]['past_mi'] for area in areas]
-    label_mi = [results[area]['label_mi'] for area in areas]
+    past_mi = [results[area]['past_mi_mean'] for area in areas]
+    past_sem = [results[area]['past_mi_sem'] for area in areas]
+    label_mi = [results[area]['label_mi_mean'] for area in areas]
+    label_sem = [results[area]['label_mi_sem'] for area in areas]
     
-    plotter.add_trace(go.Bar(x=areas, y=past_mi, name="Retention MI(Past; Present)", marker_color="#8F00FF"), name="Retention")
-    plotter.add_trace(go.Bar(x=areas, y=label_mi, name="Signal MI(Label; Present)", marker_color="#CFB87C"), name="Signal")
+    plotter.add_trace(
+        go.Bar(
+            x=areas, y=past_mi, 
+            name="Retention MI(Past; Present)", 
+            marker_color="#8F00FF",
+            error_y=dict(type='data', array=past_sem, visible=True)
+        ), 
+        name="Retention"
+    )
+    plotter.add_trace(
+        go.Bar(
+            x=areas, y=label_mi, 
+            name="Signal MI(Label; Present)", 
+            marker_color="#CFB87C",
+            error_y=dict(type='data', array=label_sem, visible=True)
+        ), 
+        name="Signal"
+    )
     
     plotter.fig.update_layout(barmode='group')
     plotter.save(output_dir, "fig29_info_bottleneck")

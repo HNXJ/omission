@@ -18,10 +18,11 @@ def plot_global_mi_dynamics(tensor: dict, output_dir: str):
     plotter.set_axes("Frame", "Temporal Context", "Mean MI", "bits")
     
     for cond in ["AAAB", "AXAB"]:
-        dash = "solid" if cond == "AXAB" else "dash"
         for b in bands:
-            y = [np.mean(tensor[cond][fk][b]) for fk in frame_keys]
-            plotter.add_trace(go.Scatter(x=x, y=y, mode="lines+markers", line=dict(color=colors[b], dash=dash), name=f"{cond}_{b}"))
+            y_mean = [np.mean(tensor[cond][fk][b]) for fk in frame_keys]
+            y_sem = [np.std(tensor[cond][fk][b]) / np.sqrt(len(tensor[cond][fk][b])) for fk in frame_keys]
+            plotter.add_shaded_error_bar(x, y_mean, y_sem, name=f"{cond}_{b}", color=colors[b])
+            print(f"""[action] Added shaded error bar for {cond} {b}""")
             
     plotter.fig.update_xaxes(tickvals=x, ticktext=frame_keys)
     plotter.save(output_dir, "fig15_global_mi_dynamics")

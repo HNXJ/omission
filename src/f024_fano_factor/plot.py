@@ -16,10 +16,13 @@ def plot_fano_factor(results: dict, output_dir: str):
     colors = ["#CFB87C", "#8F00FF", "#FF1493", "#00FFCC", "#FF5E00", "#D3D3D3"]
     times = np.arange(0, 6000) - 1000
     
-    for i, (area, ff) in enumerate(results.items()):
-        plotter.add_trace(
-            go.Scatter(x=times, y=ff, mode='lines', line=dict(color=colors[i % len(colors)], width=2), name=area),
-            name=area
+    for i, (area, data) in enumerate(results.items()):
+        plotter.add_shaded_error_bar(
+            times, 
+            data['mean'], 
+            data['sem'], 
+            area, 
+            colors[i % len(colors)]
         )
         
     plotter.add_xline(0, "P1 Onset", color="black")

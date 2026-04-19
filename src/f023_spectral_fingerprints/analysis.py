@@ -31,12 +31,17 @@ def analyze_spectral_fingerprints(loader: DataLoader, sessions: list, areas: lis
             
             if freqs is None: freqs = f
             
-            results[area].append(np.mean(pxx, axis=0))
+            # Store in dB
+            results[area].append(10 * np.log10(np.mean(pxx, axis=0) + 1e-12))
             
     # Average across sessions
     final_results = {}
     for area in areas:
         if results[area]:
-            final_results[area] = np.mean(results[area], axis=0)
+            final_results[area] = {
+                "mean": np.mean(results[area], axis=0),
+                "sem": np.std(results[area], axis=0) / np.sqrt(len(results[area]))
+            }
+            print(f"""[action] Calculated mean and SEM in dB for area {area} across {len(results[area])} sessions""")
             
     return freqs, final_results

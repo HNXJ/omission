@@ -1,5 +1,6 @@
 # core
 import os
+import numpy as np
 from pathlib import Path
 import plotly.graph_objects as go
 from src.analysis.io.logger import log
@@ -86,6 +87,55 @@ class OmissionPlotter:
             annotation_text=name, annotation_position="bottom right"
         )
         log.action(f"Added Y-line at {y_val}: {name}")
+
+    def add_shaded_error_bar(self, x: list | np.ndarray, mean: list | np.ndarray, error: list | np.ndarray, name: str, color: str):
+        """
+        Adds a mean trace with a shaded error (SEM/SD) region.
+        """
+        x = np.array(x)
+        mean = np.array(mean)
+        error = np.array(error)
+        
+        # Convert hex to rgba for shading
+        if color.startswith("#"):
+            r = int(color[1:3], 16)
+            g = int(color[3:5], 16)
+            b = int(color[5:7], 16)
+            fill_color = f"rgba({r}, {g}, {b}, 0.2)"
+        else:
+            fill_color = "rgba(128, 128, 128, 0.2)" # Fallback
+            
+        # Upper bound
+        self.fig.add_trace(go.Scatter(
+            x=x, y=mean + error,
+            mode='lines',
+            line=dict(width=0),
+            showlegend=False,
+            hoverinfo='skip',
+            legendgroup=name
+        ))
+        
+        # Lower bound + Fill
+        self.fig.add_trace(go.Scatter(
+            x=x, y=mean - error,
+            mode='lines',
+            line=dict(width=0),
+            fill='tonexty',
+            fillcolor=fill_color,
+            showlegend=False,
+            hoverinfo='skip',
+            legendgroup=name
+        ))
+        
+        # Mean trace
+        self.fig.add_trace(go.Scatter(
+            x=x, y=mean,
+            mode='lines',
+            line=dict(color=color, width=3),
+            name=name,
+            legendgroup=name
+        ))
+        log.action(f"Added shaded error trace: {name}")
 
     def save(self, output_dir: str, filename: str):
         """

@@ -21,8 +21,8 @@ def plot_prediction_error_scaling(results: dict, output_dir: str):
     colors = ["#CFB87C", "#8F00FF", "#FF1493", "#00FFCC", "#FF5E00", "#D3D3D3"]
     
     for i, (area, pos_data) in enumerate(results.items()):
-        means = [sum(pos_data[p])/len(pos_data[p]) if pos_data[p] else 0 for p in positions]
-        stds = [0 for _ in positions] # Simplified for now
+        means = [np.mean(pos_data[p]) if pos_data[p] else 0 for p in positions]
+        sems = [np.std(pos_data[p])/np.sqrt(len(pos_data[p])) if pos_data[p] else 0 for p in positions]
         
         if any(means):
             plotter.add_trace(
@@ -30,6 +30,7 @@ def plot_prediction_error_scaling(results: dict, output_dir: str):
                     x=x_labels, 
                     y=means, 
                     mode='lines+markers',
+                    error_y=dict(type='data', array=sems, visible=True),
                     line=dict(color=colors[i % len(colors)], width=3),
                     marker=dict(size=10)
                 ),

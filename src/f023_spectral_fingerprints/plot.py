@@ -17,20 +17,15 @@ def plot_spectral_fingerprints(freqs: np.ndarray, results: dict, output_dir: str
     # Madelane Golden Dark inspired color palette
     colors = ["#CFB87C", "#8F00FF", "#FF1493", "#00FFCC", "#FF5E00", "#D3D3D3"]
     
-    for i, (area, psd) in enumerate(results.items()):
-        # Convert to dB for visualization
-        psd_db = 10 * np.log10(psd + 1e-12)
-        
-        plotter.add_trace(
-            go.Scatter(
-                x=freqs, 
-                y=psd_db, 
-                mode='lines',
-                line=dict(color=colors[i % len(colors)], width=2),
-                name=area
-            ),
-            name=area
+    for i, (area, data) in enumerate(results.items()):
+        plotter.add_shaded_error_bar(
+            freqs, 
+            data['mean'], 
+            data['sem'], 
+            name=area, 
+            color=colors[i % len(colors)]
         )
+        print(f"""[action] Plotted shaded error bar for spectral fingerprint of {area}""")
             
     # Add band reference lines
     plotter.add_xline(30, "Beta/Gamma Border", color="gray", dash="dot")

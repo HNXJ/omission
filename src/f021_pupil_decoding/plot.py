@@ -20,18 +20,15 @@ def plot_pupil_surprise(results: dict, output_dir: str):
     std_all = np.array([v['std'] for v in results.values()])
     
     omit_mean = np.mean(omit_all, axis=0)
+    omit_sem = np.std(omit_all, axis=0) / np.sqrt(len(omit_all))
+    
     std_mean = np.mean(std_all, axis=0)
+    std_sem = np.std(std_all, axis=0) / np.sqrt(len(std_all))
     
     times = np.arange(0, 6000) - 1000 # Align to P1 onset at 0ms
     
-    plotter.add_trace(
-        go.Scatter(x=times, y=omit_mean, mode='lines', line=dict(color="#FF1493", width=3), name="Omission (AXAB)"),
-        name="Omission"
-    )
-    plotter.add_trace(
-        go.Scatter(x=times, y=std_mean, mode='lines', line=dict(color="#8F00FF", width=3), name="Standard (AAAB)"),
-        name="Standard"
-    )
+    plotter.add_shaded_error_bar(times, omit_mean, omit_sem, "Omission (AXAB)", "#FF1493")
+    plotter.add_shaded_error_bar(times, std_mean, std_sem, "Standard (AAAB)", "#8F00FF")
     
     # Add timing reference lines
     plotter.add_xline(0, "P1 Onset", color="black")

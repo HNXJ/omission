@@ -59,8 +59,10 @@ def analyze_information_bottleneck(loader: DataLoader, sessions: list, areas: li
     for area in areas:
         if results[area]['past_mi']:
             final_results[area] = {
-                'past_mi': np.mean(results[area]['past_mi']),
-                'label_mi': np.mean(results[area]['label_mi'])
+                'past_mi_mean': np.mean(results[area]['past_mi']),
+                'past_mi_sem': np.std(results[area]['past_mi']) / np.sqrt(len(results[area]['past_mi'])),
+                'label_mi_mean': np.mean(results[area]['label_mi']),
+                'label_mi_sem': np.std(results[area]['label_mi']) / np.sqrt(len(results[area]['label_mi']))
             }
             
     return final_results

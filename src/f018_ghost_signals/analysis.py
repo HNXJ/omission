@@ -42,9 +42,11 @@ def analyze_ghost_signals(loader: DataLoader, sessions: list, areas: list):
     final_results = {}
     for area in areas:
         if results[area]['psths']:
+            psths = np.array(results[area]['psths'])
             final_results[area] = {
                 'slopes': results[area]['slopes'],
-                'avg_psth': np.mean(results[area]['psths'], axis=0)
+                'avg_psth': np.mean(psths, axis=0),
+                'psth_sem': np.std(psths, axis=0) / np.sqrt(len(psths))
             }
             
     return final_results
