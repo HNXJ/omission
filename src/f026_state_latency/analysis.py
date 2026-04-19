@@ -5,7 +5,7 @@ from sklearn.model_selection import StratifiedKFold, cross_val_score
 from src.analysis.io.loader import DataLoader
 from src.analysis.io.logger import log
 
-def compute_divergence_latency(spk_std: np.ndarray, spk_omit: np.ndarray, win_ms: int = 50, step_ms: int = 10, fs: float = 1000.0, alpha: float = 0.01):
+def compute_divergence_latency(loader, spk_std: np.ndarray, spk_omit: np.ndarray, condition="AXAB", win_ms: int = 50, step_ms: int = 10, fs: float = 1000.0):
     """
     Finds the first time point where Standard vs Omission decoding accuracy is significantly above chance.
     spk: (trials, units, time)
@@ -43,8 +43,8 @@ def compute_divergence_latency(spk_std: np.ndarray, spk_omit: np.ndarray, win_ms
     threshold = 0.65 
     sig_idx = np.where(accuracies > threshold)[0]
     
-    # Latency from omission onset (1000ms from start)
-    omission_onset = 1000.0
+    # Latency from omission onset
+    omission_onset = loader.get_omission_onset(condition)
     if len(sig_idx) > 0:
         latency = times[sig_idx[0]] - omission_onset
     else:
@@ -52,7 +52,7 @@ def compute_divergence_latency(spk_std: np.ndarray, spk_omit: np.ndarray, win_ms
         
     return latency, times - omission_onset, accuracies, threshold
 
-def analyze_area_latencies(loader: DataLoader, sessions: list, areas: list):
+def analyze_area_latencies(loader: DataLoader, sessions: list, areas: list, condition="AXAB"):
     """
     Computes divergence latencies for multiple areas.
     """
@@ -64,11 +64,11 @@ def analyze_area_latencies(loader: DataLoader, sessions: list, areas: list):
         
         for ses in sessions:
             spk_std = loader.get_signal(mode="spk", condition="AAAB", area=area, session=ses)
-            spk_omit = loader.get_signal(mode="spk", condition="AXAB", area=area, session=ses)
+            spk_omit = loader.get_signal(mode="spk", condition=condition, area=area, session=ses)
             
             if not spk_std or not spk_omit: continue
             
-            lat, times, acc, thresh = compute_divergence_latency(spk_std[0], spk_omit[0])
+            lat, times, acc, thresh = compute_divergence_latency(loader, spk_std[0], spk_omit[0], condition=condition)
             if not np.isnan(lat):
                 area_latencies.append(lat)
             area_accs.append(acc)

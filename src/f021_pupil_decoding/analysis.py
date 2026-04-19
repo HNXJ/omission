@@ -3,21 +3,21 @@ import numpy as np
 import os
 from src.analysis.io.logger import log
 
-def analyze_pupil_surprise(sessions: list, condition_omit="AXAB", condition_std="AAAB"):
+def analyze_pupil_surprise(loader: DataLoader, sessions: list, condition_omit="AXAB", condition_std="AAAB"):
     """
     Analyzes pupil diameter changes during omissions vs standard stimuli.
     Returns: {session: { 'omit': (time,), 'std': (time,) }}
     """
     results = {}
-    data_dir = "D:/drive/data/behavioral"
+    data_dir = loader.data_dir.parent / "behavioral"
     
     for ses in sessions:
         log.info(f"Analyzing Pupil Surprise for Session: {ses}")
         
-        path_omit = os.path.join(data_dir, f"ses{ses}-behavioral-{condition_omit}.npy")
-        path_std = os.path.join(data_dir, f"ses{ses}-behavioral-{condition_std}.npy")
+        path_omit = data_dir / f"ses{ses}-behavioral-{condition_omit}.npy"
+        path_std = data_dir / f"ses{ses}-behavioral-{condition_std}.npy"
         
-        if not os.path.exists(path_omit) or not os.path.exists(path_std):
+        if not path_omit.exists() or not path_std.exists():
             log.warning(f"Missing behavioral data for {ses}")
             continue
             

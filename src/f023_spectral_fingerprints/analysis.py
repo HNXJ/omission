@@ -18,8 +18,11 @@ def analyze_spectral_fingerprints(loader: DataLoader, sessions: list, areas: lis
             if not lfp_matches: continue
             
             lfp = lfp_matches[0] # (trials, channels, time)
-            # Omission window: 1031 to 1562
-            lfp_omit = lfp[:, :, 1031:1562]
+            
+            # Use DataLoader for omission onset
+            onset = int(loader.get_omission_onset(condition))
+            # Window 0 to +500ms from omission
+            lfp_omit = lfp[:, :, onset:onset+531]
             
             # Compute PSD for each channel/trial and average
             # Flatten trials and channels

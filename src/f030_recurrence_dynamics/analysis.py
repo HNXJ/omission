@@ -41,8 +41,10 @@ def analyze_recurrence_dynamics(loader: DataLoader, sessions: list, areas: list,
             
             # Pop average trajectory
             pop = np.mean(spk[0], axis=0).T # (time, units)
-            # Omission window 1000:2500
-            traj = pop[1000:2500, :]
+            # Use DataLoader for omission onset
+            onset = int(loader.get_omission_onset(condition))
+            # Omission window: onset to onset+1500
+            traj = pop[onset:onset+1500, :]
             
             if traj.shape[1] >= 5: # need enough units
                 radius = estimate_recurrence(traj, n_comp=5)

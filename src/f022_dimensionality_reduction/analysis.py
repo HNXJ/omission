@@ -31,8 +31,9 @@ def analyze_pca_trajectories(loader: DataLoader, sessions: list, area: str):
         X_pca = pca.fit_transform(X)
         
         # Split back
-        traj_std = X_pca[:6000, :]
-        traj_omit = X_pca[6000:, :]
+        n_t = psth_std.shape[1]
+        traj_std = X_pca[:n_t, :]
+        traj_omit = X_pca[n_t:, :]
         
         results[ses] = {
             'std': traj_std,

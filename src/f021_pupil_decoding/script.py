@@ -19,7 +19,7 @@ def run_f021():
     sessions = ["230629", "230630", "230714", "230719"]
     
     # 1. Run Analysis
-    results = analyze_pupil_surprise(sessions)
+    results = analyze_pupil_surprise(loader, sessions)
     
     # 2. Plot
     if results:
