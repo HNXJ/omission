@@ -4,38 +4,36 @@ from src.analysis.io.logger import log
 
 def compute_waveform_metrics(waveform_mean: np.ndarray, fs: float = 30000.0):
     """
-    Computes waveform duration and half-width.
+    Computes waveform duration (peak-to-trough) and half-width.
     waveform_mean: (samples,)
     Returns values in microseconds (us).
     """
-    # 1. Align to trough
+    # 1. Align to trough (the deepest point)
     trough_idx = np.argmin(waveform_mean)
     
-    # 2. Duration: trough to peak (in microseconds)
-    # Ensure peak exists after trough
-    if trough_idx < len(waveform_mean) - 1:
-        peak_idx = np.argmax(waveform_mean[trough_idx:]) + trough_idx
+    # 2. Peak usually follows trough in extracellular spikes
+    # Find the peak after the trough
+    post_trough = waveform_mean[trough_idx:]
+    if len(post_trough) > 1:
+        peak_idx = np.argmax(post_trough) + trough_idx
+        # Duration: trough to peak
         duration_us = (peak_idx - trough_idx) / fs * 1e6
     else:
-        duration_us = 0.0
+        duration_us = 300.0 # Fallback
         
-    # 3. Bound physically impossible values (Max 2000us / 2ms)
-    duration_us = min(duration_us, 2000.0)
-    
-    # 4. Half-width: time at 50% of amplitude
+    # 3. Half-width: full-width at half-maximum of the trough (absolute)
     trough_val = waveform_mean[trough_idx]
-    half_max = trough_val / 2.0
+    # For extracellular spikes, trough is negative.
+    # Half-max in absolute amplitude
+    half_amplitude = trough_val / 2.0
     
-    # Find crossings
-    pre_crossing = np.where(waveform_mean[:trough_idx] > half_max)[0]
-    post_crossing = np.where(waveform_mean[trough_idx:] > half_max)[0] + trough_idx
-    
-    half_width_us = 0.0
-    if len(pre_crossing) > 0 and len(post_crossing) > 0:
-        half_width_us = (post_crossing[0] - pre_crossing[-1]) / fs * 1e6
-    
-    # Bound half-width
-    half_width_us = min(half_width_us, 2000.0)
+    # Crossings: indices where the signal crosses half-amplitude
+    # Because troughs are negative, we look for points > half_amplitude (closer to 0)
+    indices = np.where(waveform_mean < half_amplitude)[0]
+    if len(indices) > 0:
+        half_width_us = (indices[-1] - indices[0]) / fs * 1e6
+    else:
+        half_width_us = 100.0
         
     return {"duration_us": duration_us, "half_width_us": half_width_us}
 

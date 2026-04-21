@@ -5,6 +5,7 @@ import numpy as np
 from pathlib import Path
 from collections import defaultdict
 from src.analysis.io.logger import log
+from src.analysis.io.eye_mapper import EyeDataMapper
 
 class DataLoader:
     """
@@ -20,7 +21,12 @@ class DataLoader:
         self.data_dir = Path(data_dir) if data_dir else root.parent / "data" / "arrays"
         self.mapping_file = Path(mapping_file) if mapping_file else root / "context" / "overview" / "session-area-mapping.md"
         self.area_map = self._parse_mapping()
+        self.eye_mapper = EyeDataMapper()
         log.action(f"Initialized DataLoader (NPY) with mapping from {self.mapping_file}")
+
+    def get_eye_data_path(self, session: str) -> Path:
+        """Resolves the exact .bhv2.mat file specifically for oculomotor (EYE) analysis."""
+        return self.eye_mapper.get_behavioral_file(session)
 
     def _parse_mapping(self):
         """Parses the markdown table to build a mapping dict: area -> list of (session, probe, channel_indices)."""
