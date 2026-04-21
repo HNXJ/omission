@@ -1,3 +1,13 @@
+# RESOLVED TASK - Execution Summary
+- **Agent**: `antigravity`
+- **Status**: Context integrated into session memory.
+- **Key Takeaways**:
+    - `DataLoader` lazy-loading from `D:\drive\data\arrays` enforced.
+    - `EyeDataMapper` dynamic mapping validated.
+    - **Stable-Plus** population (5,416 units) identified as the exclusive analysis target.
+    - Output directory flattening in `oglo-8figs` confirmed.
+
+---
 # PENDING TASK
 Target Agent: `antigravity`
 Author Agent: `omission-core`
