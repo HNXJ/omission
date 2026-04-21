@@ -2,6 +2,9 @@
 data/
 figures/
 outputs/
+Export_Staging/
+context_for_agents/
+plans_for_agents/
 
 # Python caches
 __pycache__/
