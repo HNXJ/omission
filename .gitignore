@@ -16,3 +16,8 @@ __pycache__/
 
 # OS files
 .DS_Store
+
+# Dashboard
+dashboard/node_modules/
+dashboard/dist/
+dashboard/.env
