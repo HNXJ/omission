@@ -88,13 +88,17 @@ class OmissionPlotter:
         )
         log.action(f"Added Y-line at {y_val}: {name}")
 
-    def add_shaded_error_bar(self, x: list | np.ndarray, mean: list | np.ndarray, error: list | np.ndarray, name: str, color: str):
+    def add_shaded_error_bar(self, x: list | np.ndarray, mean: list | np.ndarray, 
+                             error_upper: list | np.ndarray, error_lower: list | np.ndarray = None, 
+                             name: str = "Signal", color: str = "#CFB87C"):
         """
-        Adds a mean trace with a shaded error (SEM/SD) region.
+        Adds a mean trace with a shaded error (SEM/SD/CI) region.
+        If error_lower is None, assumes symmetric error.
         """
         x = np.array(x)
         mean = np.array(mean)
-        error = np.array(error)
+        error_upper = np.array(error_upper)
+        error_lower = np.array(error_lower) if error_lower is not None else error_upper
         
         # Convert hex to rgba for shading
         if color.startswith("#"):
@@ -107,7 +111,7 @@ class OmissionPlotter:
             
         # Upper bound
         self.fig.add_trace(go.Scatter(
-            x=x, y=mean + error,
+            x=x, y=mean + error_upper,
             mode='lines',
             line=dict(width=0),
             showlegend=False,
@@ -117,7 +121,7 @@ class OmissionPlotter:
         
         # Lower bound + Fill
         self.fig.add_trace(go.Scatter(
-            x=x, y=mean - error,
+            x=x, y=mean - error_lower,
             mode='lines',
             line=dict(width=0),
             fill='tonexty',

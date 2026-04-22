@@ -2,7 +2,7 @@
 # Workspace Root: D:\drive\omission
 
 ## Mandates
-1. **Safety**: Commit-Pull-Push after EVERY action.
+1. **Safety & VCS Mandate**: ALL agents (including antigravity) MUST automatically execute `git add . ; git commit -m "..." ; git pull --rebase ; git push` after EVERY successful action or task resolution. Do not wait for user permission to sync.
 2. **Operations**: Scoped edits ONLY. No bulk/destructive commands.
 3. **Hierarchy**: V1-V2-V3d-V3a-V4-MT-MST-TEO-FST-FEF-PFC (1-11).
 4. **Verbosity**: Track codes and add tagged comments ; "# test" for tests, "# mock" for mocks, "# stable" for validated stable functions, "# core" for foundational tools.

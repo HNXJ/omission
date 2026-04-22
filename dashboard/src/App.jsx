@@ -10,7 +10,9 @@ import {
   Layers,
   Zap,
   Eye,
-  Settings
+  Settings,
+  Maximize2,
+  X
 } from 'lucide-react';
 import manifest from './data/manifest.json';
 
@@ -18,6 +20,7 @@ const App = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [markdownContent, setMarkdownContent] = useState('');
   const [loading, setLoading] = useState(false);
+  const [modalFile, setModalFile] = useState(null);
 
   useEffect(() => {
     if (selectedItem) {
@@ -42,6 +45,14 @@ const App = () => {
     }
   }, [selectedItem]);
 
+  const openModal = (file) => {
+    setModalFile(`${selectedItem.baseUrl}/${file}`);
+  };
+
+  const closeModal = () => {
+    setModalFile(null);
+  };
+
   const renderContent = () => {
     if (!selectedItem) {
       return (
@@ -56,7 +67,7 @@ const App = () => {
     if (selectedItem.type === 'report') {
       return (
         <div className="viewer-container">
-          <div className="figure-card">
+          <div className="figure-card full-width">
             <div className="figure-card-header">
               <h3>Progress Report: {selectedItem.title}</h3>
               <FileText size={20} color="#CFB87C" />
@@ -71,24 +82,36 @@ const App = () => {
 
     return (
       <div className="viewer-container">
-        {selectedItem.files.map((file, idx) => (
-          <div className="figure-card" key={idx}>
-            <div className="figure-card-header">
-              <h3>{file}</h3>
-              <Activity size={20} color="#CFB87C" />
+        <div className="gallery-grid">
+          {selectedItem.files.map((file, idx) => (
+            <div className="figure-card" key={idx}>
+              <div className="figure-card-header">
+                <h3>{file}</h3>
+                <div className="card-actions">
+                  <Maximize2 
+                    size={18} 
+                    color="#CFB87C" 
+                    style={{ cursor: 'pointer' }} 
+                    onClick={() => openModal(file)}
+                    title="Maximize View"
+                  />
+                  <Activity size={18} color="#666" />
+                </div>
+              </div>
+              <div className="figure-iframe-container mini">
+                <iframe 
+                  src={`${selectedItem.baseUrl}/${file}`} 
+                  className="figure-iframe"
+                  title={file}
+                  scrolling="no"
+                />
+              </div>
             </div>
-            <div className="figure-iframe-container">
-              <iframe 
-                src={`${selectedItem.baseUrl}/${file}`} 
-                className="figure-iframe"
-                title={file}
-              />
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
         
         {selectedItem.has_readme && (
-          <div className="figure-card">
+          <div className="figure-card full-width">
             <div className="figure-card-header">
               <h3>Methodology & Interpretation</h3>
               <Layers size={20} color="#CFB87C" />
@@ -151,12 +174,36 @@ const App = () => {
             ) : 'Overview'}
           </div>
           <div style={{ display: 'flex', gap: 16 }}>
+            {selectedItem?.type === 'figure' && selectedItem.files.length > 0 && (
+              <a 
+                href={`${selectedItem.baseUrl}/${selectedItem.files[0]}`} 
+                target="_blank" 
+                rel="noreferrer"
+                title="Open main figure in new tab"
+              >
+                <ExternalLink size={20} color="#CFB87C" style={{ cursor: 'pointer' }} />
+              </a>
+            )}
             <Settings size={20} color="#666" style={{ cursor: 'pointer' }} />
           </div>
         </div>
         
-        {renderContent()}
+        <div className="scroll-wrapper">
+          {renderContent()}
+        </div>
       </div>
+
+      {modalFile && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Interactive Analysis View</h3>
+              <X size={24} color="#FFF" style={{ cursor: 'pointer' }} onClick={closeModal} />
+            </div>
+            <iframe src={modalFile} className="modal-iframe" title="Maximized View" />
+          </div>
+        </div>
+      )}
     </>
   );
 };
