@@ -6,51 +6,42 @@ source: codes/functions/vflip2_mapping.py
 
 # skill: analysis-spectrolaminar
 
-## purpose
-Maps the laminar organization of cortical columns using the spectrolaminar method:
-low-frequency (Alpha/Beta) power peaks in deep layers; Gamma peaks superficially.
-The crossover between the two profiles identifies Layer 4.
+## When to Use
+Use this skill when you need to map the laminar organization of cortical columns (e.g., V1 or PFC) using linear probe LFP data. It is specifically used to identify the Layer 4 (L4) boundary via the spectrolaminar crossover method, where Alpha/Beta power dominates deep layers and Gamma power dominates superficial layers.
 
-## core functions (vflip2_mapping.py)
-| Function | Signature | Purpose |
-|---|---|---|
-| `compute_spectrolaminar_profiles(lfp_data, fs)` | `(n_ch, T), float → dict` | Computes depth-resolved power for Alpha/Beta band and Gamma band per channel |
-| `find_crossover(profiles)` | `dict → int` | Returns channel index where Gamma first exceeds Alpha/Beta — Layer 4 estimate |
-| `process_session(session_id, probes)` | `str, list → dict` | Orchestrates profiling + crossover for all probes in a session |
+## What is Input
+- `lfp_data`: `numpy.ndarray` (n_channels, n_time_points) - Raw or preprocessed LFP signals.
+- `fs`: `float` - Sampling frequency in Hz (default: 1000.0).
+- `probes`: `list` of `int` - Indices of probes to process in a session.
+- `bands`: (Implicit) Alpha/Beta: 8-30 Hz, Gamma: 35-80 Hz.
 
-## algorithm
-1. Bandpass filter each channel: Alpha/Beta (8–30Hz) and Gamma (35–80Hz).
-2. Compute RMS power per channel over the stimulus window.
-3. Normalize each profile to max=1.
-4. `find_crossover`: scan from deep → superficial; return first channel where γ > α/β.
+## What is Output
+- `profiles`: `dict` containing:
+    - `alpha_beta`: `numpy.ndarray` - Depth-resolved power profile for low frequencies.
+    - `gamma`: `numpy.ndarray` - Depth-resolved power profile for high frequencies.
+- `l4_channel`: `int` - The estimated channel index corresponding to the Layer 4 boundary (the crossover point).
 
-## interpretation
-- **Deep layers (below crossover)**: Alpha/Beta dominant — prediction/feedback.
-- **Superficial layers (above crossover)**: Gamma dominant — feedforward/error.
-- Crossover = Layer 4 proxy; use for laminar split in spike classification.
+## Algorithm / Methodology
+1. **Filtering**: Bandpass filter each channel into Alpha/Beta (8–30Hz) and Gamma (35–80Hz) bands.
+2. **Power Computation**: Compute the RMS power for each band over the defined stimulus or trial window.
+3. **Normalization**: Normalize both Alpha/Beta and Gamma profiles to their respective maximum values (max=1) to ensure comparable scales.
+4. **Crossover Detection**: Scan the normalized profiles from deep to superficial channels. The `l4_channel` is defined as the first channel where normalized Gamma power exceeds normalized Alpha/Beta power.
 
-## output
+## Placeholder Example
 ```python
+from codes.functions.vflip2_mapping import compute_spectrolaminar_profiles, find_crossover
+
+# 1. Load your LFP data (e.g., from NWB)
+# lfp_data.shape = (32, 10000)
+
+# 2. Compute profiles
 profiles = compute_spectrolaminar_profiles(lfp_data, fs=1000.0)
-# profiles = {'alpha_beta': array(n_ch), 'gamma': array(n_ch)}
+
+# 3. Find Layer 4 crossover
 l4_channel = find_crossover(profiles)
+print(f"[analysis-spectrolaminar] Identified L4 at channel: {l4_channel}")
 ```
 
-## cross-ref
-→ `predictive-routing` for CSD-based Layer 4 identification (complementary method).
-→ `analysis-lfp-pipeline` for preprocessing (bipolar ref) before profiling.
-
-## parameters & defaults
-| Parameter | Default | Notes |
-|---|---|---|
-| `fs` | 1000.0 Hz | Sampling rate of LFP |
-| Alpha/Beta band | 8–30 Hz | Low-frequency prediction band |
-| Gamma band | 35–80 Hz | High-frequency error band |
-| Normalization | max=1 per profile | Ensures fair crossover detection across sessions |
-
-## session loop example
-```python
-from codes.functions.vflip2_mapping import process_session
-results = process_session("230629", probes=[0, 1])
-# results[probe_id] = {'l4_channel': int, 'profiles': dict}
-```
+## Relevant Context / Files
+- [vflip2_mapping.py](file:///D:/drive/omission/codes/functions/vflip2_mapping.py) — Core implementation.
+- [predictive-routing](file:///D:/drive/omission/.gemini/skills/predictive-routing/skill.md) — Complementary CSD-based mapping.

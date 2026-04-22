@@ -2,89 +2,50 @@
 name: analysis-granger-convergence-debug
 description: Debugs and assesses the convergence of Granger causality analysis for LFP data between specific brain regions (V1 and PFC). This skill systematically tests various model orders to identify potential issues with model stability or parameter selection for Granger causality computations using the Nitime library.
 ---
-# SKILL: analysis-granger-convergence-debug
+# skill: analysis-granger-convergence-debug
 
-## Description
-This skill is designed for debugging and evaluating the convergence of Granger causality analysis, particularly when applied to Local Field Potential (LFP) data recorded from distinct brain regions such as the primary visual cortex (V1) and the prefrontal cortex (PFC). It systematically varies the model order parameter within the Granger causality computation (using the `nitime` library) to observe how the causality estimates change. This helps in identifying stable model orders and diagnosing potential issues like overfitting or underfitting, which can lead to non-convergent or unreliable causality results.
+## When to Use
+Use this skill when Granger causality results appear unstable, contain excessive `NaN` values, or show biologically implausible results. It is specifically designed to:
+- Sweep through different Autoregressive (AR) model orders (e.g., 5, 10, 20, 50).
+- Identify the "sweet spot" for model complexity where causality estimates stabilize.
+- Diagnose failures in the `nitime.analysis.GrangerAnalyzer` engine.
 
-## Core Tasks
-1.  **Load LFP Data**: Loads pre-processed LFP data from specified NumPy (.npy) files for V1 and PFC for a given session and condition.
-2.  **Average & Normalize**: Averages LFP signals across trials and channels, then normalizes them (mean-subtraction and standard deviation division).
-3.  **Granger Causality Computation**: Computes Granger causality using `nitime.analysis.GrangerAnalyzer` for a range of specified model orders.
-4.  **Convergence Assessment**: Prints and inspects the resulting causality values and the number of `NaN` values for different model orders to assess stability and convergence.
+## What is Input
+- **LFP Data**: `.npy` files containing multi-channel LFP recordings (e.g., `ses230816-probe2-lfp-AAAX.npy`).
+- **Model Orders**: `list` of `int` - AR orders to test.
+- **Sampling Rate**: `float` - Typically 1000 Hz.
 
-## Inputs
-*   **LFP NumPy Files**: Specific `.npy` files containing LFP data for V1 and PFC (e.g., `data/arrays/ses<ID>-probe<ID>-lfp-<COND>.npy`). The script expects files to be present for a hardcoded `session_id` and `AAAX` condition.
+## What is Output
+- **Convergence Metrics**: Printed causality values and `NaN` counts for each order.
+- **Directional Analysis**: Comparative causality for V1->PFC vs. PFC->V1 directions.
 
-## Outputs
-*   **Console Output**: Displays Granger causality values (first few elements) for V1->PFC and PFC->V1 directions, along with counts of `NaN` values, for each tested model order.
+## Algorithm / Methodology
+1. **Signal Aggregation**: Averages multi-channel recordings into a single regional representative signal (V1 and PFC).
+2. **Normalization**: Z-scores the signals (mean subtraction, standard deviation division) to ensure model stability.
+3. **AR Modeling**: Iteratively fits a Multi-Variate Autoregressive (MVAR) model using `nitime`.
+4. **Causality Estimation**: Computes the frequency-domain Granger causality.
+5. **Validation**: Checks the integrity of the causality spectrum (checking for non-positive values or `NaN` outputs).
 
-## Example Use
-
+## Placeholder Example
 ```python
 import numpy as np
-import os
 import nitime.analysis as na
 import nitime.timeseries as ts
 
-# --- Mocking the debug_granger function from debug_granger_convergence.py ---
-def mock_debug_granger():
-    print("--- Demonstrating Granger Convergence Debug (Mock) ---")
-    
-    # Create mock LFP data files if they don't exist
-    os.makedirs('data/arrays', exist_ok=True)
-    
-    session_id = '230816'
-    
-    # Simulate LFP data for V1 and PFC
-    # Shape: (trials, channels, timepoints) - simplified for mock
-    mock_lfp_v1_data = np.random.randn(10, 10, 531) * 100 # Approx 531 timepoints after slicing
-    mock_lfp_pfc_data = np.random.randn(10, 10, 531) * 100
-    
-    f_v1_mock = f'data/arrays/ses{session_id}-probe2-lfp-AAAX.npy'
-    f_pfc_mock = f'data/arrays/ses{session_id}-probe0-lfp-AAAX.npy'
-    
-    np.save(f_v1_mock, mock_lfp_v1_data)
-    np.save(f_pfc_mock, mock_lfp_pfc_data)
-    
-    print(f"  Mock LFP files created: {f_v1_mock}, {f_pfc_mock}")
+# 1. Load and Z-score regional signals
+v1 = np.load('v1_lfp.npy').mean(axis=(0,1))
+pfc = np.load('pfc_lfp.npy').mean(axis=(0,1))
+v1 = (v1 - v1.mean()) / v1.std()
+pfc = (pfc - pfc.mean()) / pfc.std()
 
-    # Load and process mock data as in the original script
-    lfp_v1 = np.mean(np.load(f_v1_mock, mmap_mode='r'), axis=(0, 1))
-    lfp_pfc = np.mean(np.load(f_pfc_mock, mmap_mode='r'), axis=(0, 1))
-    
-    # Normalize signals
-    lfp_v1 = (lfp_v1 - np.mean(lfp_v1)) / np.std(lfp_v1)
-    lfp_pfc = (lfp_pfc - np.mean(lfp_pfc)) / np.std(lfp_pfc)
-    
-    combined = np.stack([lfp_v1, lfp_pfc])
-    tseries = ts.TimeSeries(combined, sampling_rate=1000.0) # Assuming 1000 Hz
-    
-    print("
-  Running Granger Causality for different orders:")
-    for order in [5, 10, 15]: # Reduced orders for quicker mock execution
-        print(f"
-  Order {order}:")
-        try:
-            g_analyzer = na.GrangerAnalyzer(tseries, order=order)
-            g_12 = g_analyzer.causality_xy[1, 0, :] # V1->PFC (assuming V1 is index 0, PFC is 1 in combined)
-            g_21 = g_analyzer.causality_yx[0, 1, :] # PFC->V1
-            
-            print(f"    - V1->PFC (first 3): {g_12[:3]}")
-            print(f"    - PFC->V1 (first 3): {g_21[:3]}")
-            print(f"    - NaNs in V1->PFC: {np.isnan(g_12).sum()}")
-            print(f"    - NaNs in PFC->V1: {np.isnan(g_21).sum()}")
-        except Exception as e:
-            print(f"    Error computing Granger for order {order}: {e}")
+# 2. Test Model Order 20
+tseries = ts.TimeSeries(np.stack([v1, pfc]), sampling_rate=1000.0)
+analyzer = na.GrangerAnalyzer(tseries, order=20)
 
-    # Clean up mock files (optional)
-    os.remove(f_v1_mock)
-    os.remove(f_pfc_mock)
-    print("
-  Mock LFP files cleaned up.")
-
-
-# --- Run the demonstration ---
-if __name__ == '__main__':
-    mock_debug_granger()
+# 3. Check for convergence
+print(f"NaN count in V1->PFC: {np.isnan(analyzer.causality_xy).sum()}")
 ```
+
+## Relevant Context / Files
+- [debug_granger_convergence.py](file:///D:/drive/omission/codes/scripts/debug_granger_convergence.py) — Source implementation.
+- [math-neuro-omission-connectivity-metrics](file:///D:/drive/omission/.gemini/skills/math-neuro-omission-connectivity-metrics/skill.md) — Theoretical background.

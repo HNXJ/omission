@@ -2,123 +2,49 @@
 name: analysis-behavioral-data-processing
 description: Provides foundational utilities for processing raw MonkeyLogic behavioral .mat files and extracted behavioral data (eye, pupil, event codes). Includes functions for data loading, trial-wise feature extraction, saccade detection, and eye movement direction calculation.
 ---
-# SKILL: analysis-behavioral-data-processing
+# skill: analysis-behavioral-data-processing
 
-## Description
-This skill provides foundational utilities for processing raw MonkeyLogic behavioral `.mat` files and extracted behavioral data (eye, pupil, event codes). It includes functions for efficient data loading, trial-wise feature extraction (eye, pupil, behavioral codes, times), saccade detection, and eye movement direction calculation. These utilities are often used as building blocks for higher-level behavioral analysis scripts.
+## When to Use
+Use this skill when processing raw behavioral data from MonkeyLogic (stored in `.mat` files) or when analyzing eye-tracking and pupilometry data. It provides the low-level functions required for:
+- Loading legacy MonkeyLogic structures.
+- Extracting synchronized eye position and pupil diameter.
+- Detecting behavioral events (saccades, microsaccades).
+- Calculating angular directions of eye movements.
 
-## Core Tasks
-1.  **`load_behavioral_data(file_path)`**: Loads MonkeyLogic behavioral `.mat` data.
-2.  **`extract_trial_data(trial_struct, fs=1000)`**: Extracts eye, pupil, and event timing for a single trial with safety checks.
-3.  **`detect_saccades(eye_x, eye_y, fs=1000, vel_thresh=30, amp_thresh=1.5)`**: Detects saccades and microsaccades from eye position data.
-4.  **`get_angular_direction(eye_x, eye_y)`**: Calculates the angular direction (0-360 degrees) for eye movements.
+## What is Input
+- **`file_path`**: `str` - Path to the MonkeyLogic `.mat` behavioral file.
+- **`trial_struct`**: `dict`/`SimpleNamespace` - Individual trial data structure.
+- **`eye_x`, `eye_y`**: `numpy.ndarray` - 1D arrays of eye coordinates.
+- **`fs`**: `float` - Sampling frequency (default: 1000 Hz).
+- **`vel_thresh`, `amp_thresh`**: `float` - Thresholds for saccade detection logic.
 
-## Inputs
-*   MonkeyLogic `.mat` files (for `load_behavioral_data`).
-*   `trial_struct`: A structured dictionary or object representing a single trial's data (for `extract_trial_data`).
-*   `eye_x`, `eye_y`: 1D NumPy arrays representing eye position in x and y coordinates (for `detect_saccades`, `get_angular_direction`).
-*   `fs`: Sampling frequency in Hz (default 1000 Hz).
-*   `vel_thresh`, `amp_thresh`: Velocity and amplitude thresholds for saccade detection.
+## What is Output
+- **`eye`, `pupil`**: `numpy.ndarray` - Extracted and conditioned time-series data.
+- **`codes`, `times`**: `numpy.ndarray` - Behavioral event codes and their corresponding timestamps.
+- **`saccade_indices`**: `numpy.ndarray` - Time points (indices) where saccades were detected.
+- **`angles`**: `numpy.ndarray` - Angular directions in degrees (0-360).
 
-## Outputs
-*   **`load_behavioral_data`**: A structured NumPy array containing trial data (`bhvUni`).
-*   **`extract_trial_data`**: `(eye, pupil, codes, times)` tuples, where `eye` and `pupil` are NumPy arrays, and `codes`/`times` are 1D arrays of behavioral events/timestamps.
-*   **`detect_saccades`**: `(saccade_indices, velocities)` tuples, where `saccade_indices` are the time points of detected saccades and `velocities` is the instantaneous eye velocity.
-*   **`get_angular_direction`**: A 1D NumPy array of angular directions in degrees.
+## Algorithm / Methodology
+1. **Data Parsing**: Uses `scipy.io.loadmat` to navigate complex MonkeyLogic nested structures.
+2. **Feature Extraction**: Extracts `AnalogData` (Eye/Pupil) and `BehavioralCodes` (Event timestamps).
+3. **Saccade Detection**: Employs a velocity-threshold algorithm. Velocity is calculated as the magnitude of the coordinate gradients scaled by sampling rate.
+4. **Angular Calculation**: Uses `arctan2` on coordinate differentials (`diff`) to determine the vector direction of eye movements, normalized to 0-360 degrees.
 
-## Example Use
-
+## Placeholder Example
 ```python
-import numpy as np
-import scipy.io as sio
-from types import SimpleNamespace
-import sys
-import os
+from codes.functions.behavioral_utils import load_behavioral_data, extract_trial_data, detect_saccades
 
-# Assuming behavioral_utils.py is in the functions directory
-# For this example, we'll simulate the functions' presence.
-# In a real scenario, you would import them directly:
-# from functions.behavioral_utils import load_behavioral_data, extract_trial_data, 
-#                                      detect_saccades, get_angular_direction
+# 1. Load the raw behavioral file
+bhv_data = load_behavioral_data("data/session_A.mat")
 
-# --- Mocking the functions from behavioral_utils.py ---
-# This is for demonstration if behavioral_utils.py is not in current path.
-# In actual use, ensure functions.behavioral_utils is imported.
-def load_behavioral_data(file_path):
-    # Simulate loading a .mat file
-    print(f"Simulating loading behavioral data from {file_path}")
-    return [create_mock_trial_struct(), create_mock_trial_struct()]
+# 2. Extract data for trial #5
+eye, pupil, codes, times = extract_trial_data(bhv_data[5])
 
-def extract_trial_data(trial_struct, fs=1000):
-    try:
-        analog = trial_struct.AnalogData[0, 0]
-        eye = analog.Eye[0, 0] if 'Eye' in dir(analog) else None
-        gen = analog.General[0, 0] if gen and 'Gen1' in dir(gen) else None
-        pupil = gen.Gen1[0, 0] if gen and 'Gen1' in dir(gen) else None
-        codes_struct = trial_struct.BehavioralCodes[0, 0]
-        codes = codes_struct.CodeNumbers[0, 0].flatten()
-        times = codes_struct.CodeTimes[0, 0].flatten()
-        return np.array(eye), np.array(pupil), np.array(codes), np.array(times)
-    except Exception as e:
-        print(f"Error extracting mock trial: {e}")
-        return None, None, None, None
-
-def detect_saccades(eye_x, eye_y, fs=1000, vel_thresh=30, amp_thresh=1.5):
-    if eye_x is None or eye_y is None: return None, None
-    vx = np.gradient(eye_x) * fs
-    vy = np.gradient(eye_y) * fs
-    vel = np.sqrt(vx**2 + vy**2)
-    saccade_indices = np.where(vel > vel_thresh)[0]
-    return saccade_indices, vel
-
-def get_angular_direction(eye_x, eye_y):
-    if eye_x is None or eye_y is None or len(eye_x) < 2: return None
-    dx = np.diff(eye_x)
-    dy = np.diff(eye_y)
-    angles = np.arctan2(dy, dx)
-    return np.degrees(angles) % 360
-
-# --- Mocking scipy.io.loadmat output structure ---
-def create_mock_trial_struct():
-    mock_analog_data = SimpleNamespace(
-        Eye=np.array([[[np.random.rand(1000), np.random.rand(1000)]]], dtype=object),
-        General=np.array([[[SimpleNamespace(Gen1=np.random.rand(1000))]]], dtype=object)
-    )
-    mock_behavioral_codes = SimpleNamespace(
-        CodeNumbers=np.array([[[101, 102, 103, 104, 105, 106, 107, 108, 109, 110]]], dtype=object),
-        CodeTimes=np.array([[[0, 100, 200, 300, 400, 500, 600, 700, 800, 900]]], dtype=object)
-    )
-    mock_trial = SimpleNamespace(
-        AnalogData=np.array([[mock_analog_data]], dtype=object),
-        BehavioralCodes=np.array([[mock_behavioral_codes]], dtype=object),
-        TrialError=0
-    )
-    return mock_trial
-
-# --- Demonstration ---
-print("--- Demonstrating Behavioral Utilities ---")
-
-# Simulate loading data
-mock_bhv_data = load_behavioral_data("mock_path.mat")
-print(f"  Loaded {len(mock_bhv_data)} mock trials.")
-
-# Extract data for a trial
-sample_trial = mock_bhv_data[0]
-eye_data, pupil_data, codes, times = extract_trial_data(sample_trial)
-
-if eye_data is not None:
-    eye_x, eye_y = eye_data[0], eye_data[1]
-    print(f"  Extracted eye_x sample: {eye_x[:5]}")
-    print(f"  Extracted pupil sample: {pupil_data[:5]}")
-
-    # Detect saccades
-    saccade_indices, velocities = detect_saccades(eye_x, eye_y)
-    if saccade_indices is not None:
-        print(f"  Detected {len(saccade_indices)} saccades.")
-        print(f"  Max velocity: {np.max(velocities):.2f}")
-
-    # Get angular direction
-    angles = get_angular_direction(eye_x, eye_y)
-    if angles is not None:
-        print(f"  Sample angular direction: {angles[:5]} degrees")
+# 3. Detect saccades in this trial
+saccade_idx, velocities = detect_saccades(eye[0], eye[1], fs=1000)
+print(f"Trial 5: {len(saccade_idx)} saccades detected.")
 ```
+
+## Relevant Context / Files
+- [behavioral_utils.py](file:///D:/drive/omission/codes/functions/behavioral_utils.py) — Core implementation.
+- [EyeDataMapper](file:///D:/drive/omission/src/utils/eye_data_mapper.py) — Related NWB correlation tool.

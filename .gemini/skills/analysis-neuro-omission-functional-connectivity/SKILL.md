@@ -1,34 +1,47 @@
 ---
 name: analysis-neuro-omission-functional-connectivity
-description: "Omission analysis skill focusing on analysis neuro omission functional connectivity. Includes Spectral Harmony and PPC."
+description: Quantifies the synchronization and coordination between brain areas using Spectral Harmony (Power Envelope Correlations) and Pairwise Phase Consistency (PPC).
 ---
+# skill: analysis-neuro-omission-functional-connectivity
 
-# Functional Connectivity: Coordination & Harmony
+## When to Use
+Use this skill to map the functional network architecture during omission tasks. It is specifically used for:
+- Building "Spectral Harmony" matrices (11x11 regional correlations).
+- Identifying frequency-specific hubs of coordination (Gamma vs. Beta).
+- Measuring Spike-Field Coupling using bias-free PPC.
 
-Functional connectivity measures the synchronization between different brain areas, revealing the network-level coordination during stimulus and omission.
+## What is Input
+- **Power Envelopes**: Time-resolved power for specific bands (Delta through High-Gamma).
+- **Spike Trains & LFP**: For phase-locking analysis.
+- **Regional Mask**: Grouping of electrodes into the 11 target brain areas.
 
-## 1. Spectral Harmony (Cross-Area Correlation)
-Instead of raw coherence, we quantify coordination using **Cross-Area Power Envelope Correlations**.
-- **Gamma Harmony**: Dominant inter-area coordination during stimulus presentation (Feedforward flow).
-- **Beta Harmony**: Dominant inter-area coordination during stimulus omission (Feedback Prediction Error).
-- **Analysis**: 11x11 Pearson correlation matrices of band-specific power envelopes during the omission window.
+## What is Output
+- **Connectivity Matrices**: 11x11 Pearson correlation matrices of band power envelopes.
+- **PPC Spectra**: Phase-consistency values across the 1-100Hz range.
+- **Figures**: Heatmaps of regional coordination and line plots of phase-locking (Fig 8).
 
-## 2. Pairwise Phase Consistency (PPC)
-The preferred metric for Spike-Field Coupling (SFC). 
-- Bias-free regarding trial count and firing rate.
-- Used to contrast the phase-locking of S+ neurons (during stimulus) and O+ neurons (during omission).
+## Algorithm / Methodology
+1. **Envelope Extraction**: Computes the Hilbert transform of band-passed LFP signals to get the instantaneous power envelope.
+2. **Spectral Harmony**: Performs pairwise Pearson correlations between the envelopes of all 11 brain regions.
+3. **PPC Calculation**: For every spike-LFP pair, it calculates the average cosine of the phase difference across trials ($PPC = \frac{2}{N(N-1)} \sum \sum cos(\theta_i - \theta_j)$).
+4. **Hierarchy Mapping**: Analyzes how connectivity patterns shift from bottom-up (Stimulus) to top-down (Omission).
 
-## 3. Directionality
-Directional influence is inferred from the hierarchical lag and spectral profile. 
-- Higher-order areas (PFC/FEF) drive the **Beta Omission Response** down the hierarchy.
-- Lower-order areas (V1-V4) drive the **Gamma Stimulus Response** up the hierarchy.
-
-## Implementation (Figure 8)
+## Placeholder Example
 ```python
-# Correlation of envelopes
-corr_mat = np.corrcoef(power_envelopes_matrix) # 11 x 11
+import numpy as np
+from src.analysis.connectivity import compute_spectral_harmony
+
+# 1. Prepare envelope matrix (11 areas x Time)
+envelopes = np.random.rand(11, 1000) 
+
+# 2. Compute Harmony
+harmony_matrix = np.corrcoef(envelopes)
+
+# 3. Verify diagonal is 1.0
+assert np.allclose(np.diag(harmony_matrix), 1.0)
+print("Spectral Harmony Matrix computed successfully.")
 ```
 
-References:
-1. Vinck, M., et al. (2010). The pairwise phase consistency: a bias-free measure of rhythmic neuronal synchronization. NeuroImage.
-2. Bastos, A. M., et al. (2015). Visual areas exert feedforward and feedback influences through distinct frequency channels. Neuron.
+## Relevant Context / Files
+- [analysis-lfp-pipeline](file:///D:/drive/omission/.gemini/skills/analysis-lfp-pipeline/skill.md) — For band definitions and preprocessing.
+- [src/analysis/connectivity.py](file:///D:/drive/omission/src/analysis/connectivity.py) — Core implementation.
