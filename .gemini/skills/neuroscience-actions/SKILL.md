@@ -1,66 +1,47 @@
 ---
 name: neuroscience-actions
-description: Comprehensive skill for neuroscience research, paper analysis, and biophysical modeling. Includes knowledge on interneurons, laminar motifs, and paper management pipelines.
+description: Comprehensive knowledge base for biophysical modeling (JAXley), laminar motifs, interneuron dynamics, and circuit-level neuroscience research.
 ---
+# skill: neuroscience-actions
 
-# Neuroscience Actions Skill
+## When to Use
+Use this skill when designing, building, or analyzing biophysical circuit models. It is mandatory for:
+- Implementing PING/ING mechanisms for Gamma/Beta generation.
+- Configuring EI balance (75% E, 25% I) and laminar-specific connectivity (Markov 2014 rules).
+- Modeling synaptic dynamics (AMPA, NMDA, GABA) and Impulse Poisson (IP) noise.
+- Managing literature pipelines (PDF-to-Markdown extraction).
+- Applying the "Physical Realisticity Barrier" to prevent simulation instability.
 
-This skill guides the intersection of biological neuroscience research and computational modeling.
+## What is Input
+- **Network Params**: Connectivity matrices, synaptic ratios, and cell counts.
+- **Biophysical Constants**: Axial resistance $(R_a)$, capacitance $(C_m)$, and reversal potentials.
+- **Experimental Data**: Target Power Spectral Densities (PSDs) or cross-area lead/lag peaks.
 
-## 1. Biophysical Constants & Formulas
-- **Axial Current ($I_a$)**: $\frac{V_d - V_s}{r_a}$. Primary contributor to MEG/EEG source.
-- **Impulse Poisson (IP) Noise**: Event-driven stochastic current.
-    - `pulse_width`: Standard 0.1ms.
-    - `poisson_l`: Mean interval (20ms - 500ms).
-    - `pulse_amp`: Magnitude (0.01nA - 10nA).
-- **Stochastic Implementation Lessons**:
-    - **Vectorization**: Custom stochastic mechanisms must handle batched seeds using `jax.vmap(jax.random.PRNGKey)` within `update_states` to support multi-neuron networks.
-    - **Mechanism Insertion**: In modular networks, mechanisms must be inserted *after* combining cells into the final `jx.Network` to ensure global visibility across all view attributes.
-- **PING (Pyramidal Interneuron Network Gamma)**: Mechanism where E-cells drive I-cells (PV), which in turn provide rhythmic feedback inhibition.
-- **ING (Interneuron Network Gamma)**: Reciprocal inhibition between I-cells driving gamma.
+## What is Output
+- **Model Architectures**: JAXley Network objects with properly inserted stochastic mechanisms.
+- **Simulation Results**: Membrane potentials $(V_m)$, axial currents $(I_a)$, and synthetic LFP/MEG signals.
+- **Literature Summaries**: Structured "Theory Evaluation Grids" (ScZ-40, EMO-36, TcGLO).
 
-## 2. Laminar Architecture & Interneurons
-- **Parvalbumin (PV)**: Fast-spiking, perisomatic target. Essential for **Gamma** (30-80 Hz).
-- **Somatostatin (SST/CB)**: Low-threshold spiking, targets distal dendrites. Modulates **Beta** (15-25 Hz).
-- **VIP**: Disinhibitory interneurons targeting SST cells.
-- **Spectrolaminar Motif**: The spectral crossover between Alpha/Beta (Deep) and Gamma (Superficial) layers.
+## Algorithm / Methodology
+1. **EI Balance**: Standard 75% Excitatory (RS Pyramidal) vs. 25% Inhibitory (PV, SST, VIP).
+2. **Laminar Motifs**: 
+   - FF (V1 -> V2): Superficial -> L4/Soma. 
+   - FB (V2 -> V1): Deep -> L1/Dendrites.
+3. **Interneuron Roles**: PV cells drive **Gamma** (30-80Hz); SST cells modulate **Beta** (15-25Hz).
+4. **Physical Realisticity Barrier**: $V_m$ must remain in $[-120, +60]$ mV; nan-handling via `jnp.where` is mandatory.
+5. **PDF Extraction**: Use `AAE/utils/pdf_extractor.py` to organize papers into `/media/pdfs/txt/` and `/media/pdfs/img/`.
 
-## 3. Theory Evaluation Frameworks (Glossaries)
-Use these structured grids for multi-agent literature evaluation:
-- [ScZ-40: Schizophrenia Biophysics](./references/scz-glossary-reference.md)
-- [EMO-36: Electromagnetic Oscillations](./references/emo-glossary.md)
-- [TcGLO: Predictive Coding](./references/global_omission_task.md)
+## Placeholder Example
+```python
+# 1. Define Axial Current Calculation
+# Ia is the primary contributor to MEG source
+ia = (v_distal - v_soma) / ra
 
-## 4. Signal Processing & Variability
-- **Neural Variability Quenching**: The significant reduction in cross-trial variance observed immediately after stimulus onset. High quenching is often a signature of robust sensory processing.
-- **Lead/Lag Analysis (Cross-Correlation)**: 
-    - Used to study temporal precedence between areas (e.g., V1 leads PFC during feedforward visual processing).
-    - **Formula**: $R_{xy}(	au) = \sum x(t) y(t+	au)$. Peak at $	au > 0$ implies $x$ leads $y$.
+# 2. Configure PING Mechanism
+# E-cells drive PV-cells, which rhythmically inhibit E-cells
+network.insert_mechanism(PING_Oscillator())
+```
 
-## 5. Paper Management Pipeline (PDF to MD/Media)
-Use the automated extraction tool to separate text and images for analysis.
-- **Path**: `AAE/utils/pdf_extractor.py`
-- **Output**: 
-  - Markdown organized by section: `/media/pdfs/txt/`
-  - Extracted figures: `/media/pdfs/img/`
-
-## 5. Paper Writing & Reference Skills
-- **DOI Mapping**: Use `google_web_search` to find missing DOIs.
-- **Publication Aesthetic**: "Madelane Golden Dark" theme for all figures.
-- ## 6. Multi-Area Cortical Connectivity (Markov 2014)
-Hierarchical interactions are governed by laminar-specific projection rules:
-- **Feedforward (FF)**:
-    - Origin: Superficial layers (L2/3).
-    - Target: Layer 4 (L4) or Soma of E and PV cells.
-    - Path: V1 $ightarrow$ V2 $ightarrow$ V4.
-- **Feedback (FB)**:
-    - Origin: Deep layers (L5/6).
-    - Target: Layer 1 (L1) or distal dendrites of E cells.
-    - Path: V4 $ightarrow$ V2 $ightarrow$ V1.
-
-## 7. Cortical Synaptic Ratios
-- **EI Balance**: 75% Excitatory (RS Pyramidal), 25% Inhibitory (PV, SST, VIP).
-- **Excitatory Synapses**: Combination of AMPA (Fast) and NMDA (Slow, Voltage-dependent).
-- **NMDA Rule**: Typically restricted to a 10% subset of excitatory neurons for specific recursive dynamics.
-
-**Validation**: Always verify models against biological Kappa and PSD motifs.
+## Relevant Context / Files
+- [jaxley-actions](file:///D:/drive/omission/.gemini/skills/jaxley-actions/skill.md) — For implementation specifics.
+- [src/neuro/circuits.py](file:///D:/drive/omission/src/neuro/circuits.py) — Canonical circuit definitions for the 11-area model.

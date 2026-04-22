@@ -1,47 +1,45 @@
 ---
 name: predictive-routing
-description: Laminar LFP analysis, oculomotor controls, and statistical validation for the Predictive Routing paradigm. Covers CSD, JAX wavelet engine, microsaccade rejection, and GLM/permutation stats.
+description: Advanced LFP analysis engine (CSD, TFR), oculomotor controls, and statistical validation (Permutation, GLM) for the Predictive Routing paradigm.
 ---
-
 # skill: predictive-routing
 
-## spectral decomposition & csd
-- `compute_1d_csd`: Spatial Laplacian for Layer 4 identification.
-- `compute_tfr_multiband`: JAX-vectorized Morlet wavelet engine (parallel multi-band).
-- `subtract_erp`: Isolates induced power from phase-locked transients.
-- **Source**: `predictive_routing_2020/src/spectral_analysis/`
+## When to Use
+Use this skill for high-fidelity LFP analysis and statistical validation of laminar motifs. It is mandatory for:
+- Identifying Layer 4 sinks via Current Source Density (CSD) analysis.
+- Performing parallel multi-band spectral decomposition using the JAX-vectorized Morlet engine.
+- Purging microsaccade-contaminated trials (>30 deg/s) using the Engbert & Kliegl protocol.
+- Executing cluster-based permutation tests on Time-Frequency Representations (TFRs).
+- Dissociating Feedforward (Gamma) from Feedback (Beta) signals via ERP subtraction.
 
-## oculomotor controls & task logic
-- `detect_microsaccades`: Engbert & Kliegl velocity-space thresholding (>30°/s).
-- `get_clean_trials`: Purges microsaccade-contaminated epochs from analysis.
-- `PredictiveRoutingTaskLogic`: Transition-probability state machine for sequence labels.
-- **Source**: `predictive_routing_2020/src/preprocessing/oculomotor_controls.py`
+## What is Input
+- **LFP Signals**: Raw or downsampled local field potentials from linear probes.
+- **Eye-Tracking Data**: Raw $(x, y)$ gaze positions for microsaccade detection.
+- **Event Codes**: Timing markers for task-logic state machines.
 
-## statistics & glm
-- `run_permutation_test`: 2D cluster-based permutation testing for TFR clusters.
-- `run_behavioral_regression`: GLM — regress reaction time against layer-specific power.
-- `compute_wpli`: Weighted Phase Lag Index (volume-conduction-free inter-areal coherence).
-- `compute_power_power_matrix`: Cross-frequency coupling between deep and superficial layers.
-- **Source**: `predictive_routing_2020/src/statistics/`
+## What is Output
+- **CSD Profiles**: Spatial Laplacian maps for layer assignment.
+- **TFR Tensors**: Time-frequency-power arrays organized by condition and area.
+- **Statistical Clusters**: Significant time-frequency regions (p < 0.05) corrected for multiple comparisons.
 
-## usage notes
-- Use CSD before any layer-assignment or laminar split.
-- Always apply `get_clean_trials` before TFR computation.
-- FDR or cluster-based correction mandatory for all TFR/connectivity results.
+## Algorithm / Methodology
+1. **Layer Assignment**: CSD sink identification on the average Visual Evoked Potential (VEP).
+2. **Spectral Engine**: JAX-vectorized Morlet wavelets with parallel multi-band support.
+3. **Induced vs. Evoked**: ERP subtraction to isolate non-phase-locked oscillations.
+4. **Clean Trials**: Microsaccade rejection using velocity-space thresholding.
+5. **Connectivity**: Weighted Phase Lag Index (wPLI) to assess inter-areal coordination without volume conduction bias.
 
-## laminar protocol
-1. Record with linear silicon probe (e.g., Neuropixels, 128ch).
-2. Compute `compute_1d_csd` on average VEP to identify Layer 4 sink.
-3. Assign channels to layers (supra/L4/infra) based on CSD zero-crossing.
-4. Apply `subtract_erp` before TFR to isolate induced (non-phase-locked) power.
+## Placeholder Example
+```python
+# 1. Identify Layer 4 Sink
+# csd_profile is a 2D map (Channels x Time)
+csd_profile = predictive_routing.compute_1d_csd(average_vep)
 
-## connectivity protocol
-1. Apply `get_clean_trials` — reject any trial with microsaccade >30°/s in analysis window.
-2. Compute `compute_wpli` for each area-pair in each frequency band.
-3. Apply FDR correction across all area-pairs.
-4. Build adjacency matrix; compute betweenness centrality for hub identification.
+# 2. Run Parallel TFR
+# Induced power only (ERP subtracted)
+tfr_power = predictive_routing.compute_tfr_jax(lfp_tensors, subtract_erp=True)
+```
 
-## statistical thresholds
-- Cluster-based permutation: 1000 permutations, α=0.05, cluster threshold t>2.0.
-- FDR correction: Benjamini-Hochberg q<0.05 across frequency × area-pair comparisons.
-- GLM β coefficient reported as standardized (z-scored predictors).
+## Relevant Context / Files
+- [lfp-core](file:///D:/drive/omission/.gemini/skills/lfp-core/skill.md) — For fundamental LFP processing.
+- [src/spectral/wavelet_engine.py](file:///D:/drive/omission/src/spectral/wavelet_engine.py) — The JAX implementation of the Morlet transform.

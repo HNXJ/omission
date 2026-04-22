@@ -1,31 +1,40 @@
 ---
 name: hardware-neuro-omission-lab-infrastructure
-description: "Omission analysis skill focusing on hardware neuro omission lab infrastructure."
+description: Technical specification for the physical recording environment, stimulus synchronization, and eye-tracking hardware.
 ---
+# skill: hardware-neuro-omission-lab-infrastructure
 
-# Laboratory Hardware Configuration
+## When to Use
+Use this skill when verifying the temporal precision of neural data. It is essential for:
+- Understanding the relationship between screen pixels and Degrees of Visual Angle (DVA).
+- Resolving photodiode timing offsets between software events (MonkeyLogic) and physical frame flips.
+- Calibrating eye-tracking data relative to the subject's 57cm distance from the screen.
+- Documenting the physical signal chain for publication "Methods" sections.
 
-The technical integrity of our results depends on high-precision synchronization between stimulus presentation and neural recording.
+## What is Input
+- **Luminance Measurements**: Cd/m2 values for background matching.
+- **Physical Dimensions**: Screen width (cm), Subject distance (cm).
+- **Wiring Diagrams**: Synchronization triggers between VPixx and Blackrock.
 
-Visual Display:
-- Projector: PROPixx Pro (VPixx Technologies).
-- Refresh Rate: 120 Hz.
-- Resolution: 1920 x 1080.
-- Calibration: Luminance-matched background (2.613 cd/m2) verified with Photo Research PR-650.
+## What is Output
+- **Conversion Factors**: Pixels-to-DVA multipliers.
+- **Timing Offsets**: Mean photodiode latency (e.g., 8ms fixed offset).
+- **Channel Maps**: Physical electrode-to-digital channel assignments for 128-ch probes.
 
-Behavioral Control:
-- Software: MonkeyLogic 2.2.
-- Eye Tracking: High-speed infrared tracking (calibrated to 1000Hz).
-- Photodiode: Placed on the screen corner to detect physical frame flips, ensuring <1ms jitter in alignment.
+## Algorithm / Methodology
+1. **DVA Calculation**: Uses the formula `theta = 2 * arctan(w / (2 * d))` where `d` is subject distance. At 57cm, 1cm = 1 DVA.
+2. **Photodiode Correction**: Cross-correlates the "Frame Flip" pulse with the "Strobe Code" to adjust trial start times to the exact microsecond of stimulus appearance.
+3. **Luminance Normalization**: Matches the screen's black point to the lab's ambient lighting to minimize pupil dilation artifacts.
+4. **Spatial Calibration**: Maps the eye-tracker's voltage range to screen coordinates using a 9-point fixation routine in MonkeyLogic.
 
-Electrophysiology:
-- Probes: 128-channel multi-probe configurations.
-- Recording System: Blackrock Microsystems or Intan Technologies.
-- Spike Sorting: Kilosort 2.5 / 3.0.
+## Placeholder Example
+```python
+# 1. Convert Screen Pixels (px) to Visual Angle (DVA)
+# Distance = 57cm, Screen Width = 52cm, Resolution = 1920px
+px_per_cm = 1920 / 52
+dva = (px / px_per_cm) # simplified for 57cm distance
+```
 
-Physical Setup:
-Subject sits 57cm from the screen, ensuring that 1cm on screen equals ~1 degree of visual angle (DVA).
-
-References:
-1. Asaad, W. F., & Eskandar, E. N. (2008). A flexible software tool for temporally-precise neurophysiological experiments. Journal of Neuroscience Methods.
-2. Pachitariu, M., et al. (2016). Kilosort: realtime spike-sorting for thousands of channels. bioRxiv.
+## Relevant Context / Files
+- [coding-neuro-omission-behavioral-utils](file:///D:/drive/omission/.gemini/skills/coding-neuro-omission-behavioral-utils/skill.md) — For DVA implementation.
+- [src/calibration/timing_checks.py](file:///D:/drive/omission/src/calibration/timing_checks.py) — For photodiode validation.

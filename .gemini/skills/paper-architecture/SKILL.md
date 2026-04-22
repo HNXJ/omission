@@ -1,42 +1,48 @@
 ---
 name: paper-architecture
-description: Institutionalizes a "Figure-First" workflow where each figure acts as the foundation for methods, results, and captions.
-version: 1.0.0
+description: Manuscript drafting framework enforcing a "Figure-First" protocol to ensure consistency between data visualization, methods, and results.
 ---
+# skill: paper-architecture
 
-# SKILL: Figure-First Paper Architecture
+## When to Use
+Use this skill when drafting manuscripts or technical reports. It is mandatory for:
+- Implementing the "Figure-First Protocol" where data visualization drives the narrative.
+- Creating and maintaining "Figure Manifests" in `docs/figures/`.
+- Ensuring 1:1 correspondence between code methodology and manuscript text.
+- Organizing the hierarchy of Main vs. Supplementary figures.
 
-This skill enforces a rigorous, artifact-centric workflow for scientific writing. The core principle is that **figures are finalized first**, and their documentation serves as the single source of truth for all manuscript sections.
+## What is Input
+- **Analysis Figures**: Finalized interactive HTML plots or SVG exports.
+- **Experimental Metadata**: Stimulus timings, subject counts, and recording parameters.
+- **Narrative Goals**: The biological questions being addressed (e.g., "Predictive Routing in V1").
 
-## 📐 The Figure-First Protocol
+## What is Output
+- **Figure Manifests**: Dedicated `.md` files for every figure containing Intent, Methodology, Observations, and Caption.
+- **Draft Sections**: Compiled Methods and Results sections derived directly from manifests.
+- **Compiled Manuscript**: The final `paper_draft.md` tracking the full narrative arc.
 
-### 1. Figure Manifest (Documentation)
-Every figure (and supplement) MUST have a dedicated markdown file in `docs/figures/`.
-- **File Naming**: `FIG_01_Population_Firing.md`
-- **Mandatory Sections**:
-    - **🎯 Intent**: What biological question does this figure answer?
-    - **🔬 Methodology**: The exact scripts, filters, and statistical tests used to generate the data (source of truth for the **Methods** section).
-    - **📊 Observations**: Key trends and significant findings (source of truth for the **Results** section).
-    - **📝 Caption & Labels**: Draft text for the figure legend.
-    - **🗺️ Narrative Context**: How this figure leads to the next one.
+## Algorithm / Methodology
+1. **Manifest Creation**: For every figure `FXXX`, create `docs/figures/FXXX_manifest.md`.
+2. **Methodology Lock**: Transcribe exact scripts, filters, and window sizes used during analysis into the manifest.
+3. **Observation Logging**: Record key statistical findings and biological implications immediately after analysis.
+4. **Recursive Compilation**: Draft Results and Methods sections by summarizing and connecting the manifests.
+5. **Branding Check**: Ensure all figures follow the "Madelane Golden Dark" aesthetic.
 
-### 2. Recursive Drafting
-Once a figure's manifest is complete:
-1.  **Methods**: Directly transcribed from the "Methodology" section of the manifest.
-2.  **Results**: Directly transcribed from the "Observations" section of the manifest.
-3.  **Refinement**: If a figure is moved to the supplement or removed, its manifest is updated accordingly, ensuring the paper's narrative remains consistent.
+## Placeholder Example
+```markdown
+# Figure Manifest: F012_Laminar_Alpha_Beta
+## Intent
+To demonstrate the deep-layer dominance of feedback-related oscillations.
 
-## 📁 Workspace Structure
-```text
-docs/
-├── figures/          # FIG_XX manifests (The Source of Truth)
-├── methods/          # Drafted from FIG manifests
-├── results/          # Drafted from FIG manifests
-└── paper_draft.md    # Compiled manuscript
+## Methodology
+- Script: `src/analysis/laminar_spectrum.py`
+- Window: Delay interval d1 (1531-2031ms).
+- Stats: Paired t-test between L2/3 and L5/6.
+
+## Observations
+- Alpha power is 45% higher in deep layers (p < 0.001).
 ```
 
-## 🛠️ Usage Example
-When starting a new figure:
-1.  Generate the plot using an analysis script.
-2.  Immediately create `docs/figures/FIG_XX.md`.
-3.  Fill out the methodology while the code logic is fresh.
+## Relevant Context / Files
+- [design-neuro-omission-branding-theme](file:///D:/drive/omission/.gemini/skills/design-neuro-omission-branding-theme/skill.md) — For aesthetic compliance.
+- [docs/paper_outline.md](file:///D:/drive/omission/docs/paper_outline.md) — The high-level structure of the current manuscript.

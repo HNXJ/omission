@@ -1,53 +1,49 @@
 ---
 name: omission-factors
-description: Extracts a high-dimensional feature matrix (48 factors per neuron) for dimensionality reduction and population dynamics analysis.
-version: 1.0.0
+description: Framework for characterizing neuron-specific dynamics via 48-factor feature extraction (Rate, Regularity, Variability, Volatility).
 ---
+# skill: omission-factors
 
-# SKILL: Omission Neuron Factor Extraction
+## When to Use
+Use this skill when performing dimensionality reduction or functional clustering of neural populations. It is mandatory for:
+- Constructing the "48-Factor Matrix" per neuron (12 intervals $\times$ 4 metrics).
+- Characterizing firing regularity via ISI standard deviation (`std_isi`).
+- Quantifying across-trial variability (`mean_var`) and volatility (`std_var`).
+- Preparing data for PCA/UMAP embedding of population state trajectories.
 
-This skill provides the definitive framework for characterizing the firing dynamics and variability of every neuron recorded during the visual omission paradigm.
+## What is Input
+- **Spike Tensors**: High-resolution binned counts across the full trial duration.
+- **Interval Definitions**: 12 specific windows (Fixation, Pre-Omission, Omission, Post-Omission).
+- **Laminar Labels**: Mandatory metadata (Session, Area, Channel, Layer).
 
-## 📊 Matrix Structure: 48 Factors
-For each neuron, 4 core metrics are computed across 12 specific time intervals, resulting in a 48-factor feature vector.
+## What is Output
+- **Feature Matrix**: `omission_neurons_r_factors.csv` containing the 48 factors per unit.
+- **Visualizations**: Dimensionality reduction plots (PCA/UMAP) showing clustering by area or response type.
 
-### Core Metrics
-1.  **`mean_fr`**: Average firing rate (Hz) computed from binary spike counts.
-2.  **`std_isi`**: Standard deviation of Inter-Spike Intervals (ms), characterizing firing regularity.
-3.  **`mean_var`**: Average across-trial variance, characterizing neural variability.
-4.  **`std_var`**: Standard deviation of the across-trial variance trace, characterizing variability volatility.
+## Algorithm / Methodology
+1. **Metric Definition**:
+   - `mean_fr`: Mean firing rate (Hz).
+   - `std_isi`: Regularity metric (Lower = more regular).
+   - `mean_var`: Across-trial variance (Variability).
+   - `std_var`: Volatility of variance (State stability).
+2. **Interval Mapping**: 12 windows selected to capture the transition from expectation to surprise.
+3. **Filtering**: Restricts to "Stable-Plus" units (FR > 1Hz, SNR > 0.8).
+4. **Context Enrichment**: Attaches session-level metadata and laminar positions (Deep vs. Superficial).
 
-### Time Intervals (12 Total)
-- **Fixation**: `fx` window for conditions `RXRR`, `RRXR`, `RRRX`.
-- **Pre-Omission Delay**: `d1`, `d2`, or `d3` windows depending on the condition.
-- **Omission window ("X")**: `p2`, `p3`, or `p4` windows depending on the condition.
-- **Post-Omission Delay**: `d2`, `d3`, or `d4` windows depending on the condition.
-
-## 🧬 Metadata
-The resulting matrix (`omission_neurons_r_factors.csv`) includes essential spatial and laminar context:
-- `session`: The 6-digit session identifier.
-- `area`: The mapped brain area (e.g., V1, PFC, MT).
-- `channel`: The relative electrode ID within the probe (0-127).
-- `layer`: The spectro-laminar position (`Deep`, `Superficial`, or `none`).
-
-## 🛠️ Usage Examples
-
-### PCA / UMAP Visualization
+## Placeholder Example
 ```python
 import pandas as pd
-import umap
 from sklearn.decomposition import PCA
 
+# 1. Load the 48-Factor Matrix
 df = pd.read_csv('checkpoints/omission_neurons_r_factors.csv')
 features = df.filter(regex='_mean_|_std_')
 
-# PCA
-pca = PCA(n_components=3).fit_transform(features)
-
-# UMAP
-reducer = umap.UMAP(n_components=3)
-embedding = reducer.fit_transform(features)
+# 2. Run Dimensionality Reduction
+pca_results = PCA(n_components=2).fit_transform(features)
+# Scatter plot of PC1 vs PC2 colored by 'area'
 ```
 
-## 🔬 Scientific Context
-This extraction logic is grounded in Hierarchical Predictive Coding and Stimulus-Driven Variability Quenching (Churchland et al., 2010). The inclusion of ISI and variability metrics allows for the dissociation of mean rate changes from changes in neural state stability.
+## Relevant Context / Files
+- [nwb-analysis](file:///D:/drive/omission/.gemini/skills/nwb-analysis/skill.md) — For the raw variability calculation.
+- [src/analysis/feature_extraction.py](file:///D:/drive/omission/src/analysis/feature_extraction.py) — The logic generating the factors.

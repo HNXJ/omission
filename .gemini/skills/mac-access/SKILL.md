@@ -1,45 +1,43 @@
 ---
 name: mac-access
-description: A comprehensive guide for configuring full terminal access, SSH, and MLX servers on macOS.
-version: 1.0.0
+description: Administrative protocol for managing remote SSH access, Full Disk Access (FDA), and MLX inference servers on macOS.
 ---
+# skill: mac-access
 
-# SKILL: Mac Full Terminal Access & Remote Server Guide
+## When to Use
+Use this skill when configuring the macOS analytical node for remote collaboration. It is essential for:
+- Enabling SSH access (`Remote Login`) for other agents or human users.
+- Granting `Full Disk Access` to `/usr/bin/sshd` and `/bin/zsh` to bypass Sandbox restrictions.
+- Starting and maintaining persistent MLX servers (e.g., Qwen2.5-32B) for high-speed local inference.
+- Preventing system sleep during long-running background simulations.
 
-This skill provides a definitive guide for setting up and maintaining full terminal access on macOS, specifically optimized for remote neuro-analysis and MLX inference servers.
+## What is Input
+- **Host Info**: IP Address (e.g., `10.32.133.50`) and Username.
+- **Privacy Settings**: GUI pathing for macOS Security & Privacy panels.
+- **MLX Model ID**: HuggingFace path (e.g., `mlx-community/Qwen2.5-32B-Instruct-8bit`).
 
-## 1. Remote Login (SSH)
-To allow remote access from other machines:
-1.  **System Settings** > **General** > **Sharing**.
-2.  Toggle **Remote Login** to **ON**.
-3.  Click the (i) icon to verify that your user is permitted.
-4.  **Terminal Command**: `sudo systemsetup -setremotelogin on`
+## What is Output
+- **Stable Connection**: Verified SSH tunnel with password-less (Key-based) entry.
+- **Live Endpoint**: OpenAI-compatible local API (default: port `8080`).
+- **Persistent Process**: Background `tmux` sessions that survive terminal disconnects.
 
-## 2. Full Disk Access (FDA)
-Required for the terminal and SSH to access data in protected folders (e.g., `Documents`, `Desktop`, `Downloads`):
-1.  **System Settings** > **Privacy & Security** > **Full Disk Access**.
-2.  Click the `+` button and add:
-    -   `/bin/zsh` (or your preferred shell)
-    -   `/usr/bin/sshd` (to allow remote file access)
-    -   **Terminal.app** (or iTerm2)
+## Algorithm / Methodology
+1. **Sharing Activation**: `sudo systemsetup -setremotelogin on` to enable core SSH services.
+2. **FDA Authorization**: Manual addition of shells and daemons to the "Full Disk Access" list in Privacy settings.
+3. **Power Persistence**: `sudo pmset -a disablesleep 1` to ensure analytical continuity.
+4. **Session Management**: Uses `tmux` to encapsulate MLX server instances, allowing detachment/reattachment.
+5. **Security Hardening**: Recommends `ssh-copy-id` for key-based auth and reserved Static IPs.
 
-## 3. Persistent Sessions & Power
-To ensure the server doesn't die when you disconnect or the Mac sleeps:
-1.  **Prevent Sleep**:
-    -   **System Settings** > **Displays** > **Advanced** > "Prevent automatic sleeping on power adapter when the display is off".
-    -   **Terminal Command**: `sudo pmset -a disablesleep 1`
-2.  **Persistent Shell**: Use `tmux` or `screen` to keep long-running processes (like MLX servers) alive.
-    -   Start session: `tmux new -s server`
-    -   Detach: `Ctrl+B`, then `D`
-    -   Re-attach: `tmux attach -t server`
+## Placeholder Example
+```bash
+# 1. Start Persistent MLX Inference Server
+tmux new -s mlx_server
+python -m mlx_lm.server --model mlx-community/Qwen2.5-32B-Instruct-8bit --port 8080
 
-## 4. MLX Server Setup
-For high-performance inference:
-1.  **Install**: `pip install mlx-lm`
-2.  **Launch**: `python -m mlx_lm.server --model mlx-community/Qwen2.5-32B-Instruct-8bit --port 8080`
-3.  **Local Access**: Access from your Windows machine at `http://10.32.133.50:8080/v1`
+# 2. Access from Remote Node
+# curl http://10.32.133.50:8080/v1/models
+```
 
-## 5. Security & Maintenance
-- **Static IP**: Ensure your Mac has a reserved IP in the router/network settings (`10.32.133.50`).
-- **Keys**: For password-less login, use `ssh-copy-id nejath@10.32.133.50`.
-- **Updates**: Regularly run `softwareupdate -l` to check for security patches.
+## Relevant Context / Files
+- [jax-actions](file:///D:/drive/omission/.gemini/skills/jax-actions/skill.md) — For cross-node GPU/TPU coordination.
+- [src/remote/mlx_proxy.py](file:///D:/drive/omission/src/remote/mlx_proxy.py) — The Python client for the MLX server.

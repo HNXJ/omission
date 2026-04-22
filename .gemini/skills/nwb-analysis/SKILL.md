@@ -1,48 +1,49 @@
 ---
 name: nwb-analysis
-description: Enriched neurophysiology analysis suite for visual omission paradigms, including manifolds, variability, and connectivity.
-version: 2.0.0
+description: Unified data pipeline for NWB-based neurophysiology analysis, featuring manifold extraction, variability (MMFF), and hierarchical connectivity.
 ---
+# skill: nwb-analysis
 
-# SKILL: Enriched NWB Analysis Suite (nwb-actions)
+## When to Use
+Use this skill for the primary data processing pipeline of the Omission project. It is mandatory for:
+- Aligning spike trains and LFP signals to experimental events (P1, Omission onset).
+- Calculating Mean-Matched Fano Factor (MMFF) using the Churchland 2010 protocol.
+- Extracting 48-factor manifold matrices (12 intervals $\times$ 4 metrics) for population decoding.
+- Applying probe-local mapping rules (128-channel rule, V3a/V3d splitting).
+- Handling NWB lazy-loading context bugs using stable `h5py` access patterns.
 
-This skill provides a unified codebase for high-fidelity neuro-analysis of the Visual Omission Oddball paradigm.
+## What is Input
+- **NWB Files**: Raw or processed Neurodata Without Borders containers.
+- **Timing Codes**: Event markers (e.g., Code 101.0 for P1 onset).
+- **Processing Config**: Window sizes (100ms), step sizes (5ms), and smoothing kernels $(\sigma=50ms)$.
 
-## ⏱️ Task Timing & Alignment (1000Hz)
-Standard alignment is to the **onset of P1 (Code 101.0)**.
-- **Fixation (`fx`)**: 0 to 1000ms.
-- **Stimulus Window**: 531ms duration (e.g., p1: 1000-1531ms).
-- **Delay Window**: 500ms duration (e.g., d1: 1531-2031ms).
-- **Omission Windows**: 
-    - `p2`: 2031-2562ms (RXRR)
-    - `p3`: 3062-3593ms (RRXR)
-    - `p4`: 4093-4624ms (AAAX)
+## What is Output
+- **Time-Aligned Tensors**: 3D arrays (Trials $\times$ Neurons $\times$ Time) for firing rates and Fano Factors.
+- **Manifold Vectors**: Flattened feature matrices for PCA/UMAP dimensionality reduction.
+- **Categorization Labels**: Functional groups (O+, Stim+, Fixation-selective) assigned per unit.
 
-## 🔬 Core Analysis Modules
+## Algorithm / Methodology
+1. **Alignment Logic**: Hard-aligned to P1 onset (1000ms after fixation start).
+2. **Mean-Matched Fano Factor (MMFF)**: 
+   - Window ($W=100$ms), Step ($\Delta t=5$ms).
+   - Mean-matching performed across all conditions to decouple firing rate from variability.
+3. **Probe Partitioning**: 
+   - Uses `probe_id = peak_channel_id // 128`.
+   - Area **DP** maps to **V4**; **V3** splits 50/50 into **V3d** and **V3a**.
+4. **Stable Loading**: Uses `mmap_mode='r'` for large `.npy` exports and explicit `.close()` calls for NWB handles.
 
-### 1. Population Manifolds (48-Factor Matrix)
-Extracts a high-dimensional feature vector per neuron across 12 intervals and 4 metrics (Mean FR, Regularity, Mean Variability, Variability Volatility).
-- **Usage**: Dimensionality reduction (PCA/UMAP) to visualize population state trajectories.
+## Placeholder Example
+```python
+# 1. Align Data to Omission Window
+# Window p2 (RXRR): 2031-2562ms post-P1
+aligned_spikes = nwb_loader.get_aligned_window(event='p2', pre_ms=500, post_ms=1000)
 
-### 2. Functional Categorization
-Classifies neurons into mutually exclusive groups:
-- **Omit**: Selective peak during omission windows (>2 SD above baseline).
-- **Fix**: Selective activity during the fixation window (>50% drop during stimulus).
-- **Stim+ / Stim-**: Robust positive or negative stimulus responses.
+# 2. Compute Smoothed Fano Factor
+# Protocol: Sigma=2 Gaussian on final trace
+ff_trace = mmff.compute(aligned_spikes, window=100, step=5)
+smoothed_ff = gaussian_filter1d(ff_trace, sigma=2)
+```
 
-### 3. Refined Neural Variability (MMFF)
-Computes the Mean-Matched Fano Factor (Churchland 2010) with optimized smoothing to navigate the bias-variance tradeoff:
-- **Sliding Window ($W$)**: Use $W=100$ms (instead of 50ms) to increase the mean spike count per bin and reduce sampling error.
-- **Step Size ($\Delta t$)**: Use $\Delta t=5$ms (instead of 10ms) to increase sampling density and temporal resolution.
-- **Post-hoc Smoothing**: Apply a 1D Gaussian filter ($\sigma \approx 2-5$ units) to the *final* Fano factor trace. This preserves the raw statistical distributions required for Mean-Matching while providing a visually smooth result.
-- **Baselining**: Hard-aligned to 0 during the -500ms to 0ms fixation window.
-
-### 4. Directionality & Connectivity
-Formal testing of regional interactions (e.g., V1 vs. PFC):
-- **Lag Analysis**: Spike-spike cross-correlation to determine lead/lag timing.
-- **Spectral Coordination**: LFP phase-lag and Granger Causality to dissociate FF (Gamma) from FB (Beta) signals.
-
-## 🧬 Metadata Standards
-- **Probe Rule**: 128 channels per probe.
-- **Mapping**: DP -> V4; V3 -> V3d/V3a (50/50 split).
-- **Indexing**: Handles NWB Global to .npy Local index translation.
+## Relevant Context / Files
+- [lfp-core](file:///D:/drive/omission/.gemini/skills/lfp-core/skill.md) — For complementary LFP-based analysis.
+- [src/data/nwb_loader.py](file:///D:/drive/omission/src/data/nwb_loader.py) — The canonical loader for all NWB assets.
