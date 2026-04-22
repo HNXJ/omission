@@ -1,33 +1,53 @@
 ---
 name: analysis-neuro-omission-unit-classification
-description: "Omission analysis skill focusing on analysis neuro omission unit classification. Includes Top 10 S+/O+ indexing rules."
+description: Categorizes neurons into functional types (S+, O+, S-, O-) based on response profiles. Implements the Top 10 indexing rule for high-fidelity population analysis.
 ---
+# skill: analysis-neuro-omission-unit-classification
 
-# Functional Unit Classification
+## When to Use
+Use this skill to functionally segment the neural population. It is critical for:
+- Identifying "Error Neurons" (O+) in PFC/FEF.
+- Mapping "Stimulus Drivers" (S+) in early visual areas.
+- Generating Figure 7 (Spike-Field Coupling) by selecting the most representative units.
+- Testing hierarchical predictive coding (Feedforward S+ vs. Feedback O+).
 
-We categorize neurons into distinct types based on their response profiles during stimulus presentations and omissions. This mapping is critical for proving hierarchical predictive coding.
+## What is Input
+- **Spike Matrix**: `(n_trials, n_units, n_time_bins)`.
+- **Epoch Definitions**: 
+    - `fx`: Fixation (-500 to 0ms)
+    - `p1`: First Stimulus (0 to 531ms)
+    - `d1`: First Delay (531 to 1031ms)
+    - `p2`: Omission Window (1031 to 1562ms)
 
-## Categories
-1. **S+ (Stimulus Prime)**: High response to visual input (p1), minimal response during omissions. (Peak in V1-V4).
-2. **O+ (Omission Prime)**: Respond primarily when an expected stimulus is missing (p2). (Peak in FEF-PFC).
-3. **S- / O-**: Suppressed units during stimulus or omission respectively.
+## What is Output
+- **Unit Labels**: Dictionary mapping unit IDs to functional categories (S+, O+, etc.).
+- **Ranking Scores**: Z-scores or fold-change ratios for Stimulus and Omission responsiveness.
+- **Top 10 Indices**: The 10 most responsive units per area for both S+ and O+ types.
 
-## Ranking & Ground Truth (Top 10 Rule)
-To establish ground truth in Figure 7 (SFC), we identify the **Top 10** neurons per area based on:
-- **S+ Score**: Mean FR in `p1` (0-531ms) / Mean FR in `fx` (-500 to 0ms).
-- **O+ Score**: Mean FR in `p2` (1031-1562ms) / Mean FR in `d1` (531-1031ms).
+## Algorithm / Methodology
+1. **Response Calculation**: Computes mean firing rates for the four critical epochs (`fx`, `p1`, `d1`, `p2`).
+2. **S+ Indexing**: `Score_S = Mean(p1) / (Mean(fx) + epsilon)`. Units with max `Score_S` are S+.
+3. **O+ Indexing**: `Score_O = Mean(p2) / (Mean(d1) + epsilon)`. Units with max `Score_O` are O+.
+4. **Classification**: 
+    - S+ if `Score_S` > threshold and `Score_S > Score_O`.
+    - O+ if `Score_O` > threshold and `Score_O > Score_S`.
+5. **Top 10 Selection**: Sorts all units within a brain area by their respective scores and selects the top 10 for detailed analysis (e.g., SFC).
 
-## Implementation
+## Placeholder Example
 ```python
-fr_p1 = np.mean(spk[:, :, 1000:1531], axis=(0, 2))
-fr_fx = np.mean(spk[:, :, 500:1000], axis=(0, 2))
-s_plus_rank = fr_p1 / (fr_fx + 1e-5)
-top_10_units = np.argsort(s_plus_rank)[-10:]
+import numpy as np
+from src.analysis.classification import get_top_units
+
+# 1. Load spike data
+spk_matrix = load_session_spikes(session_id)
+
+# 2. Get Top 10 Omission units for PFC
+top_o_pfc = get_top_units(spk_matrix, area='PFC', type='O+', top_n=10)
+
+# 3. Verify selection
+print(f"Indices of Top 10 PFC Omission neurons: {top_o_pfc}")
 ```
 
-## Significance
-The distribution of these types confirms the hierarchical nature of active inference: Stimulus-driven activity flows forward (Gamma), while Omission-driven activity (Prediction Error) flows across the higher-order Beta network.
-
-References:
-1. Rao, R. P., & Ballard, D. H. (1999). Predictive coding in the visual cortex. Nature Neuroscience.
-2. Bastos, A. M., et al. (2012). Canonical microcircuits for predictive coding. Neuron.
+## Relevant Context / Files
+- [src/analysis/classification.py](file:///D:/drive/omission/src/analysis/classification.py) — Core logic for S+/O+ indexing.
+- [analysis-neuro-omission-functional-connectivity](file:///D:/drive/omission/.gemini/skills/analysis-neuro-omission-functional-connectivity/skill.md) — For mapping these units to SFC.

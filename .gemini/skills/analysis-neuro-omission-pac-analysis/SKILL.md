@@ -1,41 +1,50 @@
 ---
 name: analysis-neuro-omission-pac-analysis
-description: "Omission analysis skill focusing on analysis neuro omission pac analysis."
+description: Computes Phase-Amplitude Coupling (PAC) using the Modulation Index (MI). Quantifies how low-frequency phases (Theta) modulate high-frequency amplitudes (Gamma).
 ---
+# skill: analysis-neuro-omission-pac-analysis
 
-# Phase-Amplitude Coupling (PAC)
+## When to Use
+Use this skill to investigate cross-frequency coordination. It is the primary tool for:
+- Testing if the "temporal framework" of the omission response is organized by Theta oscillations.
+- Comparing Theta-Gamma coupling strength in PFC vs. V1.
+- Quantifying the coordination of fast neural updates within slow periodic cycles.
 
-Phase-Amplitude Coupling (PAC) describes how the phase of a low-frequency oscillation (e.g., Theta 4-8Hz) modulates the amplitude of a high-frequency oscillation (e.g., Gamma 40-100Hz). This is thought to be a mechanism for organizing information flow across different scales.
+## What is Input
+- **LFP Signal**: Raw or broadband LFP trace.
+- **Frequency Bands**: Low-frequency range (Phase, e.g., 4-12Hz) and High-frequency range (Amplitude, e.g., 30-100Hz).
+- **Trial Windows**: Specific epochs (e.g., Stimulus onset or Omission window).
 
-Methodology (Tort et al., 2010):
-We use the Modulation Index (MI) to quantify PAC. The process involves:
-1. Filtering the signal into Theta and Gamma bands.
-2. Extracting the phase of Theta (Hilbert transform) and the amplitude envelope of Gamma.
-3. Calculating the distribution of Gamma amplitude across Theta phase bins (0 to 360°).
-4. Quantifying the deviation from a uniform distribution using KL-divergence.
+## What is Output
+- **Modulation Index (MI)**: A single scalar value representing the strength of coupling.
+- **Comodulogram**: A 2D heatmap showing MI values across a range of phase and amplitude frequencies.
+- **Phase-Amplitude Distribution**: A polar or bar plot showing mean amplitude across phase bins.
 
-Application:
-During omission detection, Theta-Gamma coupling in the PFC increases significantly. The Theta phase may provide the temporal framework for the discrete updates of the internal generative model.
+## Algorithm / Methodology
+1. **Filtering**: Band-pass filters the signal for both the phase and amplitude components.
+2. **Phase/Amplitude Extraction**: Uses the Hilbert transform to extract the instantaneous phase of the slow signal and the amplitude envelope of the fast signal.
+3. **Binning**: Divides the phase cycle (0-360°) into equal bins (default=18).
+4. **Mean Amplitude Distribution**: Calculates the average high-frequency amplitude within each phase bin.
+5. **MI Calculation**: Uses the Tort method, which applies KL-divergence to measure the deviation of the amplitude distribution from a uniform distribution.
 
-Code Example:
+## Placeholder Example
 ```python
-import numpy as np
-def calculate_mi(phase, amplitude, n_bins=18):
-    bins = np.linspace(-np.pi, np.pi, n_bins+1)
-    mean_amp = []
-    for i in range(n_bins):
-        mask = (phase >= bins[i]) & (phase < bins[i+1])
-        if np.any(mask):
-            mean_amp.append(np.mean(amplitude[mask]))
-        else:
-            mean_amp.append(0)
-    p = np.array(mean_amp) / (np.sum(mean_amp) + 1e-12)
-    p = p + 1e-12
-    h = -np.sum(p * np.log(p))
-    mi = (np.log(n_bins) - h) / np.log(n_bins)
-    return mi
+from src.analysis.pac import calculate_modulation_index
+
+# 1. Prepare data
+lfp_trace = get_lfp_session(session_id)
+
+# 2. Compute PAC for Theta (4-8Hz) and Gamma (40-80Hz)
+mi_value = calculate_modulation_index(
+    lfp_trace, 
+    f_phase=(4, 8), 
+    f_amp=(40, 80),
+    n_bins=18
+)
+
+print(f"Modulation Index: {mi_value:.6f}")
 ```
 
-References:
-1. Tort, A. B. L., et al. (2010). Measuring phase-amplitude coupling between neuronal oscillations of different frequencies. Journal of Neurophysiology.
-2. Canolty, R. T., & Knight, R. T. (2010). The functional role of cross-frequency coupling. Trends in Cognitive Sciences.
+## Relevant Context / Files
+- [analysis-lfp-pipeline](file:///D:/drive/omission/.gemini/skills/analysis-lfp-pipeline/skill.md) — For band-passing and Hilbert logic.
+- [src/analysis/pac.py](file:///D:/drive/omission/src/analysis/pac.py) — Core implementation.

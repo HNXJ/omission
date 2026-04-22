@@ -1,55 +1,44 @@
 ---
 name: analysis-nwb-utils
-description: Utility and admin functions for NWB data management, session summary updates, timing validation, photodiode alignment, and data file organization.
+description: Low-level utility library for NWB manipulation. Provides helper functions for token estimation, remote model inference, and read-side validation.
 ---
-
 # skill: analysis-nwb-utils
 
-## session summary & metadata
-| Function | File | Purpose |
-|---|---|---|
-| `get_session_id(filename)` | `update_data_summary.py` | Extracts session ID (e.g. '230629') from any filename pattern |
-| `update_summary()` | `update_data_summary.py` | Rebuilds session-level summary CSV from all available .npy arrays |
-| `update_summary_table()` | `update_summary.py` | Updates the master markdown/CSV summary table in `data/` |
-| `organize_data_files(root)` | `organize_d_drive.py` | Moves/renames raw data files on D-drive to standardized directory layout |
+## When to Use
+Use this skill for infrastructural tasks supporting NWB analysis. It is designed for:
+- Estimating token counts for LLM-based metadata parsing (e.g., Qwen-72B integration).
+- Running read-only validation (NWBInspector) to check for best-practice compliance.
+- Extracting specific trial-aligned LFP windows for rapid debugging.
+- Managing remote model bridge connections for secondary analysis agents.
 
-## timing validation
-| Function | File | Purpose |
-|---|---|---|
-| `plot_verification()` | `verify_timing.py` | Plots Code-101 alignment + V1 latency check for a single session |
-| `plot_multi_v1(sessions)` | `verify_timing_multi.py` | Multi-session timing validation; V1 peak should appear 40–60ms post-photodiode |
+## What is Input
+- **Raw Text**: Metadata snippets for token estimation.
+- **NWB Objects**: Live `pynwb.NWBFile` instances.
+- **Reference Times**: Event anchors (e.g., Code 101.0) for time-series extraction.
 
-## photodiode alignment
-| Function | File | Purpose |
-|---|---|---|
-| `extract_photodiode()` | `photodiode_alignment.py` | Extracts photodiode channel from raw .nwb; detects rising edges as stimulus onsets |
-| `plot()` | `photodiode_alignment.py` | Visualizes photodiode trace + detected onsets vs. behavorial codes |
+## What is Output
+- **Token Count**: Integer estimate of prompt size.
+- **Validation Report**: Markdown-formatted log of NWB schema/metadata errors.
+- **Data Windows**: Clipped NumPy arrays centered on specific behavioral events.
 
-## npy export orchestration
-| Function | File | Purpose |
-|---|---|---|
-| `export_session_granular(nwb_path, session_id)` | `master_npy_export.py` | Full chunked export: NWB → behavioral/LFP/spike .npy arrays per condition |
+## Algorithm / Methodology
+1. **Token Estimation**: Uses a `~4 chars/token` heuristic to budget prompt sizes for sub-agent calls.
+2. **Remote Bridge**: Forwards structured prompts to the Office M3-Max server via a specialized API.
+3. **NWB Validation**: Wraps `pynwb-validate` and `NWBInspector` to audit files without modification.
+4. **Time Extraction**: Implements `get_data_from_ref` to slice LFP based on relative offsets (pre/post ms).
 
-## validation rules
-- V1 firing rate peak must occur 40–60ms after photodiode onset — use `plot_verification` per session.
-- Photodiode stays flat during omissions (luminance-matched background) — any change is a bug.
-- After `export_session_granular`, verify array shapes: behavioral `(n_trials, 4, 6000)`, LFP `(n_trials, 128, 6000)`.
-- `update_summary` must be run after each new export batch.
+## Placeholder Example
+```python
+from src.utils.nwb_utils import estimate_tokens, get_data_from_ref
 
-## internal tooling (low priority)
-| Function | File | Purpose |
-|---|---|---|
-| `estimate_tokens(text)` | `qwen_subagent.py` | ~4 chars/token estimator for prompt budgeting |
-| `call_qwen(prompt, system_prompt)` | `qwen_subagent.py` | Sends inference request to Office M3-Max via remote bridge |
-| `manage_model(action, model_name)` | `qwen_subagent.py` | Load/unload model on remote server via API |
+# 1. Budget a prompt
+tokens = estimate_tokens("Session metadata summary for ses_001...")
+print(f"Estimated tokens: {tokens}")
 
-## read-only nwb validation
-- Run `pynwb-validate` on every session file before large export or batch analysis runs.
-- Run NWBInspector for best-practice checks in addition to schema validation.
-- Treat validation as read-only QC; never rewrite the NWB file to "fix" issues inside this repo.
-- Store validation reports outside the NWB files, alongside other derived outputs.
+# 2. Extract a 500ms window around a specific event
+lfp_window = get_data_from_ref(nwb_obj, ref_time=120.5, pre_ms=100, post_ms=400)
+```
 
-## lfp extraction testing
-| Function | File | Purpose |
-|---|---|---|
-| `get_data_from_ref(nwb, ref_time, pre_ms, post_ms)` | `test_lfp_extraction.py` | Extracts a trial-aligned LFP window given a reference event time; used for debugging alignment |
+## Relevant Context / Files
+- [analysis-nwb-read-guardrails](file:///D:/drive/omission/.gemini/skills/analysis-nwb-read-guardrails/skill.md) — For safety rules during extraction.
+- [src/utils/qwen_subagent.py](file:///D:/drive/omission/src/utils/qwen_subagent.py) — Implementation of the remote bridge.

@@ -1,46 +1,52 @@
 ---
 name: analysis-nwb-read-guardrails
-description: Mandatory read-side guardrails for all NWB-based analysis in the omission repo. Protects frozen source data while improving speed through lazy reads, one-open-per-session patterns, and external metadata caches.
+description: Mandatory performance and safety protocols for NWB access. Enforces lazy-loading, context-preservation, and memory-efficient data extraction.
 ---
-
 # skill: analysis-nwb-read-guardrails
 
-## scope
-Applies to any task that:
-- opens `.nwb` files
-- reads trials/electrodes/units tables
-- slices LFP or behavioral streams
-- builds trial-aligned arrays
-- computes per-session metadata maps
+## When to Use
+Use this skill whenever opening or processing NWB files. It is mandatory for:
+- Preventing memory overflows when reading high-density LFP (128+ channels).
+- Avoiding "Closed File" errors by maintaining proper `NWBHDF5IO` context.
+- Optimizing trial-loop execution by pre-loading static metadata (e.g., channel maps).
+- Ensuring source data integrity by strictly enforcing read-only access.
 
-## hard constraints
-- The NWB files are frozen.
-- Never rewrite, export, rechunk, recompress, or modify source NWB files.
-- Preserve compatibility with existing data fields exactly as stored.
-- Prefer read-side optimization only: lazy slicing, one-open-per-session, and external derived caches.
-- Any optimization must leave raw NWB content untouched.
+## What is Input
+- **NWB Path**: File system path to the target session.
+- **Access Pattern**: Definition of the requested data slice (e.g., units vs. LFP).
 
-## preferred pattern
-- Open each NWB file once per session-level task and reuse the opened content within that task.
-- Treat `TimeSeries.data` as lazy/on-disk; slice only the time/channel region needed.
-- Use `to_dataframe()` only when downstream logic truly needs pandas-style joins, filtering, or grouping.
-- In hot paths, prefer direct column access or precomputed sidecar metadata over repeated full-table conversion.
-- Precompute once per session:
-  - trial index / p1 onsets
-  - area -> channel indices
-  - unit -> probe map
-  - unit -> area map
-- Write any derived cache outside the NWB file, with provenance metadata.
+## What is Output
+- **IO Context**: A managed `NWBHDF5IO` object or a data-safe copy.
+- **Lazy Objects**: Pointers to on-disk datasets (not materialized arrays).
+- **Static Caches**: Precomputed dictionaries for channel-to-area mappings.
 
-## anti-patterns
-- Do not call `np.asarray(series.data)` on full LFP just to inspect shape.
-- Do not reopen the same NWB file inside area loops, condition loops, plotting loops, or helper functions called from those loops.
-- Do not call `to_dataframe()` repeatedly for the same table inside inner loops.
-- Do not sanitize full-session datasets with `np.nan_to_num` before slicing; sanitize only the in-memory slice or epoch being analyzed.
-- Do not use export/rewrite workflows as a performance shortcut.
+## Algorithm / Methodology
+1. **Context Management**: Always use `with NWBHDF5IO(path, 'r') as io:` to ensure files are closed properly, OR pass the `nwb` object explicitly through the pipeline.
+2. **Lazy Slicing**: Never call `series.data[:]`. Always use windowed slicing `series.data[start:end, channels]` to keep memory usage proportional to the analysis window.
+3. **Pre-Indexing**: Extracts the `electrodes` and `units` tables once at the start of a session and caches them as DataFrames for fast lookup.
+4. **Sanitization**: Applies `np.nan_to_num` only to the *extracted* slice, never the full dataset.
+5. **Garbage Collection**: Explicitly calls `gc.collect()` after processing each session to free up HDF5 buffers.
 
-## done when
-- One NWB open per session task.
-- No repeated trial-table parse in inner loops.
-- No full-session LFP materialization unless the task explicitly requires the full session matrix.
-- Any new derived cache is written outside the NWB file with clear provenance metadata.
+## Placeholder Example
+```python
+from pynwb import NWBHDF5IO
+import gc
+
+def process_session(path):
+    with NWBHDF5IO(path, 'r', load_namespaces=True) as io:
+        nwb = io.read()
+        # 1. Pre-load unit metadata
+        units_df = nwb.units.to_dataframe()
+        
+        # 2. Slice LFP lazily
+        lfp_slice = nwb.acquisition['LFP'].data[0:1000, 0:10]
+        
+        # 3. Process...
+        print(f"Read {lfp_slice.shape} samples safely.")
+    
+    gc.collect() # Mandatory cleanup
+```
+
+## Relevant Context / Files
+- [analysis-nwb-data-availability-report](file:///D:/drive/omission/.gemini/skills/analysis-nwb-data-availability-report/skill.md) — For auditing files before reading.
+- [src/utils/nwb_io.py](file:///D:/drive/omission/src/utils/nwb_io.py) — Reference implementation of these guardrails.

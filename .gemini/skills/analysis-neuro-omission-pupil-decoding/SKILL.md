@@ -1,33 +1,46 @@
 ---
 name: analysis-neuro-omission-pupil-decoding
-description: "Omission analysis skill focusing on analysis neuro omission pupil decoding."
+description: Decodes stimulus identity and omission surprise from pupillometry signals. Maps pupil diameter shifts to arousal and cognitive load.
 ---
+# skill: analysis-neuro-omission-pupil-decoding
 
-# Pupil Decoding Methodology
+## When to Use
+Use this skill to analyze behavioral markers of surprise. It is particularly useful for:
+- Decoding Stimulus A vs. Stimulus B from the slow pupillary response.
+- Measuring the magnitude of "surprise" dilation during omission trials.
+- Correlating pupil-based arousal with neural metrics (e.g., Gamma power).
 
-Pupil diameter is a sensitive index of arousal, cognitive load, and surprise. We extract identity (A vs B) and omission (X) information from pupillometry signals.
+## What is Input
+- **Pupil Diameter**: Raw time-series from the eye-tracker.
+- **Blink Masks**: Timestamps of blinks for interpolation/removal.
+- **Trial Metadata**: Labels for stimulus identity and trial type (Standard vs. Omission).
 
-Temporal Dynamics:
-The pupil response is slow compared to neural signals, with peak dilation occurring 400-800ms after the event. In our task, stimuli are presented at 2Hz (every 500ms). This requires careful deconvolution or window-based decoding to separate the effects of sequential presentations.
+## What is Output
+- **Z-Scored Pupil Traces**: Baseline-corrected pupil diameter.
+- **Decoding Accuracy**: SVM-based classification performance over time.
+- **Surprise Metric**: Peak dilation amplitude during the omission window.
 
-Methodology:
-1. Signal Conditioning: Remove blinks, Z-score within trial, and baseline-correct to the pre-P1 window.
-2. Feature Extraction: Mean diameter, peak velocity of dilation, and area under the curve.
-3. Decoding: Use SVM to classify A vs B vs R based on the temporal profile of the pupil.
+## Algorithm / Methodology
+1. **Cleaning**: Interpolates across blinks and applies a low-pass filter (e.g., 10Hz) to remove high-frequency noise.
+2. **Normalization**: Z-scores the diameter within each trial and subtracts the mean diameter of the pre-stimulus baseline.
+3. **Feature Selection**: Extracts peak dilation, velocity of dilation, and area under the curve (AUC).
+4. **Classification**: Trains a Support Vector Machine (SVM) on temporal windows to classify identity (A vs. B) or state (Standard vs. Omission).
+5. **Cross-Validation**: Uses 5-fold cross-validation to ensure decoding robustness.
 
-Findings:
-We found that the pupil dilates significantly more during omissions (surprise) than during standard presentations. Interestingly, the pupil also carries stimulus identity information, even when the subject is not required to perform any action other than fixation.
-
-Technical Snippet:
+## Placeholder Example
 ```python
-import numpy as np
-def process_pupil(pupil_data):
-    # Z-score and baseline subtraction
-    z_pupil = (pupil_data - np.mean(pupil_data)) / np.std(pupil_data)
-    baseline = np.mean(z_pupil[0:100])
-    return z_pupil - baseline
+from src.analysis.pupillometry import decode_pupil_identity
+
+# 1. Load cleaned pupil traces
+pupil_data, labels = get_pupil_dataset(session_id)
+
+# 2. Run decoder
+accuracy_trace = decode_pupil_identity(pupil_data, labels, cv=5)
+
+# 3. Check for peak decoding
+print(f"Max identity decoding accuracy: {max(accuracy_trace):.2%}")
 ```
 
-References:
-1. Joshi, S., et al. (2016). Relationships between Pupil Diameter and Neuronal Activity in the Locus Coeruleus, Colliculi, and Cingulate Cortex. Neuron.
-2. Preuschoff, K., et al. (2011). Pupil dilation signals surprise: Evidence for noradrenergic modulation of decision making. Frontiers in Neuroscience.
+## Relevant Context / Files
+- [analysis-neuro-omission-oculomotor-suite](file:///D:/drive/omission/.gemini/skills/analysis-neuro-omission-oculomotor-suite/skill.md) — For raw eye data processing.
+- [src/analysis/pupil_decoding.py](file:///D:/drive/omission/src/analysis/pupil_decoding.py) — Core implementation.

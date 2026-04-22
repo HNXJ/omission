@@ -1,38 +1,47 @@
 ---
 name: coding-neuro-omission-bhv-parser
-description: "Omission analysis skill focusing on coding neuro omission bhv parser."
+description: Specialized engine for parsing MonkeyLogic 2.2 (.bhv2.mat) files to extract task event timing and stimulus metadata.
 ---
+# skill: coding-neuro-omission-bhv-parser
 
-# Behavioral Data (.mat) Parser
+## When to Use
+Use this skill when implementing the initial data ingestion step of the NWB pipeline. It is essential for:
+- Mapping `BehavioralCodes` (e.g., Code 100 for Trial Start) to absolute timestamps.
+- Identifying stimulus identity (A, B, or R) from the `TaskObject` attributes.
+- Filtering out "Trial Errors" (aborted trials, fixation breaks).
+- Extracting the "Omission" flag for Phase 4/5 comparative analysis.
 
-The behavioral parser resolves stimulus identity and timing from MonkeyLogic 2.2 output files.
+## What is Input
+- **BHV2.mat Files**: Exported MATLAB structures containing `bhvUni` or `ML2` objects.
+- **Event Code Schema**: A mapping of integers (e.g., 10, 11, 100) to task states.
 
-Core Tasks:
-1. Filtering: Extract only Correct trials (`TrialError == 0`).
-2. Timing: Map `BehavioralCodes` (Numbers and Times) to task events (Fixation, P1, P2, etc.).
-3. Identity: Parse `TaskObject.Attribute` to identify if a stimulus was A, B, or R (Random).
-4. Eye Traces: Calibrate raw analog signals into Degrees of Visual Angle (DVA).
+## What is Output
+- **Trial Dictionaries**: Cleaned Python objects containing `(trial_id, start_time, end_time, stimulus_id, is_omission)`.
+- **Event Timecourse**: A precise mapping of every task event to the master neural clock.
 
-Mapping Logic:
-Stimuli are identified by their file paths (e.g., 'A.avi' = 45°). Omissions are identified by the absence of a stimulus code (e.g., Code 103 missing) and the presence of an Omission metadata tag.
+## Algorithm / Methodology
+1. **MATLAB Deserialization**: Uses `scipy.io.loadmat(squeeze_me=True)` to convert the MATLAB structure into a navigable Python dictionary.
+2. **Trial Error Filtering**: Only processes trials where `TrialError == 0` (Success).
+3. **Stimulus Mapping**: Parses the string path in `TaskObject.Attribute` (e.g., `images/stimA.png`) to assign a categorical Stimulus ID.
+4. **Omission Detection**: Specifically looks for trials where the stimulus-on code is present but the analog stimulus-vblank is absent, or where a dedicated `Omission` tag is set in the trial header.
+5. **Timestamp Alignment**: Offsets all relative trial times by the `AbsoluteTrialStartTime` to facilitate NWB synchronization.
 
-Python Implementation:
+## Placeholder Example
 ```python
 import scipy.io as sio
 
-def parse_bhv(file_path):
-    mat = sio.loadmat(file_path, squeeze_me=True)
-    trials = mat['bhvUni']
-    correct_trials = [t for t in trials if t['TrialError'] == 0]
-    
-    results = []
-    for t in correct_trials:
-        eye = t['AnalogData']['Eye'] # (N, 2)
-        codes = t['BehavioralCodes']['CodeNumbers']
-        times = t['BehavioralCodes']['CodeTimes']
-        results.append({'eye': eye, 'codes': codes, 'times': times})
-    return results
+# 1. Load the BHV2 structure
+mat = sio.loadmat('session_230629.bhv2.mat', squeeze_me=True)
+trials = mat['ML2']['TrialData']
+
+# 2. Extract timing for correct trials
+for t in trials:
+    if t['TrialError'] == 0:
+        stim_id = t['TaskObject']['Attribute'][0]
+        onset_time = t['BehavioralCodes']['CodeTimes'][t['BehavioralCodes']['CodeNumbers'] == 100]
+        print(f"Trial {t['Trial']}: Stim {stim_id} at {onset_time}ms")
 ```
 
-References:
-1. Hwang, J., et al. (2019). MonkeyLogic: A Real-Time Behavioral Control and Data Acquisition System. Journal of Neuroscience Methods.
+## Relevant Context / Files
+- [coding-neuro-omission-behavioral-utils](file:///D:/drive/omission/.gemini/skills/coding-neuro-omission-behavioral-utils/skill.md) — For DVA and Pupil conversion.
+- [src/extract/bhv_parser.py](file:///D:/drive/omission/src/extract/bhv_parser.py) — The core implementation of this logic.
