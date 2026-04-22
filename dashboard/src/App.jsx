@@ -103,7 +103,6 @@ const App = () => {
                   src={`${selectedItem.baseUrl}/${file}`} 
                   className="figure-iframe"
                   title={file}
-                  scrolling="no"
                 />
               </div>
             </div>
