@@ -10,3 +10,9 @@ Professional React/Vite frontend for the Omission project.
 - **Functionality**:
   - Visualizes figures from `outputs/oglo-8figs`.
   - Displays progress reports.
+
+## Documentation Mandate
+All components and modules must explicitly define:
+- **What is Input**: Properties, data sources, and state required.
+- **What is Output**: Rendered UI, triggered events, and exported data.
+

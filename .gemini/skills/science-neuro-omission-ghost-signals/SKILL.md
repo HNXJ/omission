@@ -1,32 +1,48 @@
 ---
 name: science-neuro-omission-ghost-signals
-description: "Omission analysis skill focusing on science neuro omission ghost signals."
+description: Analysis framework for quantifying "Neural Ghosts" — the persistence of stimulus-specific representations during physical absence.
 ---
+# skill: science-neuro-omission-ghost-signals
 
-# Neural Ghost: Contextual Persistence
+## When to Use
+Use this skill when analyzing the content of neural activity during omission windows. It is mandatory for:
+- Detecting stimulus-specific persistence (Identity A vs. B) during a gray-screen omission.
+- Quantifying the "Blackboard Effect" where V1 represents top-down priors.
+- Correlating omission-window activity trajectories with stimulus-evoked trajectories.
+- Dissociating passive decay from active top-down maintenance.
 
-The 'Neural Ghost' refers to the contextual persistence of neuronal activity during the physical absence of a stimulus. In our sequential task, the screen is identical (gray) during delays and omissions. However, the brain maintains a representation of the expected stimulus (e.g., Identity A or B). This top-down prior generates activity in V1/PFC even when input is null.
+## What is Input
+- **Identity-Conditioned PSTHs**: Per-unit firing rates for expected-A vs. expected-B omissions.
+- **Stimulus Templates**: The "clean" neural response to actual stimulus presentations.
+- **Population Vectors**: Multi-unit activity states across the 11-area hierarchy.
 
-Mechanism:
-Top-down feedback from high-order areas (PFC/FEF) targets the deep layers of lower visual areas (V1/V2). During an omission, these priors fail to be 'canceled' by bottom-up sensory input, resulting in a residual or 'ghost' signal. This activity is not merely noise; it carries information about the identity of the expected but missing stimulus.
+## What is Output
+- **Ghost Scores**: Correlation coefficients between omission activity and stimulus-evoked activity.
+- **Trajectory Maps**: PCA/UMAP embeddings showing how omission states overlap with stimulus states.
+- **Persistence Latencies**: Duration for which the "Ghost" signal remains significant post-omission.
 
-Scientific Context:
-Studies have shown that V1 can represent the identity of omitted stimuli, suggesting that primary sensory cortex serves as a 'blackboard' for high-level expectations. In our dataset, we observe that the population trajectory in PCA space for an omission (X) often mimics the initial phase of the expected stimulus trajectory (A or B) before diverging into a surprise state.
+## Algorithm / Methodology
+1. **PSTH Matching**: Calculate the Pearson correlation between the omission window and the corresponding stimulus window.
+2. **Identity Decoding**: Train a classifier (e.g., SVM) on stimulus identity and test it on omission identity.
+3. **Blackboard Hypothesis**: High-order feedback (PFC/FEF) targets V1 deep layers to "paint" the expectation.
+4. **Surprise Divergence**: Identify the timepoint where the "Ghost" (persistence) transitions into "Surprise" (prediction error).
 
-Technical Implementation:
+## Placeholder Example
 ```python
-# Analyzing persistence in V1 units during omission windows
 import numpy as np
-def detect_ghost_signal(psth_omit, psth_stim, window=(0, 500)):
-    # Correlation between omission PSTH and stimulus PSTH
-    corr = np.corrcoef(psth_omit[window[0]:window[1]], 
-                       psth_stim[window[0]:window[1]])[0, 1]
-    return corr
 
-# High correlation indicates strong contextual persistence (The Ghost)
+def calculate_ghost_correlation(omit_activity, stim_template):
+    """
+    Computes the 'Neural Ghost' score.
+    Higher values imply stronger contextual persistence.
+    """
+    # Pearson correlation between expected-A omission and actual-A stimulus
+    return np.corrcoef(omit_activity, stim_template)[0, 1]
+
+# Example: Ghost score for a V1 deep-layer unit
+score = calculate_ghost_correlation(v1_unit_omit_A, v1_unit_stim_A)
 ```
 
-References:
-1. Muckli, L., et al. (2015). Contextual Feedback to Superficial Layers of V1. Current Biology.
-2. Kok, P., et al. (2012). Less Is More: Expectation Sharpens Representations in the Visual Cortex. Neuron.
-3. Ekman, M., et al. (2017). Time-compressed preplay of anticipated events in human primary visual cortex. Nature Communications.
+## Relevant Context / Files
+- [omission-factors](file:///D:/drive/omission/.gemini/skills/omission-factors/skill.md) — For the feature vectors used in ghost scoring.
+- [src/analysis/contextual_persistence.py](file:///D:/drive/omission/src/analysis/contextual_persistence.py) — The canonical implementation.

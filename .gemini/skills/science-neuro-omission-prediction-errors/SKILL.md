@@ -1,33 +1,47 @@
 ---
 name: science-neuro-omission-prediction-errors
-description: "Omission analysis skill focusing on science neuro omission prediction errors."
+description: Theoretical and analytical framework for quantifying "Surprise" (prediction error) signals during sequence violations.
 ---
+# skill: science-neuro-omission-prediction-errors
 
-# PFC as a Surprise Detection Hub
+## When to Use
+Use this skill when identifying and quantifying neural transients triggered by unexpected events. It is mandatory for:
+- Calculating the magnitude of "Omission Transients" relative to standard stimulus responses.
+- Testing the "Deviance-Scaling" hypothesis (f035) — proportionality to statistical rarity.
+- Identifying the onset and peak timing of the surprise signal across areas.
+- Dissociating "Stimulus-Off" transients from "Prediction-Error" transients.
 
-The Prefrontal Cortex (PFC) and Frontal Eye Fields (FEF) serve as primary hubs for the detection of prediction errors. In our sequential task, a prediction error (surprise) occurs when the expected stimulus is omitted.
+## What is Input
+- **Trial-Averaged PSTHs**: Conditioned on Standard (AXAA) vs. Omission (AXAX).
+- **Surprisal Values**: Bit-values assigned to each trial type based on block statistics.
+- **Unit Indices**: Functional labels (S+/O+) to isolate units that specifically track errors.
 
-The Oddball Effect:
-The 'Oddball' effect refers to the enhanced neural response to rare or unexpected stimuli. In our design, P4 in RRRR is a standard event, while P4 in AAAX is an omission (surprise). We contrast the magnitude of the surprise transient across different positions in the sequence (P2 vs P3 vs P4).
+## What is Output
+- **Surprise Magnitudes**: Normalized differences in firing rates (Omission - Standard).
+- **Deviance-Scaling Slopes**: Linear fit of neural response magnitude vs. information-theoretic surprisal.
+- **Detection Hubs**: Areas/layers showing the earliest or most robust error signals (typically PFC/FEF).
 
-Observations:
-1. Magnitude: Omission transients in PFC are often 2-3x larger than the baseline firing rate.
-2. Timing: The response onset is extremely rapid (~20ms), suggesting an anticipatory or very fast generative process.
-3. Scaling: The surprise signal scales with the strength of the expectation. A violation of a long sequence (P4) often triggers a stronger response than an early violation (P2).
+## Algorithm / Methodology
+1. **Transient Baseline**: Subtract the baseline firing rate (gray-screen period) from the post-omission transient.
+2. **Standard Contrast**: Compare the omission response to the response at the same sequence position in a standard trial.
+3. **Scaling Analysis**: Group trials by surprise level (10% omission vs. 30% omission) and test for monotonic scaling.
+4. **Latency Mapping**: Identify the earliest area to cross the significance threshold ($Z > 3$) for the omission effect.
 
-Active Inference Interpretation:
-The PFC response is a physical manifestation of the update to the internal generative model. It represents the divergence between the predicted state and the observed state (Null).
-
-Technical Analysis:
+## Placeholder Example
 ```python
 import numpy as np
-def quantify_surprise_transient(psth_omit, psth_standard):
-    # Difference in peak firing rate within 0-200ms
-    peak_omit = np.max(psth_omit[0:200])
-    peak_std = np.max(psth_standard[0:200])
-    return (peak_omit - peak_std) / (peak_std + 1.0)
+
+def calculate_surprise_index(omit_rate, std_rate):
+    """
+    Computes the normalized surprise index.
+    Index > 0 implies an enhancement (Prediction Error).
+    """
+    return (omit_rate - std_rate) / (omit_rate + std_rate + 1e-6)
+
+# Example: Surprise index for a PFC unit at P4 position
+idx = calculate_surprise_index(rate_p4_omit, rate_p4_std)
 ```
 
-References:
-1. Garrido, M. I., et al. (2009). The mismatch negativity: A review of underlying mechanisms. Clinical Neurophysiology.
-2. Stefanics, G., et al. (2014). Visual mismatch negativity: A predictive coding view. Frontiers in Human Neuroscience.
+## Relevant Context / Files
+- [active-inference](file:///D:/drive/omission/.gemini/skills/science-neuro-omission-active-inference/skill.md) — For the theoretical grounding of these errors.
+- [src/math/surprise_scaling.py](file:///D:/drive/omission/src/math/surprise_scaling.py) — The regression engine for scaling tests.

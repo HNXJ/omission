@@ -1,36 +1,54 @@
 ---
 name: science-neuro-omission-spectral-fingerprints
-description: "Omission analysis skill focusing on science neuro omission spectral fingerprints."
+description: Spectral analysis framework for dissociating feedforward (Gamma) and feedback (Beta/Alpha) channels during omissions.
 ---
+# skill: science-neuro-omission-spectral-fingerprints
 
-# Spectral Fingerprints of Omission
+## When to Use
+Use this skill when analyzing LFP oscillations or performing time-frequency decompositions. It is mandatory for:
+- Dissociating feedforward sensory input (Gamma $>40$Hz) from top-down predictions (Beta $15$-$30$Hz).
+- Detecting "Gamma Quenching" during omission windows.
+- Quantifying the "Surprise Beta" transient in PFC/FEF.
+- Implementing cross-frequency coupling (CFC) analysis (e.g., Theta-Gamma).
+- Mapping spectral power onto laminar CSD sinks (f042-f043).
 
-The brain uses distinct frequency bands to communicate bottom-up and top-down information. According to the communication-through-coherence (CTC) hypothesis and predictive coding frameworks (Engel et al., 2010, DOI: 10.1016/j.conb.2010.03.003), Gamma (>40Hz) is associated with feedforward sensory input, while Beta (15-30Hz) and Alpha (8-12Hz) are associated with feedback and internal priors.
+## What is Input
+- **Raw LFP**: Condition-aligned voltage traces (typically 1kHz sampling).
+- **Time-Frequency Maps**: Spectrograms or Scalograms (Morlet wavelets).
+- **Laminar Depth**: Channel indices mapped to Granular vs. Infragranular layers.
 
-Omission Signatures:
-During a standard stimulus (A or B), we observe robust Gamma oscillations in V1 and V4. However, during an omission (X), the Gamma power is significantly reduced or absent (as there is no bottom-up input). Instead, we see an increase in Alpha/Beta power in higher areas (PFC/FEF) followed by a delayed Beta increase in V1.
+## What is Output
+- **Power Spectra**: Average power per frequency band (Alpha, Beta, Gamma).
+- **Spectrogram Contrasts**: Omission - Standard power differences in frequency-time space.
+- **Directional Metrics**: Granger Causality or Phase-Slope Index in specific bands.
 
-Key Observations:
-1. Gamma Quenching: Immediate loss of high-frequency power in sensory areas.
-2. Surprise Beta: A transient increase in Beta power (20-30Hz) in PFC, signaling the update of the internal model.
-3. Theta-Gamma Coupling: During the omission window, the phase of Theta (4-8Hz) often modulates the amplitude of low-Gamma, particularly in frontal regions.
+## Algorithm / Methodology
+1. **Wavelet Transformation**: Compute the time-frequency representation using a bank of Morlet wavelets (typically 2-100Hz).
+2. **Baseline Normalization**: Use $dB$ change or $Z$-score relative to the pre-stimulus period.
+3. **Band Extraction**:
+   - **Gamma (40-80Hz)**: Tracks bottom-up sensory drive; should vanish during omissions.
+   - **Beta (15-30Hz)**: Tracks top-down priors; should surge in PFC during surprise.
+   - **Alpha (8-12Hz)**: Reflects inhibition or gain modulation.
+4. **Coherence Analysis**: Test for inter-areal phase synchronization in the Beta band during the omission window.
 
-Technical Analysis:
+## Placeholder Example
 ```python
-from scipy.signal import spectrogram
 import numpy as np
-def analyze_spectral_power(lfp, fs=1000):
+from scipy.signal import spectrogram
+
+def extract_band_power(lfp, fs=1000):
+    """
+    Computes spectral power in Beta and Gamma bands.
+    """
     f, t, Sxx = spectrogram(lfp, fs)
-    gamma_mask = (f >= 40) & (f <= 80)
-    beta_mask = (f >= 15) & (f <= 30)
-    gamma_power = np.mean(Sxx[gamma_mask, :], axis=0)
-    beta_power = np.mean(Sxx[beta_mask, :], axis=0)
-    return gamma_power, beta_power
+    gamma = np.mean(Sxx[(f >= 40) & (f <= 80), :], axis=0)
+    beta = np.mean(Sxx[(f >= 15) & (f <= 30), :], axis=0)
+    return beta, gamma
+
+# Example: Detecting Gamma quenching in V1
+beta_pow, gamma_pow = extract_band_power(v1_lfp_omit)
 ```
 
-Scientific Context:
-The dissociation of frequency bands allows the brain to multiplex different types of information. Feedback (Beta) can modulate the gain of future feedforward signals (Gamma), a mechanism for attention and expectation.
-
-References:
-1. Engel, A. K., & Fries, P. (2010). Beta-band oscillations—signalling the status quo? Current Opinion in Neurobiology.
-2. Bastos, A. M., et al. (2015). Visual areas exert feedforward and feedback influences through distinct frequency channels. Neuron.
+## Relevant Context / Files
+- [predictive-routing](file:///D:/drive/omission/.gemini/skills/predictive-routing/skill.md) — For the JAX-vectorized spectral engine details.
+- [src/spectral/wavelet_transform.py](file:///D:/drive/omission/src/spectral/wavelet_transform.py) — The canonical decomposition script.

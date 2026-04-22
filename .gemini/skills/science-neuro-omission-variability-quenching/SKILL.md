@@ -1,34 +1,52 @@
 ---
 name: science-neuro-omission-variability-quenching
-description: "Omission analysis skill focusing on science neuro omission variability quenching."
+description: Analytical framework for quantifying trial-to-trial variability reduction (Quenching) using Mean-Matched Fano Factor (MMFF).
 ---
+# skill: science-neuro-omission-variability-quenching
 
-# Variability Quenching and Fano Factor (MMFF)
+## When to Use
+Use this skill when assessing neural state stability or precision. It is mandatory for:
+- Calculating the Fano Factor ($FF = \sigma^2 / \mu$) across trials.
+- Performing "Mean-Matching" to decouple variability changes from firing rate changes.
+- Testing the "Precision-Update" hypothesis (omission triggers stronger quenching for the next stimulus).
+- Comparing quenching magnitudes across layers and areas.
 
-Neural variability quenching refers to the reduction in across-trial variance of neuronal firing following the onset of a stimulus or a cognitive event. This phenomenon is often quantified using the Fano Factor (FF = Variance / Mean). As described by Churchland et al. (2010, DOI: 10.1038/nn.2501), the onset of a stimulus 'tightens' the neural state stability, reducing stochastic noise.
+## What is Input
+- **Spike Counts**: Number of spikes per trial in a sliding window (e.g., 50ms).
+- **Trial Metadata**: Condition labels to group trials for variance calculation.
+- **Unit Population**: A large set of units to allow for robust mean-matching subsampling.
 
-Mean-Matched Fano Factor (MMFF):
-Since FF is sensitive to changes in the mean firing rate, we use a Mean-Matching procedure. We calculate the distribution of means across all units and time points and subsample the units to ensure a constant mean distribution over time. This allows us to isolate the change in variability independent of firing rate changes.
+## What is Output
+- **MMFF Curves**: Time-resolved Fano Factor after controlling for mean firing rates.
+- **Quenching Onset**: The time at which variability significantly drops below pre-stimulus levels.
+- **Precision Metrics**: Magnitude of variability reduction as a proxy for internal model precision.
 
-In Omission Tasks:
-A key hypothesis is that surprise (omission) triggers a stronger quenching effect on the *subsequent* stimulus. For example, the stimulus P3 following an omission (X in AXAB) should show lower MMFF (higher quenching) than P3 following a standard P2 (AAAB). This indicates that the brain increases its predictive precision (lowers uncertainty) after a surprise.
+## Algorithm / Methodology
+1. **Raw Statistics**: Compute the mean and variance of spike counts across trials for each unit and time bin.
+2. **Mean-Matching (Churchland Method)**:
+   - Create a 2D scatter plot of Variance vs. Mean for all units/bins.
+   - For each mean value, find a subset of points that have a balanced distribution across conditions.
+   - Compute the slope of the regression line on the mean-matched subset.
+3. **Condition Contrast**: Compare quenching during Omissions (AXAX) vs. Standards (AXAA).
+4. **Post-Omission Effect**: Quantify if the quenching on the *next* stimulus (P3) is enhanced by a preceding omission.
 
-Technical Implementation:
+## Placeholder Example
 ```python
-def compute_mmff(counts_matrix):
-    # counts_matrix: (trials, time)
-    import numpy as np
-    mean = np.mean(counts_matrix, axis=0)
-    var = np.var(counts_matrix, axis=0)
-    fano = var / (mean + 1e-9)
-    return fano
+import numpy as np
 
-# Post-processing requires mean-matching across units
+def compute_fano_factor(spike_counts):
+    """
+    Computes raw Fano Factor.
+    spike_counts: (trials, units, time)
+    """
+    mu = np.mean(spike_counts, axis=0)
+    var = np.var(spike_counts, axis=0)
+    return var / (mu + 1e-9)
+
+# Example: V1 quenching during stimulus onset
+ff_v1 = compute_fano_factor(v1_spikes)
 ```
 
-Scientific Context:
-Quenching is thought to represent the transition from a high-entropy exploratory state to a low-entropy representational state. In Active Inference terms, this is the precision-weighting of sensory input.
-
-References:
-1. Churchland, M. M., et al. (2010). Stimulus onset quenches neural variability: a widespread cortical phenomenon. Nature Neuroscience.
-2. Hussar, C. R., & Pasternak, T. (2010). Variability of Visual Responses. Journal of Neuroscience.
+## Relevant Context / Files
+- [active-inference](file:///D:/drive/omission/.gemini/skills/science-neuro-omission-active-inference/skill.md) — For the interpretation of quenching as precision-weighting.
+- [src/analysis/fano_factor.py](file:///D:/drive/omission/src/analysis/fano_factor.py) — The canonical MMFF implementation.
