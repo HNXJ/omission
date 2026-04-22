@@ -1,37 +1,47 @@
 ---
 name: coding-neuro-omission-signal-conditioning
-description: "Omission analysis skill focusing on coding neuro omission signal conditioning."
+description: Advanced DSP suite for smoothing, normalizing, and filtering neural time-series data (Spikes, LFP, MUA).
 ---
+# skill: coding-neuro-omission-signal-conditioning
 
-# Signal Conditioning & Preprocessing
+## When to Use
+Use this skill for all "Level 1" preprocessing tasks that follow data loading. It is critical for:
+- Converting discrete spikes into continuous Peristimulus Time Histograms (PSTH).
+- Z-scoring firing rates against a pre-stimulus baseline to handle inter-unit variability.
+- Band-pass filtering LFP into canonical oscillations (Alpha, Beta, Gamma).
+- Removing 60Hz line noise using Notch filters.
+- Extracting Multi-Unit Activity envelope (MUAe) via rectification and low-pass filtering.
 
-Standardized signal conditioning ensures that neural data is comparable across sessions and units.
+## What is Input
+- **Raw Tensors**: `(trials, channels, samples)` in absolute units (µV or binary spikes).
+- **Metadata**: Sampling rate (usually 1000Hz or 30kHz).
+- **Window Definitions**: Baseline windows (e.g., -500ms to 0ms) for normalization.
 
-Procedures:
-1. Spike Smoothing: Convert binary spike trains into continuous Peristimulus Time Histograms (PSTH) using a Gaussian kernel (sigma = 10ms or 20ms).
-2. Z-Scoring: Normalize firing rates to have mean=0 and std=1, typically using the pre-stimulus baseline (Sample 0-1000).
-3. LFP Filtering: 
-   - Broad-band: 1-300Hz.
-   - Notch Filter: 60Hz (to remove line noise).
-   - Band-specific: Alpha (8-12Hz), Beta (15-30Hz), Gamma (40-100Hz).
-4. MUAe Extraction: Rectify and low-pass filter the high-frequency signal (>1000Hz).
+## What is Output
+- **Smoothed PSTHs**: Continuous firing rate estimates in Hz.
+- **Normalized Signals**: Unitless Z-scored or min-max scaled data.
+- **Analytic Signals**: Complex-valued time-series (from Hilbert transform) for phase analysis.
 
-Technical Implementation:
+## Algorithm / Methodology
+1. **Gaussian Smoothing**: Convolves spike trains with a 1D Gaussian kernel (`sigma=20ms` default).
+2. **Baseline Z-Scoring**: Calculates `(x - mu_baseline) / sigma_baseline` to stabilize variance across units.
+3. **Butterworth Filters**: Implements zero-phase (causal-corrected) filtering using `scipy.signal.filtfilt`.
+4. **Hilbert Transform**: Extracts the instantaneous phase and amplitude envelope for Phase-Amplitude Coupling (PAC).
+5. **MUAe Extraction**: Rectifies the 1kHz-3kHz band and applies a 200Hz low-pass filter to estimate local population spikes.
+
+## Placeholder Example
 ```python
 from scipy.ndimage import gaussian_filter1d
-import numpy as np
 
-def get_psth(spikes, sigma=20):
-    # spikes: (trials, time)
-    psth = gaussian_filter1d(spikes.astype(float), sigma=sigma, axis=1)
-    return psth * 1000 # convert to Hz if bin=1ms
+# 1. Smooth the spikes (trials, units, time)
+psth = gaussian_filter1d(spike_array.astype(float), sigma=20, axis=2) * 1000
 
-def z_score_signal(signal, baseline_window=(0, 1000)):
-    mu = np.mean(signal[:, baseline_window[0]:baseline_window[1]])
-    sd = np.std(signal[:, baseline_window[0]:baseline_window[1]])
-    return (signal - mu) / (sd + 1e-9)
+# 2. Z-score relative to the first 500ms
+baseline_mu = psth[:, :, :500].mean(axis=(0, 2), keepdims=True)
+baseline_sd = psth[:, :, :500].std(axis=(0, 2), keepdims=True)
+z_psth = (psth - baseline_mu) / (baseline_sd + 1e-6)
 ```
 
-References:
-1. Dayan, P., & Abbott, L. F. (2001). Theoretical Neuroscience: Computational and Mathematical Modeling of Neural Systems. MIT Press.
-2. Pesaran, B., et al. (2018). Investigating Large-Scale Brain Dynamics Using Field Potentials, Spikes, and Spacing. Annual Review of Neuroscience.
+## Relevant Context / Files
+- [coding-neuro-omission-nwb-pipeline](file:///D:/drive/omission/.gemini/skills/coding-neuro-omission-nwb-pipeline/skill.md) — For initial data access.
+- [src/analysis/signal_processing.py](file:///D:/drive/omission/src/analysis/signal_processing.py) — The main implementation library.

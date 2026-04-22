@@ -1,42 +1,46 @@
 ---
 name: coding-neuro-omission-decoding-engine
-description: "Omission analysis skill focusing on coding neuro omission decoding engine."
+description: High-performance machine learning suite for quantifying stimulus and omission information fidelity using SVM and PEV.
 ---
+# skill: coding-neuro-omission-decoding-engine
 
-# Neural Decoding Engine
+## When to Use
+Use this skill when implementing population-level classification or variance analysis. It is the primary tool for:
+- Decoding stimulus identity (A vs. B) during the presentation window.
+- Testing for "Information Persistence" during the omission window.
+- Calculating Percent Explained Variance (PEV) to map where information is localized in the brain.
+- Performing Temporal Generalization (train on time t1, test on t2) to detect stable vs. dynamic representations.
 
-The decoding engine uses machine learning to quantify the information content of neural populations. We primarily use Support Vector Machines (SVM) with linear kernels.
+## What is Input
+- **Feature Matrices**: `(trials, units)` or `(trials, units, time_bins)`.
+- **Label Vectors**: Categorical target variables (e.g., 0 for StimA, 1 for StimB).
+- **Time Windows**: Specific bins (e.g., 50ms sliding windows) for dynamic decoding.
 
-Pipeline:
-1. Feature Matrix: (Trials x Neurons) for a specific time bin.
-2. Labels: Condition IDs (e.g., A vs B).
-3. Cross-Validation: 5-fold or 10-fold stratified CV to ensure robust results.
-4. Scoring: Accuracy or Percent Explained Variance (PEV).
+## What is Output
+- **Decoding Accuracy**: Time-resolved classification performance (chance-level = 50% for binary).
+- **Generalization Matrices**: 2D heatmaps of (Train Time x Test Time) accuracy.
+- **PEV Maps**: Anatomical or depth-resolved fidelity of task information.
 
-Applications:
-- Identity Decoding: Can we tell if the stimulus was A or B?
-- Omission Detection: Can we tell if a stimulus was present or missing?
-- Generalization: Training on stimulus periods and testing on omission periods (and vice versa).
+## Algorithm / Methodology
+1. **Linear SVM**: Uses `sklearn.svm.LinearSVC` for robust, high-dimensional classification.
+2. **Stratified Cross-Validation**: Implements 10-fold CV to ensure that results generalize across trial subsets.
+3. **PEV Calculation**: Computes `(SS_between - df * MS_error) / (SS_total + MS_error)` to provide a bias-corrected measure of explained variance.
+4. **Permutation Testing**: Runs 1000 shuffles of label vectors to establish a statistical significance baseline (p < 0.05).
+5. **Temporal Generalization**: Trains a classifier at each time point and tests it on all other time points to identify "Dynamic" vs. "Static" coding regimes.
 
-Code Example:
+## Placeholder Example
 ```python
 from sklearn.svm import LinearSVC
-from sklearn.model_selection import StratifiedKFold
-import numpy as np
+from sklearn.model_selection import cross_val_score
 
-def run_decoding(X, y):
-    skf = StratifiedKFold(n_splits=5)
-    accuracies = []
-    for train_idx, test_idx in skf.split(X, y):
-        clf = LinearSVC(max_iter=10000)
-        clf.fit(X[train_idx], y[train_idx])
-        accuracies.append(clf.score(X[test_idx], y[test_idx]))
-    return np.mean(accuracies)
+# 1. Initialize the linear decoding engine
+clf = LinearSVC(max_iter=5000, dual=False)
+
+# 2. Run 10-fold cross-validation on stimulus identity
+scores = cross_val_score(clf, X_units, y_labels, cv=10)
+print(f"Identity Decoding Accuracy: {scores.mean():.2%}")
 ```
 
-PEV Calculation:
-PEV = (SS_between) / (SS_total). It provides a continuous measure of how much variance in firing rate is explained by the task variables.
-
-References:
-1. Pedregosa, F., et al. (2011). Scikit-learn: Machine Learning in Python. Journal of Machine Learning Research.
-2. King, J. R., & Dehaene, S. (2014). Characterizing the dynamics of mental representations: the temporal generalization method. Trends in Cognitive Sciences.
+## Relevant Context / Files
+- [analysis-population-coding](file:///D:/drive/omission/.gemini/skills/analysis-population-coding/skill.md) — For manifold-level features.
+- [src/analysis/decoding.py](file:///D:/drive/omission/src/analysis/decoding.py) — The core implementation of the decoding engine.

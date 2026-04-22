@@ -1,33 +1,54 @@
 ---
 name: design-neuro-omission-branding-theme
-description: "Omission analysis skill focusing on design neuro omission branding theme."
+description: Specification for the project's visual identity, typography, and color systems (Madelane Golden Dark).
 ---
+# skill: design-neuro-omission-branding-theme
 
-# Visual Identity: Vanderbilt Golden Dark
+## When to Use
+Use this skill when designing any user-facing component, including:
+- Dashboard UI elements (buttons, sidebars, cards).
+- Figure trace color assignments.
+- PDF/Markdown report styling.
+- Establishing the "Visual Single Source of Truth" for multi-agent collaboration.
 
-Our project utilizes a high-contrast, professional aesthetic designed for scientific clarity and visual impact.
+## What is Input
+- **CSS Variables**: Global tokens for colors and spacing.
+- **Brand Assets**: Logos or SVG icons.
+- **Palette Definitions**: Hex codes for primary and secondary accents.
 
-Color Palette:
-- Primary: Vanderbilt Gold (#CFB87C). Used for highlights, data points of interest, and brand elements.
-- Background: Pure Black (#000000). Provides maximum contrast and a modern 'lab' feel.
-- Neutral: Slate Gray (#708090). Used for secondary axes and grid lines.
+## What is Output
+- **Styled Components**: UI elements that adhere to the Madelane aesthetic.
+- **Consistent Visuals**: Figures that are immediately recognizable as belonging to the Omission project.
+- **Themed Documentation**: Markdown files with stylized headers and alerts.
 
-Plotly Configuration:
-Interactive reports use a dark template.
-```python
-import plotly.io as pio
-pio.templates.default = 'plotly_dark'
-brand_colors = ['#CFB87C', '#FFFFFF', '#708090']
+## Algorithm / Methodology
+1. **Color Tokenization**: Defines a core set of semantic variables:
+   - `--brand-gold`: `#CFB87C` (Primary Accent / Stimulus).
+   - `--brand-purple`: `#9400D3` (Secondary Accent / Omission).
+   - `--brand-dark`: `#1A1A1A` (Main Background).
+   - `--brand-text`: `#E0E0E0` (Primary Text).
+2. **Typography Enforcement**: Standardizes on 'Inter' or 'Roboto' for high readability in dense data environments.
+3. **Glassmorphism**: Applies `backdrop-filter: blur(10px)` to dashboard overlays to create a "Premium" feel.
+4. **Transition Logic**: Mandates `0.3s ease-in-out` for all hover states and component appearances.
+5. **Aesthetic Motivation**: The "Madelane Golden Dark" palette is designed to evoke high-precision engineering and "Vanderbilt Prestige."
+
+## Placeholder Example
+```css
+/* 1. Global CSS Variables */
+:root {
+  --madelane-gold: #CFB87C;
+  --madelane-dark: #1A1A1A;
+}
+
+/* 2. Primary Button Component */
+.btn-madelane {
+  background-color: var(--madelane-gold);
+  color: var(--madelane-dark);
+  font-weight: 600;
+  border-radius: 8px;
+}
 ```
 
-Design Principles:
-1. Clarity: No chartjunk. Axes must be clearly labeled with units (ms, Hz, DVA).
-2. Interactivity: All population manifolds and PSTHs should be exportable as HTML with hover details.
-3. Consistency: Use the same color for Area V1 across all figures to aid cross-referencing.
-
-Aesthetic Motivation:
-The 'Madelane Golden Dark' aesthetic reflects the prestige of Vanderbilt University while maintaining the technical edge of modern neuroscience.
-
-References:
-1. Tufte, E. R. (2001). The Visual Display of Quantitative Information. Graphics Press.
-2. Rougier, N. P., et al. (2014). Ten Simple Rules for Better Figures. PLOS Computational Biology.
+## Relevant Context / Files
+- [design-neuro-omission-advanced-plotting](file:///D:/drive/omission/.gemini/skills/design-neuro-omission-advanced-plotting/skill.md) — For figure implementation.
+- [dashboard/index.css](file:///D:/drive/omission/dashboard/index.css) — The live implementation of the theme.
