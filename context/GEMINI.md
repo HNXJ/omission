@@ -19,6 +19,7 @@
 - Code Verbosity: EXTREME. Every single line of code must be accompanied by a print statement describing its action (e.g., print(f"""[action]...""")).
 - Python Version: ALWAYS use Python 3.14 exclusively as the master global instance.
 - Canonical Data Loader: ALWAYS use `src/core/data_loader.py` with PyNWB lazy-loading for all data access.
+- **I/O Documentation Mandate**: All "Methodology & Interpretation" documents (e.g., READMEs), all Agent Skills (`SKILL.md`), and all Python functions MUST explicitly define both "What is Input" and "What is Output". For functions, this must be formalized in the docstring. For markdown files, these must be explicit headers or sections.
 
 ## GAMMA PROTOCOL (Guide And Model-Mediated Actions)
 - Definition: Standard format for complex engineering instructions. Ensures atomic, scope-preserving, CLI-executable tasks.
