@@ -6,7 +6,7 @@
 2. **Operations**: Scoped edits ONLY. No bulk/destructive commands.
 3. **Hierarchy**: V1-V2-V3d-V3a-V4-MT-MST-TEO-FST-FEF-PFC (1-11).
 4. **Verbosity**: Track codes and add tagged comments ; "# test" for tests, "# mock" for mocks, "# stable" for validated stable functions, "# core" for foundational tools.
-5. **Root Hygiene**: The repository root MUST only contain exactly 3 folders (`src/`, `context/`, `tests/`) and `README.md`.
+5. **Root Hygiene**: The repository root MUST only contain exactly 5 folders (`src/`, `context/`, `tests/`, `dashboard/`, `Export_Staging/`) and `README.md`.
 
 ## Plotting Mandate
 - **OmissionPlotter Wrapper**: ALWAYS use `src/core/plotting.py` (`OmissionPlotter`).
@@ -30,6 +30,8 @@
 - `src/`: The canonical package containing all core code, pipelines, and utilities (`data_loader.py`, `logger.py`, `plotting.py`, `analysis/signal.py`, `analysis/stats.py`, `main.py`).
 - `context/`: Contains all project markdown documents, architectural plans, and `skills/`.
 - `tests/`: Contains all pytest suites and validation scripts.
+- `dashboard/`: Professional React/Vite frontend. Visualizes `outputs/oglo-8figs` and progress reports.
+- `Export_Staging/`: Payload staging area for cross-agent transfer.
 - `D:\drive\archive\omission_backup\`: Safe storage for all deprecated and legacy codes (old `codes/`, `operations/`, `outputs/`).
 
 ## Skills
