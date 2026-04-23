@@ -1,33 +1,23 @@
 ---
 name: study-eval-actions
-description: Framework for evaluating research papers against the 36-factor TcGLO Predictive Coding glossary. Includes AI-driven scoring and consensus mapping.
 ---
+# study-eval-actions
 
-# Study Eval Actions Skill
+## Purpose
+Evaluates research papers against the 36-factor TcGLO Predictive Coding glossary using multi-agent LLM scoring (DeepSeek, Qwen, Gemini).
 
-This skill guides the systematic evaluation of neuroscience literature using the **TcGLO (Predictive Coding) Glossary**.
+## Scoring Domains
+| Hypothesis | Focus | Key Factor IDs |
+|------------|-------|-----------------|
+| H1: Predictive Suppression | SST/PV inhibition, activity suppression | 1, 2, 6, 12 |
+| H2: FF Error Propagation | AMPA, ascending Gamma, L2/3 activity | 14, 16, 18, 22 |
+| H3: Ubiquity | Canonical microcircuit, cross-modal | 25, 30-32, 33 |
 
-## 1. The TcGLO Glossary (36 Factors)
-Evaluations are performed across three core biophysical hypotheses:
+## Workflow
+1. Extract text from PDFs (via `neuroscience-actions`)
+2. Score 0.0-1.0 per factor with ensemble of LLMs
+3. Consensus = mean, Certainty = 1 - variance
 
-### H1: Predictive Suppression (Mechanisms of Expectation)
-- Focus: How predictable stimuli are dampened via inhibition.
-- Key IDs: 1 (SST), 2 (PV), 6 (Activity Suppression), 12 (Omission Response).
-
-### H2: Feedforward Error Propagation (Surprise Transmission)
-- Focus: The generation and ascending flow of prediction errors.
-- Key IDs: 14 (AMPA), 16 (Ascending Gamma), 18 (L2/3 Activity), 22 (Latency Shift).
-
-### H3: Ubiquity (Universal Motifs)
-- Focus: Consistency across areas, modalities, and species.
-- Key IDs: 25 (Canonical Microcircuit), 30-32 (V1/V4/PFC Presence), 33 (Cross-Modal).
-
-## 2. Multi-Agent Scoring Workflow
-1. **Extraction**: Extract text evidence from PDFs (via `neuroscience-actions`).
-2. **Evaluation**: Deploy an ensemble of LLMs (DeepSeek, Qwen, Gemini) to score the paper (0.0 to 1.0) against each of the 36 factors.
-3. **Consensus**: Calculate the mean score across agents to determine the "Consensus Score."
-4. **Certainty**: Calculate the variance between agents to determine the "Certainty Index."
-
-## 3. Reference Data
-- **Dataset**: `General/Works/4thYear/HPC/HPC/hpc_table_260225.csv`.
-- **Glossary Details**: See `HPC/Skills/study-eval-neuro/glossary-reference.md`.
+## Files
+- [hpc_table_260225.csv] — Reference dataset
+- [glossary-reference.md] — TcGLO factor definitions

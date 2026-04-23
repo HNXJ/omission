@@ -1,46 +1,44 @@
 ---
 name: science-neuro-omission-cortical-hierarchy
-description: Formal 11-area mapping and hierarchical tier definitions for tracking prediction error propagation.
 ---
-# skill: science-neuro-omission-cortical-hierarchy
+# science-neuro-omission-cortical-hierarchy
 
-## When to Use
-Use this skill when analyzing multi-area interactions or comparing latencies across the visual-frontal axis. It is mandatory for:
-- Categorizing sessions into Low, Mid, and High-Order tiers.
-- Interpreting top-down vs. bottom-up information flow (Granger Causality).
-- Mapping functional connectivity onto the anatomically directed matrix (Markov 2014).
-- Calculating hierarchy-aware population latencies.
+## Purpose
+Maps 11 brain areas into 3 functional tiers and defines directional (FF/FB) connectivity expectations for interpreting Granger causality and latency results.
 
-## What is Input
-- **Area Labels**: Anatomical identifiers (V1, V4, FEF, etc.).
-- **Response Timings**: Peak activation latencies for stimulus onset and omission.
-- **Unit Metadata**: Laminar positions and response types (S+/O+).
+## Input
+| Name | Type | Description |
+|------|------|-------------|
+| area_labels | list[str] | Anatomical identifiers: V1, V2, V3d, V3a, V4, MT, MST, FST, TEO, FEF, PFC |
+| response_latencies | dict[str, float] | Peak activation times (ms) per area for stimulus/omission |
+| unit_metadata | DataFrame | Laminar positions (Deep/Sup) and response types (S+/O+) |
 
-## What is Output
-- **Tier Classification**: 11 areas mapped to 3 functional tiers.
-- **Latency Profiles**: Tier-specific timing distributions for standard vs. omission events.
-- **Directional Hypotheses**: Predicted feedback (High $\to$ Low) or feedforward (Low $\to$ High) signatures.
+## Output
+| Name | Type | Description |
+|------|------|-------------|
+| tier_map | dict[str, str] | Area → Tier assignment (Low/Mid/High) |
+| latency_profile | DataFrame | Per-tier timing distributions for Standard vs Omission |
+| directional_hypothesis | str | Predicted FB (High→Low) or FF (Low→High) signature |
 
-## Algorithm / Methodology
-1. **Tier 1 (Low-Order Visual)**: V1, V2. Primary sensory entry; stimulus latency $\approx 45$ms.
-2. **Tier 2 (Mid-Order Visual)**: V4, MT, MST, TEO, FST. Feature/motion integration; stimulus latency $\approx 65$ms.
-3. **Tier 3 (High-Order / Executive)**: FEF, PFC (dlPFC/vlPFC). Predictive model hubs; stimulus latency $> 80$ms.
-4. **Omission Dynamics**: Surprise signals often originate in Tier 3 or 2 and propagate backwards to Tier 1, violating the standard sensory hierarchy.
+## Tier Definitions
+| Tier | Areas | Stimulus Latency | Role |
+|------|-------|-------------------|------|
+| 1 (Low) | V1, V2 | ~45ms | Sensory entry |
+| 2 (Mid) | V4, MT, MST, TEO, FST | ~65ms | Feature/motion integration |
+| 3 (High) | FEF, PFC | >80ms | Predictive model hub |
 
-## Placeholder Example
+## Example
 ```python
-# Tier Assignment Logic
-area_mapping = {
-    'V1': 'Low', 'V4': 'Mid', 'FEF': 'High'
-}
+TIER_MAP = {'V1': 'Low', 'V2': 'Low', 'V4': 'Mid', 'MT': 'Mid',
+            'MST': 'Mid', 'TEO': 'Mid', 'FST': 'Mid',
+            'FEF': 'High', 'PFC': 'High'}
 
-def analyze_hierarchy_lag(area_a, area_b, lag_ms):
-    """Interprets lags based on hierarchical positions."""
-    tier_a = area_mapping.get(area_a)
-    tier_b = area_mapping.get(area_b)
-    # If High leads Low, it implies Feedback (Predictive Update)
+# Omission signals propagate High→Low (FB), violating sensory hierarchy
+onset_pfc = 25   # ms post-omission
+onset_v1 = 120   # ms post-omission
+print(f"""[result] PFC leads V1 by {onset_v1 - onset_pfc}ms → FB-dominant""")
 ```
 
-## Relevant Context / Files
-- [neuro-analysis](file:///D:/drive/omission/.gemini/skills/neuro-analysis/skill.md) — For population latency calculations.
-- [src/utils/hierarchy_map.py](file:///D:/drive/omission/src/utils/hierarchy_map.py) — The canonical 11-area dictionary.
+## Files
+- [hierarchy_map.py](file:///D:/drive/omission/src/utils/hierarchy_map.py) — 11-area dictionary
+- [analysis-granger-convergence-debug](file:///D:/drive/omission/.gemini/skills/analysis-granger-convergence-debug/SKILL.md) — Granger diagnostics

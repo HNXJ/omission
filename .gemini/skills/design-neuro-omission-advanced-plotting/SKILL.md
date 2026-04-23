@@ -1,49 +1,39 @@
 ---
 name: design-neuro-omission-advanced-plotting
-description: Technical specification for publication-quality neurophysiology visualizations using the Plotly 'Kaleido-Free' standard.
 ---
-# skill: design-neuro-omission-advanced-plotting
+# design-neuro-omission-advanced-plotting
 
-## When to Use
-Use this skill for all final figure generation tasks. It is the gold standard for:
-- Creating interactive HTML figures for the Omission Dashboard.
-- Implementing the "Madelane Golden Dark" aesthetic (#CFB87C / #9400D3).
-- Ensuring that plots support native SVG downloads without requiring the Kaleido library.
-- Building complex multi-panel figures (TFRs, PPC Spectra, CKA Matrices).
+## Purpose
+Publication-quality Plotly visualization spec: Kaleido-Free HTML export, Madelane Golden Dark theme, modebar SVG download, multi-panel layouts.
 
-## What is Input
-- **Processed Tensors**: `(time, freq, power)` for spectrograms or `(area, area)` for connectivity.
-- **Labels**: Stimulus identities (S+, S-, O+, O-).
-- **Layout Configs**: Titles, axis limits, and colorbar scales.
+## Mandatory Rules
+1. Export via `fig.write_html(include_plotlyjs='cdn')` — never `write_image`
+2. Enable SVG download: `fig.update_layout(modebar_add=['toImage'])`
+3. Color: Gold `#CFB87C` (S+/FF/Gamma), Purple `#9400D3` (O+/FB/Beta)
+4. Background: White `#FFFFFF`, Grids: `#D3D3D3`, Axes: `#000000`
+5. Bicubic smoothing on heatmaps: `zsmooth='best'`
 
-## What is Output
-- **Interactive HTML Files**: Standalone `.html` files containing the full Plotly object.
-- **Sidecar Metadata**: JSON files describing the data source and processing steps for the dashboard.
+## Input
+| Name | Type | Description |
+|------|------|-------------|
+| data_tensor | ndarray | Processed data (TFR, connectivity, traces) |
+| labels | dict | Axis labels, trace names |
+| layout_config | dict | Title, axis limits, colorbar |
 
-## Algorithm / Methodology
-1. **Interactive Rendering**: Uses `plotly.graph_objects` for fine-grained control over traces.
-2. **Kaleido-Free Export**: Bypasses `fig.write_image` by embedding a custom image download button in the Plotly modebar.
-3. **Madelane Styling**: 
-   - Gold (#CFB87C): Target Stimulus (S+) or Feedforward Gamma.
-   - Purple (#9400D3): Omission (O+) or Feedback Beta.
-   - Background: White; Grids: Subtle Gray.
-4. **Resizing Protocol**: Standardizes all figure containers to 600px height with overflow-y scroll enabled in the dashboard.
-5. **Trace Smoothing**: Applies bicubic interpolation (`zsmooth='best'`) for heatmaps to ensure "publication-ready" visual clarity.
+## Output
+| Name | Type | Description |
+|------|------|-------------|
+| html_path | str | Standalone `.html` with embedded Plotly |
 
-## Placeholder Example
+## Example
 ```python
 import plotly.graph_objects as go
-
-# 1. Create the figure with Madelane colors
 fig = go.Figure()
 fig.add_trace(go.Scatter(x=time, y=gamma, name="S+ Gamma", line=dict(color="#CFB87C")))
 fig.add_trace(go.Scatter(x=time, y=beta, name="O+ Beta", line=dict(color="#9400D3")))
-
-# 2. Configure for Kaleido-Free download
 fig.update_layout(modebar_add=['toImage'])
-fig.write_html("output/figure_madelane.html", include_plotlyjs='cdn')
+fig.write_html("output/figure.html", include_plotlyjs='cdn')
 ```
 
-## Relevant Context / Files
-- [design-neuro-omission-branding-theme](file:///D:/drive/omission/.gemini/skills/design-neuro-omission-branding-theme/skill.md) — For color palette details.
-- [src/core/plotting_engine.py](file:///D:/drive/omission/src/core/plotting_engine.py) — The standardized plotting implementation.
+## Files
+- [plotting.py](file:///D:/drive/omission/src/analysis/visualization/plotting.py) — OmissionPlotter
