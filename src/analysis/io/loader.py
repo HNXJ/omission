@@ -82,9 +82,10 @@ class DataLoader:
         Loads signals with flexible alignment.
         align_to: 'p1' (stimulus onset) or 'omission' (family-aware).
         """
-        log.action(f"Extracting {mode} signal for area {area} in condition {condition} (Align: {align_to})")
+        session = kwargs.get("session")
+        log.action(f"Extracting {mode} signal for area {area} in condition {condition} (Align: {align_to}, Session: {session})")
         
-        data_list = self._load_data(mode, condition, area)
+        data_list = self._load_data(mode, condition, area, session=session)
         if not data_list: return None
         
         if align_to == "omission":
@@ -105,12 +106,16 @@ class DataLoader:
             
         return data_list
 
-    def _load_data(self, mode, condition, area):
+    def _load_data(self, mode, condition, area, session: str = None):
         """Internal raw loader."""
         if area not in self.area_map: return None
         area_entries = self.area_map[area]
         data_list = []
         for entry in area_entries:
+            # Filter by session if provided
+            if session and entry["session"] != session:
+                continue
+                
             ses = entry["session"]; p = entry["probe"]; start_ch = entry["start_ch"]; end_ch = entry["end_ch"]; total_ch = entry["total_ch"]
             filename = f"ses{ses}-{'units-probe'+str(p)+'-spk' if mode=='spk' else 'probe'+str(p)+'-lfp'}-{condition}.npy"
             file_path = self.data_dir / filename
@@ -128,6 +133,64 @@ class DataLoader:
                 except Exception: pass
         return data_list
         
+    def get_units_by_area(self, area: str) -> list:
+        """Returns a list of unit identifiers available for the specified area."""
+        if area not in self.area_map:
+            log.warning(f"Area {area} not found in mapping.")
+            return []
+            
+        units = []
+        for entry in self.area_map[area]:
+            ses = entry["session"]
+            p = entry["probe"]
+            start_ch = entry["start_ch"]
+            end_ch = entry["end_ch"]
+            total_ch = entry["total_ch"]
+            
+            # Check for file availability to get actual unit count
+            filename = f"ses{ses}-units-probe{p}-spk-AXAB.npy" # Use AXAB as reference for unit counts
+            file_path = self.data_dir / filename
+            if file_path.exists():
+                try:
+                    arr = np.load(file_path, mmap_mode='r')
+                    n_total_units = arr.shape[1]
+                    u_start = int(n_total_units * (start_ch / total_ch))
+                    u_end = int(n_total_units * (end_ch / total_ch))
+                    
+                    for u_idx in range(u_start, u_end):
+                        units.append(f"{ses}-probe{p}-unit{u_idx}")
+                except Exception as e:
+                    log.error(f"Failed to read unit count from {filename}: {e}")
+        
+        log.info(f"Found {len(units)} units for area {area}")
+        return units
+
+    def load_unit_spikes(self, unit_id: str, condition: str = "AXAB", epoch: str = "p1"):
+        """
+        Loads spike data for a single unit.
+        unit_id format: 'session-probeN-unitIdx'
+        epoch: 'p1', 'p2', etc. (currently p1 is full 4s stim block in these files)
+        """
+        try:
+            parts = unit_id.split("-")
+            ses = parts[0]
+            probe_str = parts[1] # 'probe1'
+            u_idx = int(parts[2].replace("unit", ""))
+            
+            filename = f"ses{ses}-units-{probe_str}-spk-{condition}.npy"
+            file_path = self.data_dir / filename
+            
+            if not file_path.exists():
+                return None
+                
+            arr = np.load(file_path, mmap_mode='r')
+            # Extract single unit: shape (n_trials, n_timepoints)
+            unit_data = arr[:, u_idx, :]
+            return unit_data
+        except Exception as e:
+            log.error(f"Failed to load spikes for {unit_id}: {e}")
+            return None
+
     def get_output_dir(self, fig_id: str):
         """Returns the canonical output directory for a specific figure."""
         root = Path(__file__).parent.parent.parent.parent

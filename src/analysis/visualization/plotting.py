@@ -34,17 +34,16 @@ class OmissionPlotter:
             xaxis=dict(showgrid=True, gridcolor="#D3D3D3", linecolor="#000000", mirror=True, ticks="outside"),
             yaxis=dict(showgrid=True, gridcolor="#D3D3D3", linecolor="#000000", mirror=True, ticks="outside"),
             legend=dict(
-                title="Legend",
-                orientation="v",
-                yanchor="top",
-                y=0.99,
-                xanchor="left",
-                x=1.02,
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1,
                 bgcolor="rgba(255,255,255,0.8)",
                 bordercolor="#000000",
                 borderwidth=1
             ),
-            margin=dict(l=80, r=180, t=100, b=80),
+            margin=dict(l=80, r=40, t=100, b=80),
             modebar_add=['toImage']
         )
         log.action(f"Initialized canonical plot: {title}")

@@ -8,12 +8,19 @@ def compute_waveform_metrics(waveform_mean: np.ndarray, fs: float = 30000.0):
     waveform_mean: (samples,)
     Returns values in microseconds (us).
     """
-    # 1. Align to trough (the deepest point)
-    trough_idx = np.argmin(waveform_mean)
+    # CRITICAL FIX: Clip to a 3ms window around the trough to avoid large-buffer inflation
+    # 30kHz -> 1ms = 30 samples. We take -1ms to +2ms around the trough.
+    raw_trough_idx = np.argmin(waveform_mean)
+    start = max(0, raw_trough_idx - 30)
+    end = min(len(waveform_mean), raw_trough_idx + 60)
+    
+    # Work on clipped waveform
+    w = waveform_mean[start:end]
+    trough_idx = np.argmin(w)
     
     # 2. Peak usually follows trough in extracellular spikes
     # Find the peak after the trough
-    post_trough = waveform_mean[trough_idx:]
+    post_trough = w[trough_idx:]
     if len(post_trough) > 1:
         peak_idx = np.argmax(post_trough) + trough_idx
         # Duration: trough to peak
@@ -22,14 +29,11 @@ def compute_waveform_metrics(waveform_mean: np.ndarray, fs: float = 30000.0):
         duration_us = 300.0 # Fallback
         
     # 3. Half-width: full-width at half-maximum of the trough (absolute)
-    trough_val = waveform_mean[trough_idx]
-    # For extracellular spikes, trough is negative.
-    # Half-max in absolute amplitude
+    trough_val = w[trough_idx]
     half_amplitude = trough_val / 2.0
     
     # Crossings: indices where the signal crosses half-amplitude
-    # Because troughs are negative, we look for points > half_amplitude (closer to 0)
-    indices = np.where(waveform_mean < half_amplitude)[0]
+    indices = np.where(w < half_amplitude)[0]
     if len(indices) > 0:
         half_width_us = (indices[-1] - indices[0]) / fs * 1e6
     else:

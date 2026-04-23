@@ -15,10 +15,10 @@ from src.f008_coordination.script import run_f008
 from src.f009_individual_sfc.script import run_f009
 from src.f010_sfc_delta.script import run_f010
 from src.f011_laminar.script import run_f011
-from src.f012_mi_matrix.script import run_f012
-from src.f013_connectivity_graph.script import run_f013
-from src.f014_connectivity_delta.script import run_f014
-from src.f015_global_dynamics.script import run_f015
+from src.f012_csd_profiling.script import run_f012
+from src.f013_rhythmic_evolution.script import run_f013
+from src.f014_spiking_granger.script import run_f014
+from src.f015_spectral_granger.script import run_f015
 from src.f016_impedance_profiles.script import run_f016
 from src.f017_prediction_errors.script import run_f017
 from src.f018_ghost_signals.script import run_f018
@@ -37,13 +37,18 @@ from src.f030_recurrence_dynamics.script import run_f030
 from src.f031_spike_phase_locking.script import run_f031
 from src.f032_spike_triggered_average.script import run_f032
 from src.f033_spike_field_coherence.script import run_f033
+from src.f034_pev_analysis.script import run_f034
 from src.f034_spike_phase_consistency.script import run_f034
+from src.f035_deviance_scaling.script import run_f035
 from src.f035_spike_triggered_spectrum.script import run_f035
 from src.f036_cross_area_sfc_bu.script import run_f036
+from src.f036_interneuron_dynamics.script import run_f036
 from src.f037_cross_area_sfc_td.script import run_f037
 from src.f038_phase_dependent_fr.script import run_f038
-from src.f039_spike_field_granger.script import run_f039
-from src.f040_population_sync_index.script import run_f040
+from src.f039_spike_field_coherence.script import run_f039
+from src.f040_onset_latency.script import run_f040
+from src.f044_laminar_pac.script import run_f044
+from src.f045_laminar_coherence.script import run_f045
 
 def run_all():
     """
@@ -55,24 +60,24 @@ def run_all():
     
     pipeline_steps = [
         ("Figure 1: Theory", run_f001),
-        ("Figure 2: PSTH Design", run_f002),
+        ("Figure 2: Psth", run_f002),
         ("Figure 3: Surprise", run_f003),
         ("Figure 4: Coding", run_f004),
-        ("Figure 5: TFR", run_f005),
+        ("Figure 5: Tfr", run_f005),
         ("Figure 6: Band Power", run_f006),
-        ("Figure 7: SFC", run_f007),
+        ("Figure 7: Sfc", run_f007),
         ("Figure 8: Coordination", run_f008),
-        ("Figure 9: Individual SFC", run_f009),
-        ("Figure 10: SFC Delta", run_f010),
+        ("Figure 9: Individual Sfc", run_f009),
+        ("Figure 10: Sfc Delta", run_f010),
         ("Figure 11: Laminar", run_f011),
-        ("Figure 12: MI Matrix", run_f012),
-        ("Figure 13: Connectivity Graph", run_f013),
-        ("Figure 14: Connectivity Delta", run_f014),
-        ("Figure 15: Global Dynamics", run_f015),
-        ("Figure 16: Impedance", run_f016),
+        ("Figure 12: Csd Profiling", run_f012),
+        ("Figure 13: Rhythmic Evolution", run_f013),
+        ("Figure 14: Spiking Granger", run_f014),
+        ("Figure 15: Spectral Granger", run_f015),
+        ("Figure 16: Impedance Profiles", run_f016),
         ("Figure 17: Prediction Errors", run_f017),
         ("Figure 18: Ghost Signals", run_f018),
-        ("Figure 19: PAC Analysis", run_f019),
+        ("Figure 19: Pac Analysis", run_f019),
         ("Figure 20: Effective Connectivity", run_f020),
         ("Figure 21: Pupil Decoding", run_f021),
         ("Figure 22: Dimensionality Reduction", run_f022),
@@ -84,16 +89,21 @@ def run_all():
         ("Figure 28: State Manifolds", run_f028),
         ("Figure 29: Info Bottleneck", run_f029),
         ("Figure 30: Recurrence Dynamics", run_f030),
-        ("Figure 31: Spike-Field Phase Locking", run_f031),
-        ("Figure 32: Spike-Triggered Average", run_f032),
-        ("Figure 33: Spike-Field Coherence", run_f033),
-        ("Figure 34: Spike-Field PPC", run_f034),
-        ("Figure 35: Spike-Triggered Spectrum", run_f035),
-        ("Figure 36: Cross-Area SFC BU", run_f036),
-        ("Figure 37: Cross-Area SFC TD", run_f037),
-        ("Figure 38: Phase-Dependent FR", run_f038),
-        ("Figure 39: Spike-Field Granger", run_f039),
-        ("Figure 40: Population Sync Index", run_f040)
+        ("Figure 31: Spike Phase Locking", run_f031),
+        ("Figure 32: Spike Triggered Average", run_f032),
+        ("Figure 33: Spike Field Coherence", run_f033),
+        ("Figure 34: Pev Analysis", run_f034),
+        ("Figure 34: Spike Phase Consistency", run_f034),
+        ("Figure 35: Deviance Scaling", run_f035),
+        ("Figure 35: Spike Triggered Spectrum", run_f035),
+        ("Figure 36: Cross Area Sfc Bu", run_f036),
+        ("Figure 36: Interneuron Dynamics", run_f036),
+        ("Figure 37: Cross Area Sfc Td", run_f037),
+        ("Figure 38: Phase Dependent Fr", run_f038),
+        ("Figure 39: Spike-Field Coherence (PPC)", run_f039),
+        ("Figure 40: Population Sync Index", run_f040),
+        ("Figure 44: Laminar Pac", run_f044),
+        ("Figure 45: Laminar Coherence", run_f045),
     ]
     
     for name, func in pipeline_steps:

@@ -6,7 +6,7 @@
 2. **Operations**: Scoped edits ONLY. No bulk/destructive commands.
 3. **Hierarchy**: V1-V2-V3d-V3a-V4-MT-MST-TEO-FST-FEF-PFC (1-11).
 4. **Verbosity**: Track codes and add tagged comments ; "# test" for tests, "# mock" for mocks, "# stable" for validated stable functions, "# core" for foundational tools.
-5. **Root Hygiene**: The repository root MUST only contain exactly 5 folders (`src/`, `context/`, `tests/`, `dashboard/`, `Export_Staging/`) and `README.md`.
+5. **Root Hygiene**: The repository root MUST only contain exactly 3 folders (`src/`, `context/`, `dashboard/`) and `README.md`.
 
 ## Plotting Mandate
 - **OmissionPlotter Wrapper**: ALWAYS use `src/core/plotting.py` (`OmissionPlotter`).

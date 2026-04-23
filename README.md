@@ -18,7 +18,6 @@ Canonical repository for the **Omission** project, implementing a large-scale ne
   - `specs/`: Canonical task definitions, 15-step pipeline standards, and style mandates.
   - `analysis/`: Strategic roadmaps and methodology-specific sub-documentation.
   - `operations/`: Troubleshooting logs and implementation history.
-- **`tests/`**: Automated validation suite (under development).
 
 ## 🚀 Canonical Pipeline
 
