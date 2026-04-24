@@ -14,7 +14,7 @@ def run_f019():
     log.progress("Starting Analysis f019: PAC Analysis")
     
     loader = DataLoader()
-    output_dir = loader.get_output_dir("f019_pac_analysis")
+    output_dir = loader.get_output_dir("f019-pac-analysis")
     
     # Define sessions and areas to analyze
     sessions = ["230629", "230630", "230714", "230719"]

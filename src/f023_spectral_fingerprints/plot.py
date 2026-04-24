@@ -14,8 +14,8 @@ def plot_spectral_fingerprints(freqs: np.ndarray, results: dict, output_dir: str
     )
     plotter.set_axes("Frequency", "Hz", "Power", "dB")
     
-    # Madelane Golden Dark inspired color palette
-    colors = ["#CFB87C", "#8F00FF", "#FF1493", "#00FFCC", "#FF5E00", "#D3D3D3"]
+    # Allowed color palette: [Red, Blue, Brown, Green, Orange, Purple, Yellow]
+    colors = ["#FF0000", "#0000FF", "#A52A2A", "#008000", "#FFA500", "#800080", "#FFFF00"]
     
     for i, (area, data) in enumerate(results.items()):
         plotter.add_shaded_error_bar(

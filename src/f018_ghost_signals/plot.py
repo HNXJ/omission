@@ -15,8 +15,8 @@ def plot_ghost_signals(results: dict, output_dir: str):
     )
     plotter.set_axes("Time from P1 Onset", "ms", "Firing Rate", "Hz")
     
-    # Madelane Golden Dark inspired color palette
-    colors = ["#CFB87C", "#8F00FF", "#FF1493", "#00FFCC", "#FF5E00", "#D3D3D3"]
+    # Allowed color palette: [Red, Blue, Brown, Green, Orange, Purple, Yellow]
+    colors = ["#FF0000", "#0000FF", "#A52A2A", "#008000", "#FFA500", "#800080", "#FFFF00"]
     
     for i, (area, data) in enumerate(results.items()):
         psth = data['avg_psth']
@@ -35,5 +35,11 @@ def plot_ghost_signals(results: dict, output_dir: str):
     # Add timing reference lines
     plotter.add_xline(1031, "Expected P2", color="violet")
     plotter.add_xline(531, "D1 Start", color="gray")
+
+    # Fix legend overlap and margins
+    plotter.fig.update_layout(
+        margin=dict(t=120),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+    )
 
     plotter.save(output_dir, "fig18_ghost_signals")

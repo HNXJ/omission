@@ -50,13 +50,15 @@ def run_csd_profiling():
     plotter = OmissionPlotter(
         title="Figure f012: Current Source Density (CSD) Profiling",
         subtitle="Sink/Source dynamics during stimulus omission. Sinks (blue) indicate inward synaptic current.",
-        template="plotly_dark"
+        template="plotly_white"
     )
+    # Mandate: White background, black axis
     plotter.fig.update_layout(
-        paper_bgcolor="#000000", plot_bgcolor="#000000",
-        font=dict(color="#FFFFFF", family="Outfit"),
-        title=dict(font=dict(color="#CFB87C", size=22)),
-        height=800
+        paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF",
+        font=dict(color="#000000", family="Arial"),
+        title=dict(font=dict(color="#000000", size=22)),
+        height=800,
+        margin=dict(t=120) # Increase top margin to prevent title clipping
     )
     
     import plotly.graph_objects as go

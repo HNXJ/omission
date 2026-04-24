@@ -11,7 +11,7 @@ def run_f027():
     """
     log.progress("Starting Analysis f027: Omission Identity Coding")
     loader = DataLoader()
-    output_dir = loader.get_output_dir("f027_identity_coding")
+    output_dir = loader.get_output_dir("f027-identity-decoding")
     
     sessions = ["230629", "230630", "230714", "230719"]
     areas = ["V1", "V4", "PFC", "FEF"]

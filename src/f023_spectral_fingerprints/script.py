@@ -14,7 +14,7 @@ def run_f023():
     log.progress("Starting Analysis f023: Spectral Fingerprints")
     
     loader = DataLoader()
-    output_dir = loader.get_output_dir("f023_spectral_fingerprints")
+    output_dir = loader.get_output_dir("f023-spectral-fingerprints")
     
     # Define sessions and areas to analyze
     sessions = ["230629", "230630", "230714", "230719"]

@@ -1,15 +1,20 @@
-# core
+import numpy as np
 from src.analysis.lfp.lfp_pipeline import run_lfp_spectral_pipeline
 from src.analysis.io.logger import log
 
-def analyze_band_dynamics(areas: list, condition="AXAB"):
-    """
-    Computes band-specific power dynamics for multiple areas.
-    """
+def analyze_band_dynamics(areas: list, conditions=None):
+    if conditions is None:
+        conditions = ["AXAB", "AAAB"]
+        
     results = {}
-    for area in areas:
-        log.info(f"Running Band pipeline for {area}")
-        res = run_lfp_spectral_pipeline(area, condition)
-        if res:
-            results[area] = res
+    for cond in conditions:
+        results[cond] = {}
+        for area in areas:
+            print(f"[action] Running Band pipeline for {area} ({cond})")
+            try:
+                res = run_lfp_spectral_pipeline(area, cond)
+                if res is not None:
+                    results[cond][area] = res
+            except Exception as e:
+                print(f"[error] Failed {area} {cond}: {e}")
     return results
