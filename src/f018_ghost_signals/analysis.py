@@ -15,9 +15,8 @@ def analyze_ghost_signals(loader: DataLoader, sessions: list, areas: list):
     results = {area: {'slopes': [], 'psths': []} for area in areas}
     
     # AXAB Omission window: 
-    # P1 starts at 1000ms. Omission (P2) onset is at 1000 + 1031 = 2031ms.
-    # Anticipation (delay) window is between P1 offset (1500ms) and P2 onset (2031ms).
-    RAMP_WINDOW = (1531, 2031)
+    # Approved Plan: Capture pre-P1 anticipation (531, 1031) to resolve sparsity.
+    RAMP_WINDOW = (531, 1031)
     
     for ses in sessions:
         log.info(f"Analyzing Ghost Signals for Session: {ses}")

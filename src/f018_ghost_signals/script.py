@@ -14,10 +14,10 @@ def run_f018():
     log.progress("Starting Analysis f018: Ghost Signals")
     
     loader = DataLoader()
-    output_dir = loader.get_output_dir("f018_ghost_signals")
+    output_dir = loader.get_output_dir("f018-ghost-signals")
     
     # Define sessions and areas to analyze
-    sessions = ["230629", "230630", "230714", "230719"]
+    sessions = loader.get_sessions() # Process all sessions for maximum yield
     areas = ["V1", "V4", "PFC", "FEF"]
     
     # 1. Run Analysis

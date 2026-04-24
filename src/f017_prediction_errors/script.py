@@ -14,7 +14,7 @@ def run_f017():
     log.progress("Starting Analysis f017: Prediction Error Scaling")
     
     loader = DataLoader()
-    output_dir = loader.get_output_dir("f017_prediction_errors")
+    output_dir = loader.get_output_dir("f017-prediction-error-scaling")
     
     # Define sessions and areas to analyze
     # For speed in this turn, let's pick a few key sessions

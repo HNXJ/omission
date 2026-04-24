@@ -1,4 +1,5 @@
 # beta
+import numpy as np
 import plotly.graph_objects as go
 from src.analysis.visualization.plotting import OmissionPlotter
 from src.analysis.io.logger import log
@@ -16,7 +17,8 @@ def plot_prediction_error_scaling(results: dict, output_dir: str):
     
     positions = ["p2", "p3", "p4"]
     x_labels = ["2nd (P2)", "3rd (P3)", "4th (P4)"]
-    colors = ["#CFB87C", "#8F00FF", "#FF1493", "#00FFCC", "#FF5E00", "#D3D3D3"]
+    # Allowed color palette: [Red, Blue, Brown, Green, Orange, Purple, Yellow]
+    colors = ["#FF0000", "#0000FF", "#A52A2A", "#008000", "#FFA500", "#800080", "#FFFF00"]
     
     for i, (area, pos_data) in enumerate(results.items()):
         means = [np.mean(pos_data[p]) if pos_data[p] else 0 for p in positions]

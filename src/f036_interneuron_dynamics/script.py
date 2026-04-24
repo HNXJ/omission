@@ -11,7 +11,7 @@ def run_f036():
     results = analyze_interneuron_dynamics(loader)
     
     # Plot
-    output_dir = loader.get_output_dir("f036_interneuron_dynamics")
+    output_dir = loader.get_output_dir("f036-interneuron-dynamics")
     plot_interneuron_dynamics(results, output_dir=output_dir)
     print(f"""[progress] Module f036 complete.""")
 

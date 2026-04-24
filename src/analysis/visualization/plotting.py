@@ -51,12 +51,15 @@ class OmissionPlotter:
     def set_axes(self, x_label: str, x_unit: str, y_label: str, y_unit: str):
         """
         Enforce strict X and Y axis labeling with mandatory units.
+        Fix: Do not add empty parentheses if unit is empty.
         """
+        x_title = f"{x_label} ({x_unit})" if x_unit else x_label
+        y_title = f"{y_label} ({y_unit})" if y_unit else y_label
         self.fig.update_layout(
-            xaxis_title=f"{x_label} ({x_unit})",
-            yaxis_title=f"{y_label} ({y_unit})"
+            xaxis_title=x_title,
+            yaxis_title=y_title
         )
-        log.action(f"Set axes -> X: {x_label} ({x_unit}), Y: {y_label} ({y_unit})")
+        log.action(f"Set axes -> X: {x_title}, Y: {y_title}")
 
     def add_trace(self, trace: go.Scatter | go.Heatmap | go.Bar, name: str):
         """

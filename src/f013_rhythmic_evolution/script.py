@@ -50,12 +50,13 @@ def run_rhythmic_evolution():
     plotter = OmissionPlotter(
         title="Figure f013: Trial-by-Trial Rhythmic Evolution",
         subtitle="Tracking Gamma vs. Beta power adaptation during predictable sequences.",
-        template="plotly_dark"
+        template="plotly_white"
     )
+    # Mandate: White background, black axis
     plotter.fig.update_layout(
-        paper_bgcolor="#000000", plot_bgcolor="#000000",
-        font=dict(color="#FFFFFF", family="Outfit"),
-        title=dict(font=dict(color="#CFB87C", size=22)),
+        paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF",
+        font=dict(color="#000000", family="Arial"),
+        title=dict(font=dict(color="#000000", size=22)),
         height=800
     )
     
