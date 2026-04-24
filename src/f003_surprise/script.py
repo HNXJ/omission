@@ -1,15 +1,18 @@
-from pathlib import Path
-# core
 from src.analysis.io.loader import DataLoader
-from src.f003_surprise.analysis import analyze_area_psths
-from src.f003_surprise.plot import plot_area_psths
+from src.analysis.io.logger import log
+from src.f003_surprise.analysis import analyze_surprise
+from src.f003_surprise.plot import plot_surprise
 
 def run_f003():
+    log.progress("Starting Analysis f003: Surprise Index")
     loader = DataLoader()
     output_dir = loader.get_output_dir("f003_surprise")
+    
     areas = loader.CANONICAL_AREAS
-    results = analyze_area_psths(loader, areas)
-    plot_area_psths(results, output_dir=output_dir)
+    results = analyze_surprise(loader, areas)
+    if results:
+        plot_surprise(results, output_dir=str(output_dir))
+    log.progress("Analysis f003 complete.")
 
 if __name__ == "__main__":
     run_f003()

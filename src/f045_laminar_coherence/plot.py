@@ -21,7 +21,12 @@ def plot_laminar_coherence(results: dict, output_dir: str):
         x=layers, 
         y=layers, 
         colorscale="Viridis",
-        colorbar=dict(title="iCOH Magnitude")
+        colorbar=dict(
+            title="iCOH Magnitude",
+            y=0.5,
+            yanchor="middle",
+            len=0.7
+        )
     )
     
     plotter.add_trace(heatmap, name="Laminar Coherence")

@@ -31,4 +31,16 @@ def plot_spike_triggered_average(results: dict, output_dir: str):
         plotter.add_trace(go.Scatter(x=t, y=mean, name=area), name=area)
         
     plotter.add_xline(0, "Spike Time", color="black", dash="dot")
+    
+    # Move legend to the right to avoid overlap
+    plotter.fig.update_layout(
+        legend=dict(
+            orientation="v",
+            yanchor="top",
+            y=1,
+            xanchor="left",
+            x=1.05
+        )
+    )
+    
     plotter.save(output_dir, "fig32_spike_triggered_average")

@@ -2,6 +2,7 @@
 import os
 import re
 import numpy as np
+import pandas as pd
 from pathlib import Path
 from collections import defaultdict
 from src.analysis.io.logger import log
@@ -14,6 +15,7 @@ class DataLoader:
     """
     
     CANONICAL_AREAS = ["V1", "V2", "V3d", "V3a", "V4", "MT", "MST", "TEO", "FST", "FEF", "PFC"]
+    BLACKLISTED_SESSIONS = ["230901"] # Session 5 (PFC) clipping artifact
     
     def __init__(self, data_dir: str = None, mapping_file: str = None):
         # Resolve paths relative to repo root
@@ -47,6 +49,8 @@ class DataLoader:
                 parts = [p.strip() for p in line.split("|")[1:-1]]
                 if len(parts) >= 4:
                     session = parts[0]
+                    if session in self.BLACKLISTED_SESSIONS:
+                        continue
                     probe = int(parts[1])
                     areas = [a.strip() for a in parts[2].split(",")]
                     # Alias DP to V4
@@ -142,6 +146,8 @@ class DataLoader:
         units = []
         for entry in self.area_map[area]:
             ses = entry["session"]
+            if ses in self.BLACKLISTED_SESSIONS:
+                continue
             p = entry["probe"]
             start_ch = entry["start_ch"]
             end_ch = entry["end_ch"]
@@ -197,6 +203,23 @@ class DataLoader:
         out_dir = root.parent / "outputs" / "oglo-8figs" / fig_id
         out_dir.mkdir(parents=True, exist_ok=True)
         return out_dir
+
+    def get_sessions(self):
+        """Returns list of sessions found in data directory."""
+        sessions = set()
+        for f in self.data_dir.glob("ses*-*.npy"):
+            match = re.search(r"ses(\d+)-", f.name)
+            if match:
+                sessions.add(match.group(1))
+        return sorted(list(sessions))
+
+    def get_unit_metrics(self, session: str):
+        """Loads metadata CSV for a session."""
+        root = Path(__file__).parent.parent.parent.parent
+        csv_path = root.parent / "data" / "metadata" / f"units_ses-{session}.csv"
+        if csv_path.exists():
+            return pd.read_csv(csv_path, index_col=0)
+        return None
 
     def close_all(self):
         pass

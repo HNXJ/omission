@@ -1,55 +1,73 @@
-# core
 import numpy as np
-from sklearn.decomposition import PCA
+from scipy.ndimage import gaussian_filter1d
 from src.analysis.io.loader import DataLoader
 from src.analysis.io.logger import log
 
-def analyze_population_manifolds(loader: DataLoader, areas: list):
-    """
-    Computes 3D PCA trajectories with 95% CI bootstrapped confidence tubes.
-    """
-    results = {}
-    for area in areas:
-        print(f"""[action] Starting bootstrap manifold analysis for area {area}""")
-        spk_aaab = loader.get_signal(mode="spk", condition="AAAB", area=area)
-        spk_axab = loader.get_signal(mode="spk", condition="AXAB", area=area)
-        
-        if not spk_aaab or not spk_axab: continue
-        
-        # Helper to get bootstrapped mean trajectories
-        def get_bootstrapped_traj(spk_data, n_boot=100):
-            print(f"""[action] Performing {n_boot} bootstrap iterations""")
-            n_trials = len(spk_data)
-            trajs = []
-            for i in range(n_boot):
-                idx = np.random.choice(n_trials, n_trials, replace=True)
-                sample = np.vstack([np.mean(spk_data[j], axis=0) for j in idx]).T
-                trajs.append(sample)
-            return np.array(trajs)
+CONDITION_GROUPS = {
+    "A-Base Sequences": ['AAAB', 'AXAB', 'AAXB', 'AAAX'],
+    "B-Base Sequences": ['BBBA', 'BXBA', 'BBXA', 'BBBX'],
+    "Random Sequences": ['RRRR', 'RXRR', 'RRXR', 'RRRX']
+}
 
-        # Concatenate and PCA
-        t_idx = slice(500, 3000, 10)
-        pop_aaab = get_bootstrapped_traj(spk_aaab)[:, t_idx, :]
-        pop_axab = get_bootstrapped_traj(spk_axab)[:, t_idx, :]
-        
-        # Project all through common PCA
-        mean_aaab = np.mean(pop_aaab, axis=0)
-        mean_axab = np.mean(pop_axab, axis=0)
-        X_combined = np.vstack([mean_aaab, mean_axab])
-        
-        pca = PCA(n_components=3)
-        pca.fit(X_combined)
-        
-        # Project bootstraps
-        proj_aaab = np.array([pca.transform(traj) for traj in pop_aaab])
-        proj_axab = np.array([pca.transform(traj) for traj in pop_axab])
-        
-        results[area] = {
-            'traj_aaab': np.mean(proj_aaab, axis=0),
-            'ci_aaab': np.percentile(proj_aaab, [2.5, 97.5], axis=0),
-            'traj_axab': np.mean(proj_axab, axis=0),
-            'ci_axab': np.percentile(proj_axab, [2.5, 97.5], axis=0),
-            'explained_var': pca.explained_variance_ratio_
-        }
-        print(f"""[action] Completed manifold analysis for {area}""")
+RASTER_CONDS = ['RRRR', 'RXRR', 'RRXR']
+
+def smooth_fr(data, sigma=50):
+    """Gaussian convolution for smooth firing rate traces."""
+    return gaussian_filter1d(data.astype(float), sigma=sigma)
+
+def analyze_unit_coding(loader: DataLoader, unit_id: str):
+    """
+    Extracts rasters and PSTHs for a single unit across all 12 sequence conditions.
+    """
+    print(f"[action] Analyzing coding suite for unit: {unit_id}")
+    
+    results = {
+        'rasters': {},
+        'psths': {}
+    }
+    
+    # 1. Rasters
+    for cond in RASTER_CONDS:
+        spk_data = loader.load_unit_spikes(unit_id, cond)
+        if spk_data is not None and spk_data.shape[0] > 0:
+            trials, times = np.where(spk_data > 0)
+            times_ms = times - 1000  # Shift to p1 onset
+            mask = (times_ms >= -1000) & (times_ms <= 4000)
+            results['rasters'][cond] = {
+                'times': times_ms[mask],
+                'trials': trials[mask]
+            }
+
+    # 2. PSTHs for all condition groups
+    for group_name, conditions in CONDITION_GROUPS.items():
+        results['psths'][group_name] = {}
+        for cond in conditions:
+            spk_data = loader.load_unit_spikes(unit_id, cond)
+            if spk_data is None or spk_data.shape[0] == 0:
+                continue
+                
+            n_trials = spk_data.shape[0]
+            
+            # Firing Rate per trial (Hz)
+            fr_trials = spk_data.astype(float) * 1000
+            
+            # Mean and SEM
+            mean_fr = fr_trials.mean(axis=0)
+            sem_fr = fr_trials.std(axis=0) / np.sqrt(n_trials)
+            
+            # Gaussian Convolution Smoothing (sigma=50ms)
+            mean_smoothed = smooth_fr(mean_fr, sigma=50)
+            upper_smoothed = smooth_fr(mean_fr + sem_fr, sigma=50)
+            lower_smoothed = smooth_fr(mean_fr - sem_fr, sigma=50)
+            
+            time_ms = np.arange(len(mean_smoothed)) - 1000
+            mask = (time_ms >= -1000) & (time_ms <= 4000)
+            
+            results['psths'][group_name][cond] = {
+                'time': time_ms[mask],
+                'mean': mean_smoothed[mask],
+                'upper': upper_smoothed[mask],
+                'lower': lower_smoothed[mask]
+            }
+            
     return results

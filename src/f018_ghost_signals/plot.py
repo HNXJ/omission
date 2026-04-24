@@ -18,18 +18,18 @@ def plot_ghost_signals(results: dict, output_dir: str):
     # Madelane Golden Dark inspired color palette
     colors = ["#CFB87C", "#8F00FF", "#FF1493", "#00FFCC", "#FF5E00", "#D3D3D3"]
     
-    times = np.arange(0, 6000)
-    
     for i, (area, data) in enumerate(results.items()):
         psth = data['avg_psth']
         sem = data['psth_sem']
+        n_samples = len(psth)
+        times = np.arange(0, n_samples)
         
         plotter.add_shaded_error_bar(
             times, 
             psth, 
             sem, 
-            f"{area} (N={len(data['slopes'])})",
-            colors[i % len(colors)]
+            name=f"{area} (N={len(data['slopes'])})",
+            color=colors[i % len(colors)]
         )
             
     # Add timing reference lines

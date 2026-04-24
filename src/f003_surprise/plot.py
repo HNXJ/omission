@@ -1,24 +1,34 @@
-# core
 import plotly.graph_objects as go
 from src.analysis.visualization.plotting import OmissionPlotter
-import numpy as np
+from src.analysis.io.logger import log
 
-def plot_area_psths(results: dict, output_dir: str):
+def plot_surprise(results: dict, output_dir: str):
     """
-    Plots Figure 3 area PSTHs.
+    Plots a bar chart of the Surprise Index across the hierarchy.
     """
-    t_local = np.linspace(-1000, 1000, 2000)
+    print(f"[action] Plotting Surprise Index Bar Chart")
+    plotter = OmissionPlotter(
+        title="Figure f003: Population Surprise Index",
+        subtitle="Surprise = (Omission - Standard) / (Omission + Standard) | Window: [0, 500]ms"
+    )
     
-    for area, data in results.items():
-        plotter = OmissionPlotter(
-            title=f"Figure 3: {area} Omission-Local PSTH",
-            subtitle=f"n={data['n_units']} units | Mean ± SEM | 0ms = Omission Onset"
-        )
-        plotter.set_axes("Time from Omission", "ms", "Firing Rate", "Hz")
-        
-        plotter.add_shaded_error_bar(t_local, data['aaab'], data['aaab_sem'], "Standard (AAAB)", "#000000")
-        plotter.add_shaded_error_bar(t_local, data['axab'], data['axab_sem'], "Omission (AXAB)", "#9400D3")
-        
-        plotter.add_xline(0, "Omission/Stim 2", color="red")
-        plotter.fig.update_xaxes(range=[-500, 1000])
-        plotter.save(output_dir, f"fig3_psth_local_{area}")
+    areas = list(results.keys())
+    means = [results[a]['mean'] for a in areas]
+    sems = [results[a]['sem'] for a in areas]
+    
+    plotter.set_axes("Cortical Area", "", "Surprise Index", "a.u.")
+    
+    plotter.fig.add_trace(go.Bar(
+        x=areas,
+        y=means,
+        error_y=dict(type='data', array=sems, visible=True),
+        marker_color="#9400D3",
+        marker_line=dict(width=1, color="black")
+    ))
+    
+    import os
+    os.makedirs(output_dir, exist_ok=True)
+    filename = "f003_surprise_index.html"
+    filepath = os.path.join(output_dir, filename)
+    plotter.fig.write_html(filepath, include_plotlyjs="cdn")
+    log.progress(f"Saved {filename}")
