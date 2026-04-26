@@ -87,6 +87,8 @@ class DataLoader:
         align_to: 'p1' (stimulus onset) or 'omission' (family-aware).
         """
         session = kwargs.get("session")
+        pre_ms = kwargs.get("pre_ms", 1000)
+        post_ms = kwargs.get("post_ms", 1000)
         log.action(f"Extracting {mode} signal for area {area} in condition {condition} (Align: {align_to}, Session: {session})")
         
         data_list = self._load_data(mode, condition, area, session=session)
@@ -99,9 +101,9 @@ class DataLoader:
             
             aligned_list = []
             for arr in data_list:
-                # Crop to [-1000, +1000] ms relative to omission
-                start = onset_sample - 1000
-                end = onset_sample + 1000
+                # Crop to [-pre_ms, +post_ms] relative to omission
+                start = max(0, onset_sample - pre_ms)
+                end = onset_sample + post_ms
                 if arr.shape[-1] >= end:
                     aligned_list.append(arr[:, :, start:end])
                 else:
@@ -200,7 +202,8 @@ class DataLoader:
     def get_output_dir(self, fig_id: str):
         """Returns the canonical output directory for a specific figure."""
         root = Path(__file__).parent.parent.parent.parent
-        out_dir = root.parent / "outputs" / "oglo-8figs" / fig_id
+        dashboard_id = fig_id.replace("_", "-")
+        out_dir = root.parent / "outputs" / "oglo-8figs" / dashboard_id
         out_dir.mkdir(parents=True, exist_ok=True)
         return out_dir
 

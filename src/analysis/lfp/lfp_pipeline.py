@@ -25,8 +25,8 @@ def get_lfp_signal(
         log.warning(f"Condition {condition} not in canonical set.")
     
     # Determine alignment
-    # If align_to is 'omission', DataLoader handles the cropping to [-1000, 1000]ms
-    data_list = loader.get_signal(mode="lfp", condition=condition, area=area, align_to=align_to)
+    # If align_to is 'omission', DataLoader handles the cropping
+    data_list = loader.get_signal(mode="lfp", condition=condition, area=area, align_to=align_to, **kwargs)
     
     if not data_list:
         return np.array([])
@@ -59,32 +59,34 @@ def run_lfp_spectral_pipeline(area: str, condition: str):
     
     # 1. Load aligned to omission
     log.progress(f"Running Spectral Pipeline for {area} - {condition}")
-    lfp = get_lfp_signal(area, condition, align_to="omission")
+    lfp = get_lfp_signal(area, condition, align_to="omission", pre_ms=2000, post_ms=2000)
     if lfp.size == 0: return None
     
     # 2. Preprocess
     lfp_clean = preprocess_lfp(lfp)
     
     # 3. TFR (Linear Power)
-    freqs, times, power = compute_multitaper_tfr(lfp_clean)
-    # times is relative to start of slice (0 to 2000ms). Center (0ms omission) is at 1000ms.
-    times_local = times - 1000.0
+    # Using efficient band power calculation to save memory
+    from src.analysis.lfp.lfp_tfr import compute_band_power_efficiently, compute_multitaper_tfr
     
-    # 4. Baseline Normalize ([-250, -50]ms)
-    normed_power = baseline_normalize(power, times_local)
+    freqs, times, band_dict = compute_band_power_efficiently(lfp_clean)
+    times_local = times - 2000.0
     
-    # 5. Average across trials and channels for pop summary
-    avg_power = np.mean(normed_power, axis=(0, 1)) # (freqs, times)
+    # Also get a summary TFR Heatmap (averaged across trials/channels early to save memory)
+    # We'll just compute a single-trial-like TFR for the summary plot if needed,
+    # but run_lfp_spectral_pipeline usually returns everything.
+    # To be efficient, let's just compute the average TFR directly.
     
-    # 6. Band collapse
-    bands = collapse_band_power(freqs, normed_power)
-    # bands: {band_name: (trials, channels, times)}
+    # 4. Average across trials and channels for pop summary
+    # We'll re-calculate TFR on averaged data for the heatmap to be super efficient
+    avg_lfp = np.mean(lfp_clean, axis=(0, 1), keepdims=True)
+    f_sum, t_sum, p_sum = compute_multitaper_tfr(avg_lfp)
+    # p_sum shape is (1, 1, freqs, times)
     
     return {
         "freqs": freqs,
         "times": times_local,
-        "tfr": avg_power,
-        "tfr_full": normed_power, # (trials, channels, freqs, times)
-        "bands": {k: np.mean(v, axis=(0, 1)) for k, v in bands.items()},
-        "bands_full": bands # {band_name: (trials, channels, times)}
+        "tfr": p_sum[0, 0],
+        "bands": {k: np.mean(v, axis=(0, 1)) for k, v in band_dict.items()},
+        "bands_full": band_dict # {band_name: (trials, channels, times)}
     }

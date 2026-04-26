@@ -3,6 +3,11 @@ name: analysis-mmff
 ---
 # analysis-mmff
 
+## 1. Problem
+This skill encompasses the legacy instructions for analysis-mmff.
+Legacy Purpose/Info:
+# analysis-mmff
+
 ## Purpose
 Mean-Matched Fano Factor (MMFF) computation and visualization. Controls for firing-rate confounds in variability analysis. Absorbs `science-neuro-omission-variability-quenching`.
 
@@ -38,3 +43,23 @@ print(f"""[result] MMFF computed for {len(mmff_data)} areas""")
 ## Files
 - [omission_hierarchy_utils.py](file:///D:/drive/omission/codes/functions/omission_hierarchy_utils.py) — Core functions
 - [compute_mean_matched_fano.py](file:///D:/drive/omission/codes/scripts/compute_mean_matched_fano.py) — Orchestrator
+
+## 2. Solution Architecture
+Executes the analytical pipeline using the standardized Omission hierarchy.
+- **Input**: NWB data or Numpy arrays via DataLoader.
+- **Output**: Interactive HTML/SVG figures saved to `D:/drive/outputs/oglo-8figs/`.
+
+## 3. Skills/Tools
+- Python 3.14
+- canonical LFP/Spike loaders (`src/analysis/io/loader.py`)
+- OmissionPlotter (`src/analysis/visualization/plotting.py`)
+- **Code/DOI Reference**: Internal Codebase (src)
+
+## 4. Version Control
+- All changes must be committed.
+- Comply with the GAMMA protocol (Commit-Pull-Push after every action).
+
+## 5. Rules/Cautions
+- Ensure strict adherence to the Madelane Golden Dark aesthetic.
+- Folders must be named using dashes (e.g., `f0xx-keyword`), NO underscores.
+- Only run on 'Stable-Plus' neuronal populations.

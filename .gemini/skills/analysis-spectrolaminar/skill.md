@@ -3,6 +3,11 @@ name: analysis-spectrolaminar
 ---
 # analysis-spectrolaminar
 
+## 1. Problem
+This skill encompasses the legacy instructions for analysis-spectrolaminar.
+Legacy Purpose/Info:
+# analysis-spectrolaminar
+
 ## Purpose
 Spectrolaminar profiling: computes depth-resolved Alpha/Beta vs Gamma power from linear-probe LFP and identifies the L4 crossover channel for laminar assignment.
 
@@ -30,3 +35,23 @@ print(f"""[result] L4 crossover at channel {l4}""")
 
 ## Files
 - [vflip2_mapping.py](file:///D:/drive/omission/codes/functions/vflip2_mapping.py) — Core
+
+## 2. Solution Architecture
+Executes the analytical pipeline using the standardized Omission hierarchy.
+- **Input**: NWB data or Numpy arrays via DataLoader.
+- **Output**: Interactive HTML/SVG figures saved to `D:/drive/outputs/oglo-8figs/`.
+
+## 3. Skills/Tools
+- Python 3.14
+- canonical LFP/Spike loaders (`src/analysis/io/loader.py`)
+- OmissionPlotter (`src/analysis/visualization/plotting.py`)
+- **Code/DOI Reference**: Internal Codebase (src)
+
+## 4. Version Control
+- All changes must be committed.
+- Comply with the GAMMA protocol (Commit-Pull-Push after every action).
+
+## 5. Rules/Cautions
+- Ensure strict adherence to the Madelane Golden Dark aesthetic.
+- Folders must be named using dashes (e.g., `f0xx-keyword`), NO underscores.
+- Only run on 'Stable-Plus' neuronal populations.

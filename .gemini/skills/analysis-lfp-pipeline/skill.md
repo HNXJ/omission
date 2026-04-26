@@ -3,6 +3,11 @@ name: analysis-lfp-pipeline
 ---
 # analysis-lfp-pipeline
 
+## 1. Problem
+This skill encompasses the legacy instructions for analysis-lfp-pipeline.
+Legacy Purpose/Info:
+# analysis-lfp-pipeline
+
 ## Purpose
 End-to-end LFP analysis: NPY/NWB loading, TFR computation, SFC/PPC, cross-area connectivity, and Kaleido-Free Plotly output. Absorbs `lfp-core`.
 
@@ -41,6 +46,26 @@ print(f"""[result] TFR shape: {tfr_db.shape}""")
 ```
 
 ## Files
-- [data_loader.py](file:///D:/drive/omission/src/core/data_loader.py) — Data access
-- [lfp_pipeline.py](file:///D:/drive/omission/src/analysis/lfp_pipeline.py) — Core logic
+- [loader.py](file:///D:/drive/omission/src/analysis/io/loader.py) — Data access
+- [lfp_pipeline.py](file:///D:/drive/omission/src/analysis/lfp/lfp_pipeline.py) — Core implementation
 - [OmissionPlotter](file:///D:/drive/omission/src/analysis/visualization/plotting.py) — Visualization
+
+## 2. Solution Architecture
+Executes the analytical pipeline using the standardized Omission hierarchy.
+- **Input**: NWB data or Numpy arrays via DataLoader.
+- **Output**: Interactive HTML/SVG figures saved to `D:/drive/outputs/oglo-8figs/`.
+
+## 3. Skills/Tools
+- Python 3.14
+- canonical LFP/Spike loaders (`src/analysis/io/loader.py`)
+- OmissionPlotter (`src/analysis/visualization/plotting.py`)
+- **Code/DOI Reference**: Internal Codebase (src)
+
+## 4. Version Control
+- All changes must be committed.
+- Comply with the GAMMA protocol (Commit-Pull-Push after every action).
+
+## 5. Rules/Cautions
+- Ensure strict adherence to the Madelane Golden Dark aesthetic.
+- Folders must be named using dashes (e.g., `f0xx-keyword`), NO underscores.
+- Only run on 'Stable-Plus' neuronal populations.

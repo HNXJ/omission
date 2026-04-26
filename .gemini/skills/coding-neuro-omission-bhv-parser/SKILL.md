@@ -3,6 +3,11 @@ name: coding-neuro-omission-bhv-parser
 ---
 # coding-neuro-omission-bhv-parser
 
+## 1. Problem
+This skill encompasses the legacy instructions for coding-neuro-omission-bhv-parser.
+Legacy Purpose/Info:
+# coding-neuro-omission-bhv-parser
+
 ## Purpose
 Parses MonkeyLogic 2.2 `.bhv2.mat` files to extract event timing, stimulus identity (A/B/R), omission flags, and trial-error filtering.
 
@@ -30,3 +35,23 @@ for t in trials:
 
 ## Files
 - [bhv_parser.py](file:///D:/drive/omission/src/extract/bhv_parser.py) — Core logic
+
+## 2. Solution Architecture
+Executes the analytical pipeline using the standardized Omission hierarchy.
+- **Input**: NWB data or Numpy arrays via DataLoader.
+- **Output**: Interactive HTML/SVG figures saved to `D:/drive/outputs/oglo-8figs/`.
+
+## 3. Skills/Tools
+- Python 3.14
+- canonical LFP/Spike loaders (`src/analysis/io/loader.py`)
+- OmissionPlotter (`src/analysis/visualization/plotting.py`)
+- **Code/DOI Reference**: Internal Codebase (src)
+
+## 4. Version Control
+- All changes must be committed.
+- Comply with the GAMMA protocol (Commit-Pull-Push after every action).
+
+## 5. Rules/Cautions
+- Ensure strict adherence to the Madelane Golden Dark aesthetic.
+- Folders must be named using dashes (e.g., `f0xx-keyword`), NO underscores.
+- Only run on 'Stable-Plus' neuronal populations.

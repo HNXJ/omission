@@ -1,8 +1,7 @@
-# core
 import numpy as np
 from src.analysis.io.loader import DataLoader
 from src.analysis.io.logger import log
-from src.analysis.lfp.sfc import select_top_units, get_matched_sfc_data, get_plv_spectrum, apply_subsampling
+from src.analysis.lfp.sfc import get_plv_spectrum, apply_subsampling
 
 def analyze_sfc_plv(loader: DataLoader, areas: list):
     """
@@ -10,32 +9,76 @@ def analyze_sfc_plv(loader: DataLoader, areas: list):
     """
     results = {}
     for area in areas:
-        log.info(f"Computing SFC for {area}")
+        print(f"[action] Computing SFC for {area}")
         
-        # 1. Selection
-        s_units = select_top_units(loader, area, mode="stimulus", top_n=10)
-        o_units = select_top_units(loader, area, mode="omission", top_n=10)
+        # Load aligned signals
+        spk_s = loader.get_signal(mode="spk", condition="AAAB", area=area, align_to="omission")
+        lfp_s = loader.get_signal(mode="lfp", condition="AAAB", area=area, align_to="omission")
         
-        if not s_units or not o_units: continue
+        spk_o = loader.get_signal(mode="spk", condition="AXAB", area=area, align_to="omission")
+        lfp_o = loader.get_signal(mode="lfp", condition="AXAB", area=area, align_to="omission")
         
-        # 2. Loading and Alignment
-        s_data = [get_matched_sfc_data(loader, u) for u in s_units]
-        o_data = [get_matched_sfc_data(loader, u) for u in o_units]
+        if not spk_s or not lfp_s or not spk_o or not lfp_o:
+            print(f"[warning] Missing data for {area}, skipping.")
+            continue
+        if len(spk_s) != len(lfp_s) or len(spk_o) != len(lfp_o):
+            print(f"[warning] Mismatched LFP/SPK blocks for {area}, skipping.")
+            continue
         
-        # Filter out failed loads
-        s_data = [d for d in s_data if d[0] is not None]
-        o_data = [d for d in o_data if d[0] is not None]
+        # Extract S+ top units
+        s_unit_data = []
+        for lfp_arr, spk_arr in zip(lfp_s, spk_s):
+            if lfp_arr.size == 0 or spk_arr.size == 0: continue
+            mean_lfp = np.mean(lfp_arr, axis=1) # (trials, time)
+            fr = np.mean(spk_arr[:, :, 1000:1500], axis=(0, 2))
+            for u_idx, val in enumerate(fr):
+                if val > 0.001:
+                    s_unit_data.append((val, mean_lfp, spk_arr[:, u_idx, :]))
+                    
+        s_unit_data.sort(key=lambda x: x[0], reverse=True)
+        top_s_data = s_unit_data[:10]
         
-        if not s_data or not o_data: continue
+        # Extract O+ top units
+        o_unit_data = []
+        for lfp_arr, spk_arr in zip(lfp_o, spk_o):
+            if lfp_arr.size == 0 or spk_arr.size == 0: continue
+            mean_lfp = np.mean(lfp_arr, axis=1)
+            fr = np.mean(spk_arr[:, :, 1000:1500], axis=(0, 2))
+            for u_idx, val in enumerate(fr):
+                if val > 0.001:
+                    o_unit_data.append((val, mean_lfp, spk_arr[:, u_idx, :]))
+                    
+        o_unit_data.sort(key=lambda x: x[0], reverse=True)
+        top_o_data = o_unit_data[:10]
         
-        # 3. Subsampling
-        all_spks = [d[1] for d in s_data] + [d[1] for d in o_data]
+        if not top_s_data or not top_o_data:
+            print(f"[warning] Not enough responsive units for {area}, skipping.")
+            continue
+        
+        # Subsampling
+        all_spks = [d[2] for d in top_s_data] + [d[2] for d in top_o_data]
         sub_spks = apply_subsampling(all_spks)
         
-        # 4. PLV Spectrum
-        s_spectra = [get_plv_spectrum(s_data[i][0], sub_spks[i])[1] for i in range(len(s_data))]
-        o_spectra = [get_plv_spectrum(o_data[i][0], sub_spks[len(s_data)+i])[1] for i in range(len(o_data))]
-        freqs, _ = get_plv_spectrum(s_data[0][0], sub_spks[0])
-        
+        # Calculate PLV spectra in the window 0-500ms post onset
+        s_spectra = []
+        for i, d in enumerate(top_s_data):
+            lfp_full = d[1]
+            spk_full = sub_spks[i].copy()
+            spk_full[:, :1000] = 0
+            spk_full[:, 1500:] = 0
+            freqs, spec = get_plv_spectrum(lfp_full, spk_full)
+            s_spectra.append(spec)
+            
+        o_spectra = []
+        for i, d in enumerate(top_o_data):
+            lfp_full = d[1]
+            spk_full = sub_spks[len(top_s_data)+i].copy()
+            spk_full[:, :1000] = 0
+            spk_full[:, 1500:] = 0
+            _, spec = get_plv_spectrum(lfp_full, spk_full)
+            o_spectra.append(spec)
+            
         results[area] = {'freqs': freqs, 's_plus': s_spectra, 'o_plus': o_spectra}
+        print(f"[result] Computed SFC PLV for {area}")
+        
     return results

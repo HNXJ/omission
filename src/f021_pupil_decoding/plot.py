@@ -27,8 +27,8 @@ def plot_pupil_surprise(results: dict, output_dir: str):
     
     times = np.arange(0, 6000) - 1000 # Align to P1 onset at 0ms
     
-    plotter.add_shaded_error_bar(times, omit_mean, omit_sem, "Omission (AXAB)", "#FF1493")
-    plotter.add_shaded_error_bar(times, std_mean, std_sem, "Standard (AAAB)", "#8F00FF")
+    plotter.add_shaded_error_bar(times, omit_mean, omit_sem, name="Omission (AXAB)", color="#FF1493")
+    plotter.add_shaded_error_bar(times, std_mean, std_sem, name="Standard (AAAB)", color="#8F00FF")
     
     # Add timing reference lines
     plotter.add_xline(0, "P1 Onset", color="black")

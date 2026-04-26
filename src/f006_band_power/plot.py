@@ -4,9 +4,12 @@ from src.analysis.io.logger import log
 import numpy as np
 import os
 from scipy.ndimage import gaussian_filter1d
+from src.analysis.io.loader import DataLoader
+from src.analysis.lfp.lfp_constants import TIMING_MS
 
 def plot_band_dynamics(results: dict, output_dir: str):
     os.makedirs(output_dir, exist_ok=True)
+    loader = DataLoader()
     
     colors = {
         "theta": "#4B0082", 
@@ -17,6 +20,7 @@ def plot_band_dynamics(results: dict, output_dir: str):
     }
     
     for cond, area_data in results.items():
+        onset_ms = loader.get_omission_onset(cond)
         for area, res in area_data.items():
             print(f"[action] Plotting Band Dynamics for {area} ({cond})")
             plotter = OmissionPlotter(
@@ -48,9 +52,19 @@ def plot_band_dynamics(results: dict, output_dir: str):
                 plotter.add_trace(go.Scatter(x=times, y=mean_trace-sem_trace, fill='tonexty', mode='lines', line=dict(width=0), fillcolor=rgba, showlegend=False), name=f"{band_name}_down")
                 plotter.add_trace(go.Scatter(x=times, y=mean_trace, mode='lines', line=dict(color=color, width=3)), name=band_name)
                 
-            plotter.add_xline(0, "Omission Onset", color="red", dash="dash")
-            plotter.fig.update_xaxes(range=[-500, 1000])
-            
-            filename = f"f006_band_power_local_{area}_{cond}"
+            # Add Sequence Timing Markers shifted by omission onset
+            for marker_name, t_val in TIMING_MS.items():
+                shifted_t = t_val - onset_ms
+                if -1500 <= shifted_t <= 2000: # Only plot relevant markers
+                    dash_style = "dot" if marker_name.startswith("d") else "dash"
+                    # Marker name to Upper for label
+                    label = marker_name.upper()
+                    plotter.add_xline(shifted_t, label, color="gray", dash=dash_style)
+
+            plotter.add_xline(0, "OMISSION (P2)", color="red", dash="dash")
+            plotter.fig.update_xaxes(range=[-2000, 2000])
+
+            # Save with name expected by dashboard
+            filename = f"fig6_band_power_{area}"
             plotter.save(output_dir, filename)
             log.progress(f"Saved {filename}.html")

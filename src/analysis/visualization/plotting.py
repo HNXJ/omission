@@ -145,9 +145,8 @@ class OmissionPlotter:
 
     def save(self, output_dir: str, filename: str):
         """
-        Save the figure efficiently in Interactive HTML format ONLY.
-        Strictly adheres to the Kaleido-Free Export mandate. The HTML viewer 
-        is configured natively with a 'Download to SVG' button via modebar_add.
+        Save the figure efficiently in Interactive HTML format.
+        Based on user override, additionally exports to SVG via Kaleido.
         """
         out_path = Path(output_dir)
         out_path.mkdir(parents=True, exist_ok=True)
@@ -157,5 +156,19 @@ class OmissionPlotter:
         
         # Save HTML (100% reliable, interactive, self-contained)
         html_file = out_path / f"{filename}.html"
-        self.fig.write_html(str(html_file), include_plotlyjs="cdn")
+        config = {
+            'toImageButtonOptions': {
+                'format': 'svg',
+                'filename': filename
+            }
+        }
+        self.fig.write_html(str(html_file), include_plotlyjs="cdn", config=config)
         log.progress(f"Saved interactive HTML figure (Kaleido-Free): {html_file}")
+
+        # Explicit User Override: Generate Vectorized SVG
+        svg_file = out_path / f"{filename}.svg"
+        try:
+            self.fig.write_image(str(svg_file), engine="kaleido")
+            log.progress(f"Saved vectorized SVG (Mandate Override): {svg_file}")
+        except Exception as e:
+            log.warning(f"Failed to save SVG (Kaleido might not be installed properly): {e}")
