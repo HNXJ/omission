@@ -83,10 +83,14 @@ def run_lfp_spectral_pipeline(area: str, condition: str):
     f_sum, t_sum, p_sum = compute_multitaper_tfr(avg_lfp)
     # p_sum shape is (1, 1, freqs, times)
     
+    # Baseline Normalize the summary TFR (dB)
+    t_sum_local = t_sum - 2000.0 # Align to omission
+    p_sum_db = baseline_normalize(p_sum[0, 0], t_sum_local, baseline_window=(-1000, -500))
+    
     return {
         "freqs": freqs,
         "times": times_local,
-        "tfr": p_sum[0, 0],
+        "tfr": p_sum_db,
         "bands": {k: np.mean(v, axis=(0, 1)) for k, v in band_dict.items()},
         "bands_full": band_dict # {band_name: (trials, channels, times)}
     }

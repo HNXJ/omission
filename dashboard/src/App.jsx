@@ -143,15 +143,17 @@ const App = () => {
     }
   };
 
+  const [viewFilter, setViewFilter] = useState('both'); // 'both', 'aaab', 'axab'
+
   const getFiguresForPhase = (phase) => {
-    return manifest.figures.filter(fig => {
-      const match = fig.id.match(/^f(\d+)/);
-      if (match) {
-        const num = parseInt(match[1]);
-        return num >= phase.range[0] && num <= phase.range[1];
-      }
-      return false;
-    });
+    return manifest.figures.filter(fig => fig.phase === parseInt(phase.id.replace('p', '')));
+  };
+
+  const filterFiles = (files) => {
+    if (viewFilter === 'both') return files;
+    if (viewFilter === 'aaab') return files.filter(f => f.toLowerCase().includes('aaab') || f.toLowerCase().includes('standard'));
+    if (viewFilter === 'axab') return files.filter(f => f.toLowerCase().includes('axab') || f.toLowerCase().includes('omission'));
+    return files;
   };
 
   const renderScoreboard = () => (
@@ -197,22 +199,53 @@ const App = () => {
     </div>
   );
 
+  const renderStats = (stats) => {
+    if (!stats || Object.keys(stats).length === 0) return null;
+    return (
+      <div className="figure-card full-width">
+        <div className="figure-card-header">
+          <h3>Population Statistics (11 Areas)</h3>
+          <ShieldCheck size={20} color="#CFB87C" />
+        </div>
+        <div className="stats-grid">
+          {Object.entries(stats).map(([area, s]) => (
+            <div key={area} className="stat-unit">
+              <div className="stat-unit-area">{area}</div>
+              <div className="stat-unit-tier" style={{ color: getStatusColor(s.tier.toLowerCase()) }}>
+                {s.tier} {s.stars}
+              </div>
+              <div className="stat-unit-meta">
+                p={s.p.toExponential(2)} | n={s.n_units || '?'}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   const renderContent = () => {
-    if (viewMode === 'scoreboard') return renderScoreboard();
+    const location = useLocation();
+    const isScoreboard = location.pathname === '/scoreboard';
+    
+    if (isScoreboard) return renderScoreboard();
+    
     if (!selectedItem) {
       return (
         <div className="empty-state">
           <LayoutDashboard size={64} color="#CFB87C" style={{ opacity: 0.5, marginBottom: 24 }} />
           <h2>Omission Terminal</h2>
-          <p>System Online. Awaiting analytical interrogation.</p>
+          <p>Select a module from the hierarchy to begin interrogation.</p>
         </div>
       );
     }
 
     return (
       <div className="viewer-container">
+        {renderStats(selectedItem.stats)}
+        
         <div className="gallery-grid">
-          {selectedItem.files.map((file, idx) => (
+          {filterFiles(selectedItem.files).map((file, idx) => (
             <div className="figure-card" key={idx}>
               <div className="figure-card-header">
                 <h3>{file}</h3>
@@ -315,7 +348,24 @@ const App = () => {
             <div className="header-title">
               {selectedItem ? selectedItem.title : 'Analytical Terminal'}
             </div>
-            <Settings size={20} color="#666" style={{ cursor: 'pointer' }} />
+            
+            <div className="header-actions">
+              <div className="filter-toggle">
+                <button 
+                  className={`filter-btn ${viewFilter === 'both' ? 'active' : ''}`}
+                  onClick={() => setViewFilter('both')}
+                >BOTH</button>
+                <button 
+                  className={`filter-btn ${viewFilter === 'aaab' ? 'active' : ''}`}
+                  onClick={() => setViewFilter('aaab')}
+                >STANDARD</button>
+                <button 
+                  className={`filter-btn ${viewFilter === 'axab' ? 'active' : ''}`}
+                  onClick={() => setViewFilter('axab')}
+                >OMISSION</button>
+              </div>
+              <Settings size={20} color="#666" style={{ cursor: 'pointer' }} />
+            </div>
           </div>
           <div className="scroll-wrapper">
             <Routes>

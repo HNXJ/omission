@@ -52,8 +52,13 @@ def analyze_unit_coding(loader: DataLoader, unit_id: str):
             fr_trials = spk_data.astype(float) * 1000
             
             # Mean and SEM
-            mean_fr = fr_trials.mean(axis=0)
-            sem_fr = fr_trials.std(axis=0) / np.sqrt(n_trials)
+            if n_trials > 0:
+                mean_fr = fr_trials.mean(axis=0)
+                std_fr = fr_trials.std(axis=0)
+                sem_fr = std_fr / np.sqrt(n_trials)
+            else:
+                mean_fr = np.zeros(spk_data.shape[1])
+                sem_fr = np.zeros(spk_data.shape[1])
             
             # NaN/INF Guard: Replace any invalid numbers with 0.0 before smoothing
             mean_fr = np.nan_to_num(mean_fr, nan=0.0, posinf=0.0, neginf=0.0)

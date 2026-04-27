@@ -61,12 +61,22 @@ def audit_figure(figure_path: Path, code_ref: str):
             notes.append("Missing essential labels (Title/X/Y)")
             
         # 3. Data Integrity Audit (30 points)
-        if "NaN" in content or "Infinity" in content or "null" in content:
-             # Basic check for empty arrays or corrupt data
-             # Note: 'null' is common in Plotly JSON, so we check for NaN/Infinity specifically
-             if "NaN" in content or "Infinity" in content:
+        # Extract the JSON payload (usually the second or third argument to Plotly.newPlot)
+        # We look for the data array [ ... ] and layout object { ... }
+        json_match = re.search(r'Plotly\.newPlot\(\s*"[^"]+",\s*(\[.*?\]),\s*(\{.*?\})', content, re.DOTALL)
+        if json_match:
+            data_json = json_match.group(1)
+            layout_json = json_match.group(2)
+            
+            if "NaN" in data_json or "Infinity" in data_json or "NaN" in layout_json or "Infinity" in layout_json:
                  score -= WEIGHTS["integrity"]
-                 notes.append("Corrupt Data (NaN/Infinity detected)")
+                 notes.append("Corrupt Data (NaN/Infinity detected in JSON)")
+        else:
+            # Fallback if regex fails, but be more specific
+            # Check if NaN/Infinity appear in a context that looks like JSON data
+            if re.search(r':\s*NaN', content) or re.search(r':\s*Infinity', content):
+                score -= WEIGHTS["integrity"]
+                notes.append("Corrupt Data (NaN/Infinity detected via fallback)")
 
     except Exception as e:
         print(f"""[error] Failed to read {target_html}: {e}""")
