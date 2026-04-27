@@ -134,4 +134,26 @@ def analyze_sfc_delta():
                 "n_units": len(all_sfc_ax)
             }
             
+            # 3. STATISTICAL COMPARISON (Significance-Tier Standard)
+            # Compare AXAB vs AAAB Delta PLV in the Omission window (0 to 500ms)
+            from scipy.stats import ranksums
+            from src.analysis.stats.tiers import get_significance_tier
+            
+            # time_vector is centered on windows. Omission window is around 0.
+            win_mask = (time_vector >= 0) & (time_vector <= 500)
+            
+            # Average PLV per unit in the window
+            plv_ax_pop = np.nanmean(sfc_ax[:, win_mask], axis=1)
+            plv_aa_pop = np.nanmean(sfc_aa[:, win_mask], axis=1)
+            
+            # Filter NaNs
+            mask = ~np.isnan(plv_ax_pop) & ~np.isnan(plv_aa_pop)
+            if np.sum(mask) >= 5:
+                stat, p_val = ranksums(plv_ax_pop[mask], plv_aa_pop[mask])
+                tier, k, stars = get_significance_tier(p_val)
+                results[area]["stats"] = {
+                    "p": p_val, "tier": tier, "stars": stars, "test": "Rank-Sum (Delta PLV)"
+                }
+                print(f"[stats] SFC-Delta Area {area} | {tier} ({p_val:.2e}) | {stars}")
+            
     return results

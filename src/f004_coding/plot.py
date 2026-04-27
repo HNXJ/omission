@@ -2,6 +2,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
 from src.analysis.io.logger import log
+from src.analysis.stats.tiers import get_significance_tier
 
 COND_COLORS = {
     'AAAB': '#0072B2', 'AAAX': '#56B4E9', 'AAXB': '#009E73', 'AXAB': '#E69F00',
@@ -25,11 +26,20 @@ def plot_raster_suite(results: dict, unit_id: str, tag: str, area: str, output_d
     # Prepare Dynamic Subplot Titles with Stats
     raster_titles = ["RRRR Raster", "RXRR Raster", "RRXR Raster"]
     final_titles = list(raster_titles)
+    
+    # Metadata for stats footer
+    global_p_val = 1.0
+    global_test = "N/A"
+    
     for group in GROUP_NAMES:
         title = group
         if group in results['psths'] and 'stats' in results['psths'][group]:
             s = results['psths'][group]['stats']
             title = f"{group} ({s['stars'] if s['stars'] else 'n.s.'})"
+            # Capture for footer (usually from A-Base)
+            if group == "A-Base Sequences":
+                global_p_val = s['p']
+                global_test = s['test']
         final_titles.append(title)
 
     fig = make_subplots(
@@ -40,7 +50,7 @@ def plot_raster_suite(results: dict, unit_id: str, tag: str, area: str, output_d
         row_heights=[0.08, 0.08, 0.08, 0.24, 0.24, 0.24]
     )
     
-    max_fr = 0
+    max_fr = 1.0 # Minimum baseline
     has_data = False
 
     # 1. Rasters
@@ -56,7 +66,6 @@ def plot_raster_suite(results: dict, unit_id: str, tag: str, area: str, output_d
                 name=f'{cond} Raster',
                 showlegend=False
             ), row=row_idx, col=1)
-            fig.update_yaxes(title_text="Trials", row=row_idx, col=1, autorange="reversed")
             has_data = True
 
     # 2. PSTHs
@@ -82,22 +91,25 @@ def plot_raster_suite(results: dict, unit_id: str, tag: str, area: str, output_d
                     line=dict(color=color, width=3)
                 ), row=row_idx, col=1)
                 
-                max_fr = max(max_fr, np.max(p_data['upper']))
+                max_fr = max(max_fr, np.nanmax(p_data['upper']))
                 has_data = True
 
     if not has_data:
         print(f"[warning] No data to plot for {unit_id}")
         return
 
-    # Global Styling & Labeling
+    # Global Styling & Labeling (STRICT COMPLIANCE)
     for r in range(1, 7):
-        # Apply labels to EVERY row to pass Sentinel audit
-        fig.update_xaxes(title_text="Time from p1 onset (ms)", row=r, col=1)
+        # Mandatory Axis Labels
+        fig.update_xaxes(title_text="Time from p1 onset (ms)", row=r, col=1, showgrid=True, gridcolor="#EEE")
         if r <= 3:
-            fig.update_yaxes(title_text="Trials", row=r, col=1, autorange="reversed")
+            fig.update_yaxes(title_text="Trials", row=r, col=1, autorange="reversed", showgrid=True, gridcolor="#EEE")
         else:
-            fig.update_yaxes(title_text="Firing Rate (Hz)", row=r, col=1, range=[0, np.nanmax([max_fr, 1.0]) * 1.1])
+            # Data Integrity: Guard against NaN in range
+            safe_max = float(max_fr) if not np.isnan(max_fr) else 10.0
+            fig.update_yaxes(title_text="Firing Rate (Hz)", row=r, col=1, range=[0, safe_max * 1.1], showgrid=True, gridcolor="#EEE")
 
+        # Shaded Epochs
         for epoch in EPOCHS:
             fig.add_vrect(
                 x0=epoch['start'], x1=epoch['end'],
@@ -108,10 +120,20 @@ def plot_raster_suite(results: dict, unit_id: str, tag: str, area: str, output_d
         for start in [0, 1031, 2062, 3093]:
              fig.add_vline(x=start, line_width=1, line_dash="dash", line_color="black", opacity=0.3, row=r, col=1)
 
-    title_text = f"<b>Figure f004: Ultimate Stable Unit - {tag}</b><br><sup>Unit: {area} | ID: {unit_id} | Madelane-Compliant Aesthetic</sup>"
+    # Master Title & Subtitle
+    title_main = f"Figure f004: Ultimate Stable Unit - {tag}"
+    if global_p_val < 0.05:
+        _, _, stars = get_significance_tier(global_p_val)
+        title_main = f"{title_main} {stars}"
+        
+    title_text = f"<b>{title_main}</b><br><sup>Unit: {area} | ID: {unit_id} | Madelane-Compliant Aesthetic</sup>"
     
+    # High-Density Statistical Footer
+    tier_name, _, stars = get_significance_tier(global_p_val)
+    stats_footer = f"<b>Stats:</b> [{global_test}] p={global_p_val:.2e} ({tier_name}) {stars} | Ref: {area}_{unit_id}"
+
     fig.update_layout(
-        title=dict(text=title_text, x=0.5, xanchor='center', font=dict(size=18, family="Arial", color="#000000")),
+        title=dict(text=title_text, x=0.5, xanchor='center', font=dict(size=20, family="Arial", color="#000000")),
         template="plotly_white",
         paper_bgcolor="#FFFFFF",
         plot_bgcolor="#FFFFFF",
@@ -119,23 +141,45 @@ def plot_raster_suite(results: dict, unit_id: str, tag: str, area: str, output_d
         legend=dict(
             orientation="h",
             yanchor="top",
-            y=-0.03,
+            y=-0.04,
             xanchor="center",
             x=0.5,
-            font=dict(size=10),
-            bgcolor="rgba(255,255,255,0.8)",
+            font=dict(size=12, family="JetBrains Mono"),
+            bgcolor="rgba(255,255,255,0.9)",
             bordercolor="#000000",
             borderwidth=1
         ),
-        margin=dict(b=150, t=120, l=100, r=100),
+        margin=dict(b=180, t=140, l=120, r=80),
         modebar_add=['toImage']
+    )
+    
+    # Inject Footer Annotation
+    fig.add_annotation(
+        xref="paper", yref="paper",
+        x=0, y=-0.08,
+        text=stats_footer,
+        showarrow=False,
+        font=dict(family="JetBrains Mono", size=11, color="#333"),
+        align="left"
     )
 
     # Save
     import os
     os.makedirs(output_dir, exist_ok=True)
-    filename = f"f004_coding_suite_{tag}.html"
-    filepath = os.path.join(output_dir, filename)
-    fig.write_html(filepath, include_plotlyjs="cdn")
-    print(f"[action] Saved: {filepath}")
-    log.progress(f"Saved {filename}")
+    filename = f"f004_coding_suite_{tag}"
+    filepath_html = os.path.join(output_dir, f"{filename}.html")
+    
+    # Save with SVG-capable modebar
+    config = {
+        'toImageButtonOptions': {
+            'format': 'svg',
+            'filename': filename,
+            'height': 1600,
+            'width': 1200,
+            'scale': 1
+        }
+    }
+    fig.write_html(filepath_html, include_plotlyjs="cdn", config=config)
+    
+    print(f"[action] Saved: {filepath_html}")
+    log.progress(f"Saved {filename}.html")

@@ -9,7 +9,10 @@ def plot_surprise(results: dict, output_dir: str):
     print(f"[action] Plotting Surprise Index Bar Chart")
     plotter = OmissionPlotter(
         title="Figure f003: Population Surprise Index",
-        subtitle="Surprise = (Omission - Standard) / (Omission + Standard) | Window: [0, 500]ms"
+        x_label="Cortical Area (S_k Tier)",
+        y_label="Surprise Index",
+        subtitle="Surprise = (Omission - Standard) / (Omission + Standard) | Window: [0, 500]ms",
+        y_unit="a.u."
     )
     
     areas = list(results.keys())
@@ -21,8 +24,6 @@ def plot_surprise(results: dict, output_dir: str):
         
     means = [results[a]['mean'] for a in areas]
     sems = [results[a]['sem'] for a in areas]
-    
-    plotter.set_axes("Cortical Area (S_k Tier)", "", "Surprise Index", "a.u.")
     
     plotter.fig.add_trace(go.Bar(
         x=display_labels,

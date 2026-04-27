@@ -2,6 +2,7 @@ import numpy as np
 from src.analysis.io.loader import DataLoader
 from src.analysis.io.logger import log
 from src.analysis.lfp.sfc import get_plv_spectrum, apply_subsampling
+from src.analysis.stats.tiers import get_significance_tier, run_permutation_test, run_frequency_wise_comparison
 
 def analyze_sfc_plv(loader: DataLoader, areas: list):
     """
@@ -20,9 +21,6 @@ def analyze_sfc_plv(loader: DataLoader, areas: list):
         
         if not spk_s or not lfp_s or not spk_o or not lfp_o:
             print(f"[warning] Missing data for {area}, skipping.")
-            continue
-        if len(spk_s) != len(lfp_s) or len(spk_o) != len(lfp_o):
-            print(f"[warning] Mismatched LFP/SPK blocks for {area}, skipping.")
             continue
         
         # Extract S+ top units
@@ -79,6 +77,27 @@ def analyze_sfc_plv(loader: DataLoader, areas: list):
             o_spectra.append(spec)
             
         results[area] = {'freqs': freqs, 's_plus': s_spectra, 'o_plus': o_spectra}
-        print(f"[result] Computed SFC PLV for {area}")
+        
+        # 3. STATISTICAL COMPARISON (Significance-Tier Standard)
+        # Point-by-point Frequency Comparison
+        p_corrected, rejected_mask = run_frequency_wise_comparison(np.array(o_spectra), np.array(s_spectra))
+        
+        # Gamma band window: 30-80 Hz for Global Star Rating
+        g_mask = (freqs >= 30) & (freqs <= 80)
+        plv_s_gamma = [np.mean(spec[g_mask]) for spec in s_spectra]
+        plv_o_gamma = [np.mean(spec[g_mask]) for spec in o_spectra]
+        
+        p_val_gamma, _ = run_permutation_test(np.array(plv_o_gamma), np.array(plv_s_gamma))
+        tier, k, stars = get_significance_tier(p_val_gamma)
+        
+        results[area]['stats'] = {
+            'p': p_val_gamma, 
+            'tier': tier, 
+            'stars': stars, 
+            'test': 'Permutation Test (Gamma PLV)',
+            'p_spectrum': p_corrected,
+            'rejected_mask': rejected_mask
+        }
+        print(f"[stats] SFC Area {area} | {tier} ({p_val_gamma:.2e}) | {stars}")
         
     return results

@@ -20,13 +20,27 @@ def plot_band_dynamics(results: dict, output_dir: str):
     }
     
     for cond, area_data in results.items():
+        if cond == "stats":
+            continue
         onset_ms = loader.get_omission_onset(cond)
         for area, res in area_data.items():
             print(f"[action] Plotting Band Dynamics for {area} ({cond})")
-            plotter = OmissionPlotter(title=f"Figure f006: {area} Band-Specific Omission Dynamics ({cond}, x_label="Time", y_label="Power (dB)")",
-                subtitle="Relative Power (dB) with ±SEM | 0ms = Omission Onset | 30ms Smoothed"
+            
+            # Aggregate stats summary for title if available
+            title_stats = ""
+            if "stats" in results and area in results["stats"]:
+                # Just highlight the most significant band in the title
+                area_stats = results["stats"][area]
+                best_band = max(area_stats, key=lambda b: -area_stats[b]['p'] if area_stats[b]['p'] < 1.0 else -1e10)
+                title_stats = f" | {best_band} {area_stats[best_band]['stars']}"
+
+            plotter = OmissionPlotter(
+                title=f"Figure f006: {area} Band-Specific Omission Dynamics ({cond}){title_stats}",
+                x_label="Time from Omission",
+                y_label="Relative Power",
+                subtitle="Relative Power (dB) with ±SEM | 0ms = Omission Onset",
+                y_unit="dB"
             )
-            plotter.set_axes("Time from Omission", "ms", "Relative Power", "dB")
             
             times = res["times"]
             
@@ -49,7 +63,11 @@ def plot_band_dynamics(results: dict, output_dir: str):
                 
                 plotter.add_trace(go.Scatter(x=times, y=mean_trace+sem_trace, mode='lines', line=dict(width=0), showlegend=False), name=f"{band_name}_up")
                 plotter.add_trace(go.Scatter(x=times, y=mean_trace-sem_trace, fill='tonexty', mode='lines', line=dict(width=0), fillcolor=rgba, showlegend=False), name=f"{band_name}_down")
-                plotter.add_trace(go.Scatter(x=times, y=mean_trace, mode='lines', line=dict(color=color, width=3)), name=band_name)
+                stars = ""
+                if "stats" in results and area in results["stats"] and band_name in results["stats"][area]:
+                    stars = f" {results['stats'][area][band_name]['stars']}"
+                
+                plotter.add_trace(go.Scatter(x=times, y=mean_trace, mode='lines', line=dict(color=color, width=3)), name=f"{band_name}{stars}")
                 
             # Add Sequence Timing Markers shifted by omission onset
             for marker_name, t_val in TIMING_MS.items():

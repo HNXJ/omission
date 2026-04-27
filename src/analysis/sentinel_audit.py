@@ -48,41 +48,50 @@ class GPAAuditor:
         if not html_files:
             return 0, "fail", "No HTML figure found"
         
+        # Sort by size to pick the primary figure (not indices or small plots)
+        html_files.sort(key=lambda x: os.path.getsize(os.path.join(folder_path, x)), reverse=True)
         first_fig = os.path.join(folder_path, html_files[0])
         try:
             with open(first_fig, 'r', encoding='utf-8', errors='ignore') as f:
                 content = f.read()
                 
                 # Aesthetic (10 pts)
-                white_patterns = [r'"paper_bgcolor":\s*"#?FFFFFF"', r'"paper_bgcolor":\s*"white"', r'"paper_bgcolor":\s*"rgb\(255,\s*255,\s*255\)"']
+                white_patterns = [r'"paper_bgcolor":\s*"#?FFFFFF"', r'"paper_bgcolor":\s*"white"']
                 if any(re.search(p, content, re.I) for p in white_patterns):
                     gpa += 10.0
                 else:
                     details.append("Non-white background")
 
-                # Statistical (30 pts)
-                if re.search(r'Sig-\d+|Insignificant|Null', content):
-                    gpa += 10.0
-                if re.search(r'p=\d+\.\d+e[+-]\d+', content):
-                    gpa += 5.0
-                if "*" in content or "n.s." in content:
-                    gpa += 5.0
+                # Statistical Proof (40 pts)
+                # Tier detection (20) + P-value reporting (10) + Significance mapping (10)
+                tier_match = re.search(r'Sig-\d+|Insignificant|Null', content)
+                p_match = re.search(r'p=\d+\.\d+e[+-]\d+', content)
+                stars_match = re.search(r'\*+|n\.s\.|Null', content)
+                
+                if tier_match: gpa += 20.0
+                if p_match: gpa += 10.0
+                if stars_match: gpa += 10.0
+                
+                if not tier_match:
+                    details.append("Missing Statistical Tier")
 
-                # Data Integrity (30 pts)
+                # Data Integrity (20 pts)
                 if not re.search(r'":\s*\[[^\]]*\b(NaN|Infinity)\b', content):
-                    gpa += 30.0
+                    gpa += 20.0
                 else:
                     details.append("Corrupt Data (NaN/INF)")
                     status = "fail"
 
                 # Scientific Density (10 pts)
-                if "Area" in content or "Population" in content:
+                if any(term in content for term in ["Area", "Population", "Units", "Hierarchy"]):
                     gpa += 10.0
+                else:
+                    details.append("Low Scientific Density")
                     
         except Exception as e:
             return 0, "fail", f"Audit Error: {str(e)}"
 
-        status = "awesome" if gpa >= 90 else "pass" if gpa >= 60 else "fail"
+        status = "awesome" if gpa >= 95 else "pass" if gpa >= 70 else "fail"
         return round(gpa, 2), status, "; ".join(details) if details else "GPA Calibrated."
 
 def main():
@@ -128,7 +137,15 @@ def main():
     with open(SCOREBOARD_PATH, 'w') as f:
         json.dump(sb, f, indent=2)
     
-    print(f"[SENTINEL] Registry Audit Complete. {len(new_ledger)} modules verified.")
+    print(f"\n{'='*100}")
+    print(f"{'ANALYSIS':<30} | {'STATUS':<8} | {'SCORE':<6} | {'NOTES'}")
+    print(f"{'-'*100}")
+    for entry in new_ledger:
+        print(f"{entry['analysis'][:30]:<30} | {entry['status']:<8} | {entry['score']:<6} | {entry['notes']}")
+    print(f"{'='*100}\n")
+    
+    avg_gpa = sum(e['score'] for e in new_ledger) / len(new_ledger) if new_ledger else 0
+    print(f"[SENTINEL] Registry Audit Complete. {len(new_ledger)} modules verified. Average GPA: {avg_gpa:.2f}")
 
 if __name__ == "__main__":
     main()

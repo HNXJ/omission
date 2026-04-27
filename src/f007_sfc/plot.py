@@ -15,11 +15,18 @@ def plot_sfc_plv(results: dict, output_dir: str):
     PURPLE = "#9400D3"
     
     for area, data in results.items():
+        stats = data['stats']
+        proof_str = f"[{stats['test']}] {stats['tier']} (p={stats['p']:.2e}) {stats['stars']}"
+        
         print(f"[action] Plotting SFC for {area}")
-        plotter = OmissionPlotter(title=f"Figure f007: {area} SFC (PLV, x_label="Frequency", y_label="Coherence")", 
-            subtitle="Subsampling Corrected | Top 10 S+ vs O+ | Mean ± SEM"
+        plotter = OmissionPlotter(
+            title=f"Figure f007: {area} Spike-Field Coherence {stats['stars']}",
+            x_label="Frequency",
+            y_label="Phase-Locking Value",
+            subtitle=f"{proof_str} | Subsampling Corrected | Mean ± SEM",
+            x_unit="Hz",
+            y_unit="PLV"
         )
-        plotter.set_axes("Frequency", "Hz", "Phase-Locking Value", "PLV")
         
         freqs = data['freqs']
         for name, spectra, color in [("S+ (Stimulus)", data['s_plus'], GOLD), ("O+ (Omission)", data['o_plus'], PURPLE)]:

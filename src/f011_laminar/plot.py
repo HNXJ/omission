@@ -7,7 +7,11 @@ import os
 def plot_laminar_routing(results: dict, output_dir: str):
     os.makedirs(output_dir, exist_ok=True)
     
-    for area, pop_hg in results.items():
+    for area, data in results.items():
+        pop_hg = data["heatmap"]
+        stats = data["stats"]
+        stars = stats["stars"]
+        
         # Clean data first
         pop_hg = np.nan_to_num(pop_hg, nan=0.0)
         
@@ -17,10 +21,10 @@ def plot_laminar_routing(results: dict, output_dir: str):
         channels = np.arange(n_chans) - n_chans // 2 # Relative depth centered at 0
 
         plotter = OmissionPlotter(
-            title=f"Figure f011: {area} Laminar Cortical Mapping",
+            title=f"Figure f011: {area} Laminar Mapping {stars}",
             x_label="Time from Omission",
             y_label="Relative Depth to L4",
-            subtitle="High-Gamma (35-80 Hz) Depth-Profile Aligned to Layer 4 Sink",
+            subtitle=f"HG Power Surge: {stats['tier']} (p={stats['p']:.2e}) {stars}",
             x_unit="ms",
             y_unit="channels"
         )

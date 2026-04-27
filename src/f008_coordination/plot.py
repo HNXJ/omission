@@ -9,16 +9,29 @@ def plot_spectral_harmony(results: dict, areas: list, output_dir: str):
     """
     os.makedirs(output_dir, exist_ok=True)
     for name, mat in results.items():
+        if name in ["stats", "stars"]: continue
+        
         print(f"[action] Plotting Spectral Harmony: {name}")
         band, window = name.split("_")
+        
+        # Extract stars if available for this band
+        text_stars = None
+        if "stars" in results and band in results["stars"]:
+            text_stars = results["stars"][band]
+
         plotter = OmissionPlotter(
-            title=f"Figure f008: {band} Band Power Correlation",
-            subtitle=f"{window} Window (11x11 Cross-Area Harmony)"
+            title=f"Figure f008: {band} Band Harmony ({window})",
+            x_label="Target Area",
+            y_label="Source Area",
+            subtitle=f"{window} Window (11x11 Cross-Area Harmony)",
+            x_unit="Hierarchy",
+            y_unit="Hierarchy"
         )
-        plotter.set_axes("Target Area", "Hierarchy", "Source Area", "Hierarchy")
         
         heatmap = go.Heatmap(
             z=mat, x=areas, y=areas, 
+            text=text_stars,
+            texttemplate="%{text}",
             colorscale="Viridis" if band == "Beta" else "Plasma",
             colorbar=dict(title="Pearson r"), zmin=-0.1, zmax=1.0
         )

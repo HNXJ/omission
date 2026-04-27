@@ -100,6 +100,42 @@ def analyze_spectral_harmony(loader: DataLoader, areas: list, condition="AXAB"):
                 results[key] = avg_mat
             else:
                 results[key] = np.zeros((n, n))
+
+    # 3. STATISTICAL COMPARISON (Significance-Tier Standard)
+    # Compare Omission vs Baseline correlations across sessions for each pair
+    from scipy.stats import wilcoxon
+    from src.analysis.stats.tiers import get_significance_tier
+    
+    results["stats"] = {"Beta": np.full((n, n), 1.0), "Gamma": np.full((n, n), 1.0)}
+    results["stars"] = {"Beta": np.full((n, n), "", dtype=object), "Gamma": np.full((n, n), "", dtype=object)}
+    
+    for band in ["Beta", "Gamma"]:
+        b_mats = session_mats[f"{band}_Baseline"]
+        o_mats = session_mats[f"{band}_Omission"]
+        
+        if not b_mats or not o_mats: continue
+        
+        b_stack = np.stack(b_mats) # (sessions, n_areas, n_areas)
+        o_stack = np.stack(o_mats)
+        
+        for i in range(n):
+            for j in range(n):
+                if i == j: continue
                 
-    print(f"[result] Computed Spectral Harmony across {len(sessions)} sessions.")
+                # Pair-wise correlations across sessions
+                b_vals = b_stack[:, i, j]
+                o_vals = o_stack[:, i, j]
+                
+                # Filter out NaNs
+                mask = ~np.isnan(b_vals) & ~np.isnan(o_vals)
+                b_clean = b_vals[mask]
+                o_clean = o_vals[mask]
+                
+                if len(b_clean) >= 5 and not np.all(b_clean == o_clean):
+                    stat, p_val = wilcoxon(b_clean, o_clean)
+                    tier, k, stars = get_significance_tier(p_val)
+                    results["stats"][band][i, j] = p_val
+                    results["stars"][band][i, j] = stars
+                
+    print(f"[result] Computed Spectral Harmony and Stats across {len(sessions)} sessions.")
     return results

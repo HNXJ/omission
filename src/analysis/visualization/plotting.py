@@ -4,6 +4,7 @@ import numpy as np
 from pathlib import Path
 import plotly.graph_objects as go
 from src.analysis.io.logger import log
+from src.analysis.stats.tiers import get_significance_tier
 
 class OmissionPlotter:
     """
@@ -15,12 +16,19 @@ class OmissionPlotter:
     - Efficient HTML and SVG export (without kaleido).
     """
 
-    def __init__(self, title: str, x_label: str, y_label: str, subtitle: str = "", x_unit: str = "", y_unit: str = "", template: str = "plotly_white"):
+    def __init__(self, title: str, x_label: str, y_label: str, subtitle: str = "", x_unit: str = "", y_unit: str = "", template: str = "plotly_white", p_value: float = None):
         """
         Initialize a new canonical figure.
         Mandatory: title, x_label, y_label.
+        Optional: p_value for automated Significance Tier (S_k) injection.
         """
         self.fig = go.Figure()
+        
+        # Inject Significance Tier if p_value is provided
+        if p_value is not None:
+            _, _, stars = get_significance_tier(p_value)
+            if stars:
+                title = f"{title} {stars}"
         
         full_title = f"<b>{title}</b><br><sup>{subtitle}</sup>" if subtitle else f"<b>{title}</b>"
         
@@ -50,6 +58,23 @@ class OmissionPlotter:
         # Automatically set labels
         self.set_axes(x_label, x_unit, y_label, y_unit)
         log.action(f"Initialized canonical plot: {title}")
+
+    def add_stats_metadata(self, test_name: str, p_value: float, n_sessions: int, n_units: int):
+        """
+        Injects high-density statistical proof into the figure annotations.
+        """
+        tier_name, _, stars = get_significance_tier(p_value)
+        proof = f"[{test_name}] p={p_value:.2e} ({tier_name}) | N={n_sessions}S/{n_units}U"
+        
+        self.fig.add_annotation(
+            xref="paper", yref="paper",
+            x=0, y=-0.15,
+            text=f"<b>Stats:</b> {proof} {stars}",
+            showarrow=False,
+            font=dict(family="JetBrains Mono", size=10, color="#333"),
+            align="left"
+        )
+        log.action(f"Added statistical metadata: {proof}")
 
     def set_axes(self, x_label: str, x_unit: str, y_label: str, y_unit: str):
         """

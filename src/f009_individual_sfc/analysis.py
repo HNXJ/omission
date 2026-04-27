@@ -212,5 +212,25 @@ def analyze_individual_sfc():
                 cls_res["Standard"][b]["phases"].extend(res_std[b]["phases"])
                 
         results[cls_name] = cls_res
-        
+
+    # 3. STATISTICAL COMPARISON (Significance-Tier Standard)
+    # Compare Omission vs Standard Z-scores for each class and band
+    from scipy.stats import ranksums
+    from src.analysis.stats.tiers import get_significance_tier
+    
+    results["stats"] = {}
+    for cls_name in classes:
+        results["stats"][cls_name] = {}
+        for b in freqs:
+            z_omit = results[cls_name]["Omission"][b]["z"]
+            z_std = results[cls_name]["Standard"][b]["z"]
+            
+            if len(z_omit) > 0 and len(z_std) > 0:
+                stat, p_val = ranksums(z_omit, z_std)
+                tier, k, stars = get_significance_tier(p_val)
+                results["stats"][cls_name][b] = {
+                    "p": p_val, "tier": tier, "stars": stars, "test": "Rank-Sum (PPC-Z)"
+                }
+                print(f"[stats] {cls_name} | {b} | {tier} ({p_val:.2e}) | {stars}")
+
     return results

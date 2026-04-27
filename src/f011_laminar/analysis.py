@@ -81,8 +81,36 @@ def analyze_laminar_routing():
             aligned_hgs.append(aligned)
             
         if aligned_hgs:
+            # 3. STATISTICAL COMPARISON (Significance-Tier Standard)
+            # Compare High-Gamma power in Omission window (2000:2500) vs Baseline (1500:2000) across sessions
+            from scipy.stats import wilcoxon
+            from src.analysis.stats.tiers import get_significance_tier
+            
+            # Extract power for each session in the two windows
+            omit_vals = []
+            base_vals = []
+            for hg_map in aligned_hgs:
+                omit_vals.append(np.nanmean(hg_map[:, 2000:2500]))
+                base_vals.append(np.nanmean(hg_map[:, 1500:2000]))
+            
+            omit_vals = np.array(omit_vals)
+            base_vals = np.array(base_vals)
+            
+            mask = ~np.isnan(omit_vals) & ~np.isnan(base_vals)
+            o_clean, b_clean = omit_vals[mask], base_vals[mask]
+            
+            if len(o_clean) >= 5 and not np.all(o_clean == b_clean):
+                stat, p_val = wilcoxon(o_clean, b_clean)
+                tier, k, stars = get_significance_tier(p_val)
+            else:
+                p_val, tier, stars = 1.0, "Null", ""
+                
             # Nanmean across sessions
             pop_hg = np.nanmean(np.array(aligned_hgs), axis=0)
-            results[area] = pop_hg
+            results[area] = {
+                "heatmap": pop_hg,
+                "stats": {"p": p_val, "tier": tier, "stars": stars, "test": "Wilcoxon Signed-Rank"}
+            }
+            print(f"[stats] Laminar Area {area} | {tier} ({p_val:.2e}) | {stars}")
             
     return results

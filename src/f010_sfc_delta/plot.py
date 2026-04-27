@@ -11,11 +11,18 @@ def plot_sfc_delta(results: dict, output_dir: str):
     os.makedirs(output_dir, exist_ok=True)
     
     for area, data in results.items():
+        stars = ""
+        if "stats" in data:
+            stars = f" {data['stats']['stars']}"
+            
         plotter = OmissionPlotter(
-            title=f"Figure f010: {area} Delta SFC", 
-            subtitle=f"Continuous 2-4 Hz Phase-Locking Value | N={data['n_units']} units"
+            title=f"Figure f010: {area} Delta SFC{stars}", 
+            x_label="Time from Omission",
+            y_label="Delta SFC",
+            subtitle=f"Continuous 2-4 Hz Phase-Locking Value | N={data['n_units']} units",
+            x_unit="ms",
+            y_unit="PLV"
         )
-        plotter.set_axes("Time from Omission", "ms", "Delta SFC", "PLV")
         
         times = data["times"]
         ax_mean = data["ax_mean"]

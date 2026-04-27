@@ -77,8 +77,36 @@ def run_f012_analysis():
             aligned_csds.append(aligned)
             
         if aligned_csds:
+            # 3. STATISTICAL COMPARISON (Significance-Tier Standard)
+            # Compare Sink Magnitude in Omission window (2000:2500) vs Baseline (1500:2000) across sessions
+            from scipy.stats import wilcoxon
+            from src.analysis.stats.tiers import get_significance_tier
+            
+            # Extract sink magnitude (min CSD) for each session
+            omit_sinks = []
+            base_sinks = []
+            for csd_map in aligned_csds:
+                # Sink is negative, so min() is strongest sink
+                omit_sinks.append(np.nanmin(csd_map[:, 2000:2500]))
+                base_sinks.append(np.nanmin(csd_map[:, 1500:2000]))
+            
+            omit_sinks = np.array(omit_sinks)
+            base_sinks = np.array(base_sinks)
+            
+            mask = ~np.isnan(omit_sinks) & ~np.isnan(base_sinks)
+            o_clean, b_clean = omit_sinks[mask], base_sinks[mask]
+            
+            if len(o_clean) >= 5 and not np.all(o_clean == b_clean):
+                stat, p_val = wilcoxon(o_clean, b_clean)
+                tier, k, stars = get_significance_tier(p_val)
+            else:
+                p_val, tier, stars = 1.0, "Null", ""
+                
             pop_csd = np.nanmean(np.array(aligned_csds), axis=0)
-            # Final integrity check for Sentinel Audit
-            results[area] = np.nan_to_num(pop_csd, nan=0.0)
+            results[area] = {
+                "heatmap": np.nan_to_num(pop_csd, nan=0.0),
+                "stats": {"p": p_val, "tier": tier, "stars": stars, "test": "Wilcoxon Signed-Rank"}
+            }
+            print(f"[stats] CSD Area {area} | {tier} ({p_val:.2e}) | {stars}")
             
     return results

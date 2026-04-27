@@ -19,12 +19,16 @@ def plot_individual_sfc(results: dict, output_dir: str):
     conditions = ["Omission", "Expected", "Standard"]
     
     for cls_name, data in results.items():
+        if cls_name == "stats": continue
+        
         # 1. Bar Plot
         plotter = OmissionPlotter(
             title=f"Figure f009: {cls_name} Spike-Field Coherence",
-            subtitle=f"Pairwise Phase Consistency (PPC) Z-Score | N=20 Units"
+            x_label="Condition",
+            y_label="Coherence Z-score",
+            subtitle=f"Pairwise Phase Consistency (PPC) Z-Score | N=20 Units",
+            y_unit="sigma"
         )
-        plotter.set_axes("Condition", "", "Coherence Z-score", "σ")
         
         for b in bands:
             means = []
@@ -34,12 +38,16 @@ def plot_individual_sfc(results: dict, output_dir: str):
                 means.append(np.nanmean(z_scores))
                 sems.append(np.nanstd(z_scores) / np.sqrt(max(1, len(z_scores))))
                 
+            stars = ""
+            if "stats" in results and cls_name in results["stats"] and b in results["stats"][cls_name]:
+                stars = f" {results['stats'][cls_name][b]['stars']}"
+                
             plotter.add_trace(go.Bar(
                 x=conditions,
                 y=means,
                 error_y=dict(type='data', array=sems, visible=True),
                 marker_color=colors[b]
-            ), name=b)
+            ), name=f"{b}{stars}")
             
         plotter.fig.update_layout(barmode='group')
         plotter.save(output_dir, f"f009_sfc_barplot_{cls_name.replace('+', 'plus').replace('-', 'minus')}")
