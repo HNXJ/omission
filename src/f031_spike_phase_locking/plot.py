@@ -9,9 +9,12 @@ def plot_spike_phase_locking(results: dict, output_dir: str):
     """
     plotter = OmissionPlotter(
         title="Figure 31: Spike-Field Phase Locking (PLV) Spectrum",
-        subtitle="Phase-locking strength of single units to local LFP during Omission window (p2)."
+        x_label="Frequency",
+        y_label="PLV Strength",
+        subtitle="Phase-locking strength of single units to local LFP during Omission window (p2).",
+        x_unit="Hz",
+        y_unit="norm"
     )
-    plotter.set_axes("Frequency", "Hz", "PLV Strength", "norm")
     
     for area, data in results.items():
         freqs = data["freqs"]

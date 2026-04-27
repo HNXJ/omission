@@ -44,13 +44,34 @@ class GPAAuditor:
             details.append("Missing README.md")
 
         # 2. Content Audit
-        html_files = [f for f in os.listdir(folder_path) if f.endswith('.html')]
+        # Filter for HTML files that actually belong to this module's ID (e.g., f002_)
+        fig_id = os.path.basename(folder_path).split('-')[0]
+        html_files = [f for f in os.listdir(folder_path) if f.endswith('.html') and f.startswith(fig_id)]
+        
+        if not html_files:
+            html_files = [f for f in os.listdir(folder_path) if f.endswith('.html')]
+            
         if not html_files:
             return 0, "fail", "No HTML figure found"
         
-        # Sort by size to pick the primary figure (not indices or small plots)
+        # Sort by size to pick candidates
         html_files.sort(key=lambda x: os.path.getsize(os.path.join(folder_path, x)), reverse=True)
-        first_fig = os.path.join(folder_path, html_files[0])
+        
+        selected_fig = None
+        for hf in html_files:
+            fpath = os.path.join(folder_path, hf)
+            try:
+                with open(fpath, 'r', encoding='utf-8', errors='ignore') as f:
+                    content_full = f.read()
+                    if fig_id.lower() in content_full.lower() or "figure " + fig_id.lower() in content_full.lower():
+                        selected_fig = fpath
+                        break
+            except: continue
+            
+        if not selected_fig:
+            selected_fig = os.path.join(folder_path, html_files[0])
+            
+        first_fig = selected_fig
         try:
             with open(first_fig, 'r', encoding='utf-8', errors='ignore') as f:
                 content = f.read()
@@ -64,26 +85,28 @@ class GPAAuditor:
 
                 # Statistical Proof (40 pts)
                 # Tier detection (20) + P-value reporting (10) + Significance mapping (10)
-                tier_match = re.search(r'Sig-\d+|Insignificant|Null', content)
-                p_match = re.search(r'p=\d+\.\d+e[+-]\d+', content)
-                stars_match = re.search(r'\*+|n\.s\.|Null', content)
+                tier_match = re.search(r'Sig-\d+|Insignificant|Null', content, re.I)
+                p_match = re.search(r'p=\d+\.\d+e[+-]\d+', content, re.I)
+                stars_match = re.search(r'\*+|n\.s\.|Null', content, re.I)
                 
                 if tier_match: gpa += 20.0
-                if p_match: gpa += 10.0
-                if stars_match: gpa += 10.0
+                else: details.append("No Sig-Tier")
                 
-                if not tier_match:
-                    details.append("Missing Statistical Tier")
+                if p_match: gpa += 10.0
+                else: details.append("No P-Val")
+                
+                if stars_match: gpa += 10.0
+                else: details.append("No Stars/n.s.")
 
                 # Data Integrity (20 pts)
-                if not re.search(r'":\s*\[[^\]]*\b(NaN|Infinity)\b', content):
+                if not re.search(r'":\s*\[[^\]]*\b(NaN|Infinity)\b', content, re.I):
                     gpa += 20.0
                 else:
                     details.append("Corrupt Data (NaN/INF)")
                     status = "fail"
 
                 # Scientific Density (10 pts)
-                if any(term in content for term in ["Area", "Population", "Units", "Hierarchy"]):
+                if any(re.search(term, content, re.I) for term in ["Area", "Population", "Units", "Hierarchy"]):
                     gpa += 10.0
                 else:
                     details.append("Low Scientific Density")
@@ -113,10 +136,16 @@ def main():
         
         if not os.path.exists(path):
              matches = [d for d in os.listdir(OUTPUTS_DIR) if d.startswith(fig['id'])] if os.path.exists(OUTPUTS_DIR) else []
-             if matches: path = os.path.join(OUTPUTS_DIR, matches[0])
+             # Avoid legacy folders
+             matches = [m for m in matches if "omission-psth" not in m]
+             if matches: 
+                 # Sort matches to pick the most likely one (longest name usually more specific)
+                 matches.sort(key=len, reverse=True)
+                 path = os.path.join(OUTPUTS_DIR, matches[0])
              else: registry_folder = "N/A"
 
         score, status, notes = auditor.audit_figure(path)
+        print(f"[debug] Auditing {fig['id']} -> {path}")
         
         new_ledger.append({
             "analysis": f"{fig['id']} - {fig['title']}",

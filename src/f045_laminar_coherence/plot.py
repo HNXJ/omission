@@ -12,11 +12,15 @@ def plot_laminar_coherence(results: dict, output_dir: str):
     
     plotter = OmissionPlotter(
         title="Figure 45: Laminar Spectral Coherence (iCOH)",
-        subtitle="Beta Band (13-30Hz) | Imaginary Coherence (Bias-Corrected)"
+        x_label="Target Layer",
+        y_label="Source Layer",
+        subtitle="Beta Band (13-30Hz) | Imaginary Coherence (Bias-Corrected)",
+        x_unit="Depth",
+        y_unit="Depth"
     )
-    plotter.set_axes("Target Layer", "Depth", "Source Layer", "Depth")
-    
-    heatmap = go.Heatmap(
+
+    import plotly.graph_objects as go
+
         z=mat, 
         x=layers, 
         y=layers, 

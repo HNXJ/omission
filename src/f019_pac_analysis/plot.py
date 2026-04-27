@@ -9,7 +9,10 @@ def plot_pac_summary(results: dict, output_dir: str):
     Plots Figure 19: PAC (Modulation Index) across Areas.
     results: {area: [mi_values]}
     """
-    plotter = OmissionPlotter(title="Figure 19: Phase-Amplitude Coupling (PAC, x_label="Phase Freq", y_label="Amp Freq")",
+    plotter = OmissionPlotter(
+        title="Figure 19: Phase-Amplitude Coupling (PAC)", 
+        x_label="Phase Freq", 
+        y_label="Amp Freq",
         subtitle="Modulation Index (Tort 2010) | Phase: Beta (13-30Hz), Amp: Gamma (35-80Hz)"
     )
     plotter.set_axes("Brain Area", "Index", "Modulation Index (MI)", "units")

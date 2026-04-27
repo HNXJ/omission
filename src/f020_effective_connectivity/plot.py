@@ -9,7 +9,10 @@ def plot_effective_connectivity(results: dict, output_dir: str):
     Plots Figure 20: Effective Connectivity (Granger Causality).
     results: { 'A->B': [values], ... }
     """
-    plotter = OmissionPlotter(title="Figure 20: Effective Connectivity (Granger Causality, x_label="Area 1", y_label="Area 2")",
+    plotter = OmissionPlotter(
+        title="Figure 20: Effective Connectivity (Granger Causality)", 
+        x_label="Area 1", 
+        y_label="Area 2",
         subtitle="Directed Influence between Areas during Omission"
     )
     plotter.set_axes("Connection Path", "Index", "Granger Causality", "units")

@@ -12,11 +12,15 @@ def plot_laminar_pac(results: dict, output_dir: str):
     
     plotter = OmissionPlotter(
         title="Figure 44: Laminar Phase-Amplitude Coupling (PAC)",
-        subtitle="Alpha Phase (8-13Hz) -> Gamma Amplitude (30-80Hz) | Tort MI"
+        x_label="Amplitude Layer",
+        y_label="Phase Layer",
+        subtitle="Alpha Phase (8-13Hz) -> Gamma Amplitude (30-80Hz) | Tort MI",
+        x_unit="Depth",
+        y_unit="Depth"
     )
-    plotter.set_axes("Amplitude Layer", "Depth", "Phase Layer", "Depth")
-    
-    heatmap = go.Heatmap(
+
+    import plotly.graph_objects as go
+
         z=mat, 
         x=layers, 
         y=layers, 

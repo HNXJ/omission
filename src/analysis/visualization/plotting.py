@@ -16,7 +16,7 @@ class OmissionPlotter:
     - Efficient HTML and SVG export (without kaleido).
     """
 
-    def __init__(self, title: str, x_label: str, y_label: str, subtitle: str = "", x_unit: str = "", y_unit: str = "", template: str = "plotly_white", p_value: float = None):
+    def __init__(self, title, x_label, y_label, subtitle="", x_unit="", y_unit="", template="plotly_white", p_value=None):
         """
         Initialize a new canonical figure.
         Mandatory: title, x_label, y_label.

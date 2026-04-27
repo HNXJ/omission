@@ -1,4 +1,5 @@
 import plotly.graph_objects as go
+import numpy as np
 from src.analysis.visualization.plotting import OmissionPlotter
 from src.analysis.io.logger import log
 
@@ -7,15 +8,25 @@ def plot_surprise(results: dict, output_dir: str):
     Plots a bar chart of the Surprise Index across the hierarchy.
     """
     print(f"[action] Plotting Surprise Index Bar Chart")
+    areas = list(results.keys())
+    # Global stats for the summary plot
+    global_stars = ""
+    global_p = 1.0
+    global_tier = "Null"
+    if areas:
+        # Take mean or max sig across areas for the global subtitle
+        global_p = np.min([results[a]['stats']['p'] for a in areas])
+        from src.analysis.stats.tiers import get_significance_tier
+        global_tier, k, global_stars = get_significance_tier(global_p)
+
     plotter = OmissionPlotter(
-        title="Figure f003: Population Surprise Index",
+        title=f"Figure f003: Population Surprise Index {global_stars}",
         x_label="Cortical Area (S_k Tier)",
         y_label="Surprise Index",
-        subtitle="Surprise = (Omission - Standard) / (Omission + Standard) | Window: [0, 500]ms",
+        subtitle=f"Global Surprise: {global_tier} (p={global_p:.2e}) | Window: [0, 500]ms",
         y_unit="a.u."
     )
     
-    areas = list(results.keys())
     # Format labels with stats: Area ***
     display_labels = []
     for a in areas:

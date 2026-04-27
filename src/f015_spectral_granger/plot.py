@@ -14,8 +14,14 @@ def plot_global_mi_dynamics(tensor: dict, output_dir: str):
     frame_keys = list(tensor["AXAB"].keys())
     x = np.arange(len(frame_keys))
     
-    plotter = OmissionPlotter(title="Figure 15: Global Connectivity Dynamics", subtitle="Mean Inter-Area MI (17 Frames, x_label="Frequency", y_label="Causality (GC)")")
-    plotter.set_axes("Frame", "Temporal Context", "Mean MI", "bits")
+    plotter = OmissionPlotter(
+        title="Figure 15: Global Connectivity Dynamics",
+        x_label="Frame",
+        y_label="Mean MI",
+        subtitle="Mean Inter-Area MI (17 Frames)",
+        x_unit="Temporal Context",
+        y_unit="bits"
+    )
     
     for cond in ["AAAB", "AXAB"]:
         for b in bands:

@@ -9,13 +9,16 @@ def plot_theory_schematic(output_dir: str):
     """
     log.progress(f"[action] Plotting Figure 1 Schematic...")
     plotter = OmissionPlotter(
-        title="Figure 1: Predictive Routing Theory Schematic",
-        subtitle="Canonical L2/3 vs L5/6 Signal & Prediction Error Routing"
+        "Figure 1: Predictive Routing Theory Schematic",
+        "",
+        "",
+        subtitle="Canonical L2/3 vs L5/6 Signal & Prediction Error Routing",
+        x_unit="Arb",
+        y_unit="Arb"
     )
     
     plotter.fig.update_xaxes(showgrid=False, zeroline=False, showticklabels=False, range=[0, 10])
     plotter.fig.update_yaxes(showgrid=False, zeroline=False, showticklabels=False, range=[0, 10])
-    plotter.set_axes(x_label="", x_unit="Arb", y_label="", y_unit="Arb")
     
     # Draw L2/3 Box (Superficial)
     plotter.fig.add_shape(type="rect", x0=2, y0=6, x1=4, y1=9,

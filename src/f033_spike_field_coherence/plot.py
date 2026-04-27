@@ -9,9 +9,12 @@ def plot_spike_field_coherence(results: dict, output_dir: str):
     """
     plotter = OmissionPlotter(
         title="Figure 33: Spike-Field Coherence (SFC)",
-        subtitle="Spectral coherence between single-unit spikes and local LFP."
+        x_label="Frequency",
+        y_label="Coherence",
+        subtitle="Spectral coherence between single-unit spikes and local LFP.",
+        x_unit="Hz",
+        y_unit="norm"
     )
-    plotter.set_axes("Frequency", "Hz", "Coherence", "norm")
     
     for area, data in results.items():
         f = data["freqs"]

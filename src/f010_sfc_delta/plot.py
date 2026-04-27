@@ -15,11 +15,15 @@ def plot_sfc_delta(results: dict, output_dir: str):
         if "stats" in data:
             stars = f" {data['stats']['stars']}"
             
+        stats_str = ""
+        if "stats" in data:
+            stats_str = f"{data['stats']['tier']} (p={data['stats']['p']:.2e}) {stars} | "
+
         plotter = OmissionPlotter(
             title=f"Figure f010: {area} Delta SFC{stars}", 
             x_label="Time from Omission",
             y_label="Delta SFC",
-            subtitle=f"Continuous 2-4 Hz Phase-Locking Value | N={data['n_units']} units",
+            subtitle=f"{stats_str}Continuous 2-4 Hz Phase-Locking Value | N={data['n_units']} units",
             x_unit="ms",
             y_unit="PLV"
         )

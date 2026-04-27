@@ -10,9 +10,12 @@ def plot_onset_latency(results: dict, output_dir: str):
     # Plot A: PSTH Overlays
     plotter_psth = OmissionPlotter(
         title="Figure 40A: Population PSTH and Onset Detection",
-        subtitle="Omission-Aligned | Dashed lines indicate threshold crossing"
+        x_label="Time from Omission",
+        y_label="Firing Rate",
+        subtitle="Omission-Aligned | Dashed lines indicate threshold crossing",
+        x_unit="ms",
+        y_unit="Hz"
     )
-    plotter_psth.set_axes("Time from Omission", "ms", "Firing Rate", "Hz")
     
     # Hierarchy Colors
     colors = ["#CFB87C", "#8F00FF", "#FF1493", "#00FFCC", "#FF5E00", "#D3D3D3", "#FFFFFF", "#AAAAAA", "#555555", "#333333", "#111111"]
@@ -42,9 +45,12 @@ def plot_onset_latency(results: dict, output_dir: str):
     if latencies:
         plotter_lat = OmissionPlotter(
             title="Figure 40B: Omission Latency Hierarchy",
-            subtitle="First significant FR deviation post-omission"
+            x_label="Brain Area",
+            y_label="Latency",
+            subtitle="First significant FR deviation post-omission",
+            x_unit="Hierarchy",
+            y_unit="ms"
         )
-        plotter_lat.set_axes("Brain Area", "Hierarchy", "Latency", "ms")
         
         plotter_lat.add_trace(go.Bar(
             x=valid_areas, 

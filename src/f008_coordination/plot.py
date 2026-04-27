@@ -14,23 +14,30 @@ def plot_spectral_harmony(results: dict, areas: list, output_dir: str):
         print(f"[action] Plotting Spectral Harmony: {name}")
         band, window = name.split("_")
         
-        # Extract stars if available for this band
-        text_stars = None
+        # Extract stats for this band
+        stars_matrix = None
+        stars_representative = ""
+        p_val = 1.0
+        tier = "Null"
         if "stars" in results and band in results["stars"]:
-            text_stars = results["stars"][band]
+            stars_matrix = results["stars"][band]
+            # Use a representative pair for the title (e.g., V1-PFC which is 0, 10)
+            stars_representative = stars_matrix[0, 10] if stars_matrix.shape[1] > 10 else stars_matrix[0, 1]
+            p_val = results["stats"][band][0, 10] if stars_matrix.shape[1] > 10 else results["stats"][band][0, 1]
+            tier = "Sig-k" if p_val < 0.05 else "Insignificant"
 
         plotter = OmissionPlotter(
-            title=f"Figure f008: {band} Band Harmony ({window})",
+            title=f"Figure f008: {band} Band Harmony ({window}) {stars_representative}",
             x_label="Target Area",
             y_label="Source Area",
-            subtitle=f"{window} Window (11x11 Cross-Area Harmony)",
+            subtitle=f"{tier} (p={p_val:.2e}) {stars_representative} | {window} Window (11x11 Coordination)",
             x_unit="Hierarchy",
             y_unit="Hierarchy"
         )
         
         heatmap = go.Heatmap(
             z=mat, x=areas, y=areas, 
-            text=text_stars,
+            text=stars_matrix,
             texttemplate="%{text}",
             colorscale="Viridis" if band == "Beta" else "Plasma",
             colorbar=dict(title="Pearson r"), zmin=-0.1, zmax=1.0

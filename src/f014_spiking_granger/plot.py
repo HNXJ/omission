@@ -25,7 +25,12 @@ def plot_connectivity_delta(data_list: list, areas: list, output_dir: str):
     sem_gamma = np.std(deltas_gamma, axis=0) / np.sqrt(len(deltas_gamma))
     
     # Beta Plot
-    plotter = OmissionPlotter(title="Figure 14: Beta Connectivity Delta", subtitle="Mean ± SEM (Omission Window p2, x_label="Frequency", y_label="Causality (GC)")")
+    plotter = OmissionPlotter(
+        title="Figure 14: Beta Connectivity Delta",
+        x_label="Frequency",
+        y_label="Causality (GC)",
+        subtitle="Mean ± SEM (Omission Window p2)"
+    )
     # Since Connectivity delta is traditionally a heatmap, but shading is requested for averages:
     # If we need 1D profiles, we should project, but the requirement is to use add_shaded_error_bar.
     # Assuming standard projection or 1D representation.
@@ -34,6 +39,11 @@ def plot_connectivity_delta(data_list: list, areas: list, output_dir: str):
     plotter.save(output_dir, "fig14_delta_mi_beta_p2_avg")
     
     # Gamma Plot
-    plotter_g = OmissionPlotter(title="Figure 14: Gamma Connectivity Delta", subtitle="Mean ± SEM (Omission Window p2, x_label="Frequency", y_label="Causality (GC)")")
+    plotter_g = OmissionPlotter(
+        title="Figure 14: Gamma Connectivity Delta",
+        x_label="Frequency",
+        y_label="Causality (GC)",
+        subtitle="Mean ± SEM (Omission Window p2)"
+    )
     plotter_g.add_shaded_error_bar(x=x_axis, y=mean_gamma.mean(axis=1), error=sem_gamma.mean(axis=1), name="ΔGamma MI")
     plotter_g.save(output_dir, "fig14_delta_mi_gamma_p2_avg")

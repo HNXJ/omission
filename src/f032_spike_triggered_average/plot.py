@@ -9,9 +9,12 @@ def plot_spike_triggered_average(results: dict, output_dir: str):
     """
     plotter = OmissionPlotter(
         title="Figure 32: Spike-Triggered Average (STA)",
-        subtitle="Average local LFP waveform triggered on single-unit spikes during Omission window."
+        x_label="Time from Spike",
+        y_label="LFP Amplitude",
+        subtitle="Average local LFP waveform triggered on single-unit spikes during Omission window.",
+        x_unit="ms",
+        y_unit="uV"
     )
-    plotter.set_axes("Time from Spike", "ms", "LFP Amplitude", "uV")
     
     for area, data in results.items():
         t = data["t"]
