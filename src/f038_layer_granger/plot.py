@@ -10,7 +10,7 @@ def plot_layer_granger_contrast(results_df, output_dir):
     plotter = OmissionPlotter(
         title="Layer-wise Directed Information Flow",
         subtitle="V1 <-> PFC Cortical Feedback Reversal",
-        template="plotly_dark"
+        template="plotly_white"
     )
     
     # Custom Madelane Golden Dark theme injection
@@ -39,11 +39,10 @@ def plot_layer_granger_contrast(results_df, output_dir):
     plotter.set_axes("Temporal Window", "Category", "Granger F-Statistic", "a.u.")
     
     plotter.fig.update_layout(
-        paper_bgcolor="#1A1A1A",
-        plot_bgcolor="#1A1A1A",
-        font=dict(color="#CFB87C"),
-        xaxis=dict(gridcolor="#333333", linecolor="#CFB87C"),
-        yaxis=dict(gridcolor="#333333", linecolor="#CFB87C"),
+        paper_bgcolor="#FFFFFF",
+        plot_bgcolor="#FFFFFF",
+        xaxis=dict(gridcolor="#D3D3D3", linecolor="#000000"),
+        yaxis=dict(gridcolor="#D3D3D3", linecolor="#000000"),
         barmode='group'
     )
     

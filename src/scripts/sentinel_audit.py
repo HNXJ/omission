@@ -51,10 +51,10 @@ def audit_figure(figure_path: Path, code_ref: str):
                 notes.append("Non-white background detected")
         
         # Check for labels (20 points)
-        # Using regex to find "title":{"text":"..."} inside xaxis/yaxis/layout
-        has_title = re.search(r'"title":\s*\{"text":\s*"[^"]+"', content) is not None
-        has_xaxis = re.search(r'"xaxis":\s*\{[^}]*"title":\s*\{"text":\s*"[^"]+"', content) is not None
-        has_yaxis = re.search(r'"yaxis":\s*\{[^}]*"title":\s*\{"text":\s*"[^"]+"', content) is not None
+        # Using flexible regex to find "text":"..." inside title/xaxis/yaxis regardless of key order
+        has_title = re.search(r'"title":\s*\{[^}]*"text":\s*"[^"]+"', content) is not None
+        has_xaxis = re.search(r'"xaxis\d*":\s*\{[^}]*"title":\s*\{[^}]*"text":\s*"[^"]+"', content) is not None
+        has_yaxis = re.search(r'"yaxis\d*":\s*\{[^}]*"title":\s*\{[^}]*"text":\s*"[^"]+"', content) is not None
         
         if not (has_title and has_xaxis and has_yaxis):
             score -= WEIGHTS["labels"]
@@ -68,15 +68,20 @@ def audit_figure(figure_path: Path, code_ref: str):
             data_json = json_match.group(1)
             layout_json = json_match.group(2)
             
-            if "NaN" in data_json or "Infinity" in data_json or "NaN" in layout_json or "Infinity" in layout_json:
+            # Use negative lookbehind/lookahead to find ONLY unquoted NaN/Infinity
+            # This avoids false positives in base64 'bdata' strings
+            has_nan = re.search(r'(?<!["\w])NaN(?!["\w])', data_json) or re.search(r'(?<!["\w])NaN(?!["\w])', layout_json)
+            has_inf = re.search(r'(?<!["\w])Infinity(?!["\w])', data_json) or re.search(r'(?<!["\w])Infinity(?!["\w])', layout_json)
+            
+            if has_nan or has_inf:
                  score -= WEIGHTS["integrity"]
-                 notes.append("Corrupt Data (NaN/Infinity detected in JSON)")
+                 notes.append("Corrupt Data (Literal NaN/Infinity detected in JSON)")
         else:
             # Fallback if regex fails, but be more specific
-            # Check if NaN/Infinity appear in a context that looks like JSON data
-            if re.search(r':\s*NaN', content) or re.search(r':\s*Infinity', content):
+            # Check if NaN/Infinity appear as literals
+            if re.search(r'(?<!["\w])NaN(?!["\w])', content) or re.search(r'(?<!["\w])Infinity(?!["\w])', content):
                 score -= WEIGHTS["integrity"]
-                notes.append("Corrupt Data (NaN/Infinity detected via fallback)")
+                notes.append("Corrupt Data (Literal NaN/Infinity detected via fallback)")
 
     except Exception as e:
         print(f"""[error] Failed to read {target_html}: {e}""")

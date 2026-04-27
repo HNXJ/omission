@@ -1,6 +1,7 @@
 # core
 import os
 import json
+import re
 from pathlib import Path
 
 def generate_manifest():
@@ -28,9 +29,21 @@ def generate_manifest():
         for fig_dir in sorted(output_root.iterdir()):
             if fig_dir.is_dir():
                 print(f"""[action] Processing figure directory: {fig_dir.name}...""")
+                # Extract numeric ID for phase mapping
+                fig_num_match = re.search(r'f(\d+)', fig_dir.name)
+                fig_phase = 1
+                if fig_num_match:
+                    num = int(fig_num_match.group(1))
+                    if num <= 4: fig_phase = 1
+                    elif num <= 10: fig_phase = 2
+                    elif num <= 20: fig_phase = 3
+                    elif num <= 30: fig_phase = 4
+                    else: fig_phase = 5
+                
                 fig_data = {
                     "id": fig_dir.name,
                     "title": fig_dir.name.replace("-", " ").title(),
+                    "phase": fig_phase,
                     "baseUrl": f"/@fs/{fig_dir.as_posix()}",
                     "files": [f.name for f in fig_dir.glob("*.html")],
                     "has_readme": (fig_dir / "README.md").exists()

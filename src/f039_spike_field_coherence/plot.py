@@ -146,6 +146,7 @@ def plot_ppc_per_area(results_df, output_dir: str):
         template="plotly_white",
         paper_bgcolor="#FFFFFF",
         plot_bgcolor="#FFFFFF",
+        xaxis_title="Frequency Band",
         yaxis_title="PPC",
         margin=dict(l=80, r=60, t=120, b=80),
         modebar_add=['toImage'],
