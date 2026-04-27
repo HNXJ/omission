@@ -16,8 +16,7 @@ def plot_sfc_plv(results: dict, output_dir: str):
     
     for area, data in results.items():
         print(f"[action] Plotting SFC for {area}")
-        plotter = OmissionPlotter(
-            title=f"Figure f007: {area} SFC (PLV)", 
+        plotter = OmissionPlotter(title=f"Figure f007: {area} SFC (PLV, x_label="Frequency", y_label="Coherence")", 
             subtitle="Subsampling Corrected | Top 10 S+ vs O+ | Mean ± SEM"
         )
         plotter.set_axes("Frequency", "Hz", "Phase-Locking Value", "PLV")

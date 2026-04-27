@@ -245,9 +245,185 @@ body {
   background-color: #000;
 }
 
+/* Terminal Ticker */
+.terminal-ticker {
+  height: 36px;
+  background-color: var(--gold);
+  color: #000;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 32px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  z-index: 100;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.ticker-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ticker-label {
+  opacity: 0.7;
+}
+
+.ticker-divider {
+  width: 1px;
+  height: 16px;
+  background-color: rgba(0,0,0,0.2);
+}
+
+/* Scoreboard Styles */
+.scoreboard-container {
+  padding: 48px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.scoreboard-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.scoreboard-header h2 {
+  font-size: 1.5rem;
+  color: #FFF;
+  letter-spacing: 0.05em;
+}
+
+.scoreboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  background-color: #0A0A0A;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.scoreboard-table th {
+  text-align: left;
+  padding: 16px 24px;
+  background-color: #151515;
+  color: var(--gold);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  border-bottom: 2px solid var(--border);
+}
+
+.scoreboard-table td {
+  padding: 16px 24px;
+  border-bottom: 1px solid #111;
+  color: var(--text-secondary);
+}
+
+.scoreboard-table tr:hover {
+  background-color: #111;
+}
+
+.scoreboard-table .bold {
+  color: #FFF;
+  font-weight: 500;
+}
+
+.scoreboard-table .dim {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.scoreboard-table .status-badge {
+  padding: 4px 10px;
+  border-radius: 4px;
+  color: #000;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+.scoreboard-table .score-cell {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.scoreboard-table .notes-cell {
+  max-width: 400px;
+  line-height: 1.4;
+}
+
+.empty-state {
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.empty-state h2 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: var(--text-secondary);
+}
+
+.phase-group {
+  margin-bottom: 8px;
+}
+
+.phase-header {
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  background-color: rgba(255,255,255,0.02);
+  border-left: 2px solid transparent;
+}
+
+.phase-header:hover {
+  background-color: rgba(255,255,255,0.05);
+}
+
+.nav-item.sub-item {
+  padding-left: 48px;
+  font-size: 0.85rem;
+}
+
+.code-ref {
+  margin-top: 8px;
+  font-size: 0.7rem;
+  color: var(--gold);
+  opacity: 0.6;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.notes-text {
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -260,5 +436,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #CFB87C;
+  background: var(--gold);
 }
+
+

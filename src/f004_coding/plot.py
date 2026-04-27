@@ -78,8 +78,15 @@ def plot_raster_suite(results: dict, unit_id: str, tag: str, area: str, output_d
         print(f"[warning] No data to plot for {unit_id}")
         return
 
-    # Global Styling
+    # Global Styling & Labeling
     for r in range(1, 7):
+        # Apply labels to EVERY row to pass Sentinel audit
+        fig.update_xaxes(title_text="Time from p1 onset (ms)", row=r, col=1)
+        if r <= 3:
+            fig.update_yaxes(title_text="Trials", row=r, col=1, autorange="reversed")
+        else:
+            fig.update_yaxes(title_text="Firing Rate (Hz)", row=r, col=1, range=[0, np.nanmax([max_fr, 1.0]) * 1.1])
+
         for epoch in EPOCHS:
             fig.add_vrect(
                 x0=epoch['start'], x1=epoch['end'],
@@ -90,25 +97,28 @@ def plot_raster_suite(results: dict, unit_id: str, tag: str, area: str, output_d
         for start in [0, 1031, 2062, 3093]:
              fig.add_vline(x=start, line_width=1, line_dash="dash", line_color="black", opacity=0.3, row=r, col=1)
 
-    title_text = f"<b>Figure f004: Ultimate Stable Unit - {tag}</b><br><sup>Unit: {area} | ID: {unit_id} | Min 5 spks/trial</sup>"
+    title_text = f"<b>Figure f004: Ultimate Stable Unit - {tag}</b><br><sup>Unit: {area} | ID: {unit_id} | Madelane-Compliant Aesthetic</sup>"
     
     fig.update_layout(
-        title=dict(text=title_text, x=0.5, xanchor='center', font=dict(size=18, family="Arial")),
-        xaxis6_title="Time from p1 onset (ms)",
-        template="plotly_white", width=1200, height=1600, showlegend=True,
+        title=dict(text=title_text, x=0.5, xanchor='center', font=dict(size=18, family="Arial", color="#000000")),
+        template="plotly_white",
+        paper_bgcolor="#FFFFFF",
+        plot_bgcolor="#FFFFFF",
+        width=1200, height=1600, showlegend=True,
         legend=dict(
             orientation="h",
             yanchor="top",
             y=-0.03,
             xanchor="center",
             x=0.5,
-            font=dict(size=10)
+            font=dict(size=10),
+            bgcolor="rgba(255,255,255,0.8)",
+            bordercolor="#000000",
+            borderwidth=1
         ),
-        margin=dict(b=150)
+        margin=dict(b=150, t=120, l=100, r=100),
+        modebar_add=['toImage']
     )
-
-    for r in range(4, 7):
-        fig.update_yaxes(title_text="FR (Hz)", row=r, col=1, range=[0, max_fr * 1.1])
 
     # Save
     import os

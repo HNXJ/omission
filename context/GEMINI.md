@@ -1,40 +1,33 @@
-# Project: Omission (hnxj/omission)
-# Workspace Root: D:\drive\omission
+# Project: Omission (V1-PFC Predictive Routing)
 
-## Mandates
-1. **Atomic VCS Mandate**: Do not execute a git push after *every single minor file write*. Instead, group logical tasks together. Execute `git pull --rebase`, `git add`, `git commit`, and `git push` only when a logical milestone or specific analytical script is complete and validated, to prevent Git index locking and network timeouts.
-2. **Windows OS Execution Hygiene**: When operating in the win32 environment, strictly use PowerShell-compatible syntax. Do NOT use standard bash chaining operators like `&&`. Use `;` to chain commands (e.g., `git add . ; git commit -m "update"`).
-3. **Operations**: Scoped edits ONLY. No bulk/destructive commands.
-4. **Hierarchy**: V1-V2-V3d-V3a-V4-MT-MST-TEO-FST-FEF-PFC (1-11).
-5. **Verbosity**: Track codes and add tagged comments ; "# test" for tests, "# mock" for mocks, "# stable" for validated stable functions, "# core" for foundational tools.
-6. **Root Hygiene**: The repository root MUST only contain exactly 3 folders (`src/`, `context/`, `dashboard/`) and `README.md`.
+## 1. Authoritative Topology
+All analytical and instructional operations MUST align with the **Figure Registry** (`src/analysis/registry.py`). This is the only source of truth for metadata and module mapping.
 
-## Plotting Mandate
-- **OmissionPlotter Wrapper**: ALWAYS use `src/core/plotting.py` (`OmissionPlotter`).
-- **Kaleido-Free Export**: ALWAYS save plots ONLY as interactive HTML files with the 'Download to SVG' modebar button configured natively (`fig.update_layout(modebar_add=['toImage'])`). Do NOT use Kaleido.
-- **Mandatory Elements**: X/Y labels, units, reference lines (timing/stats), detailed titles, subtitles, and legends are strictly required.
+### Canonical Directories
+- **Source**: `src/`
+  - `src/analysis/`: Core primitives (IO, Signal Conditioning, Visualization).
+  - `src/fxxx_.../`: Modular figure packages (Analysis + Plotting).
+- **Instructional**: `.gemini/skills/` (Primary Skill Store).
+- **Output**: `../outputs/oglo-8figs/` (Repo-relative resolution required).
+- **Dashboard**: `dashboard/` (Omission Terminal).
 
-## PERMANENT RULES
-- Predictive Coding Policy: If something is informative, novel or high-priority, keep it in context and save as skill or memory. If something is trivial, inhibit it to save energy and time.
-- Tone: Critical Electrical Engineer. Direct. No filler. No buzzwords. Always ask for next and TODO.
-- Code Verbosity: EXTREME. Every single line of code must be accompanied by a print statement describing its action (e.g., print(f"""[action]...""")).
-- Python Version: ALWAYS use Python 3.14 exclusively as the master global instance.
-- Canonical Data Loader: ALWAYS use `src/core/data_loader.py` with PyNWB lazy-loading for all data access.
-- **I/O Documentation Mandate**: All "Methodology & Interpretation" documents (e.g., READMEs), all Agent Skills (`SKILL.md`), and all Python functions MUST explicitly define both "What is Input" and "What is Output". For functions, this must be formalized in the docstring. For markdown files, these must be explicit headers or sections.
+## 2. Analytical Mandates
+1. **Convergence Truth**: Do not reference `src/core/*` or `src/utils/*`. These are legacy/stale artifacts.
+2. **Registry-Driven**: All new figures must be registered in `FigureRegistry` before execution.
+3. **Decentralized execution**: All scripts must resolve paths relative to the repository root. No hardcoded absolute drive letters in canonical code.
+4. **Stable-Plus Constraint**: Restrict operations to vetted 'Stable-Plus' population (FR>1Hz, SNR>0.8, 100% trial presence).
 
-## GAMMA PROTOCOL (Guide And Model-Mediated Actions)
-- Definition: Standard format for complex engineering instructions. Ensures atomic, scope-preserving, CLI-executable tasks.
-- Architecture: Problem -> Solution Architecture -> Skills/Tools -> Version Control -> Rules/Cautions.
-- Workflow: Plantation Debug (Research -> Strategic Step Listing -> User Feedback -> Refine -> Act).
-- Error Skills: Save permanent debug skills as debug-<action>-<problem>-<solution>.
+## 3. Aesthetic Protocol (Madelane Golden Dark)
+- **Primary Color**: #CFB87C (Gold) for Sinks / Target signals.
+- **Secondary Color**: #9400D3 (Violet) for Sources / Omission signals.
+- **Background**: ALWAYS #FFFFFF (Pure White) for paper space.
+- **Library**: Plotly (HTML interactive export only).
 
-## Workspace Context (D:\drive\omission\)
-- `src/`: The canonical package containing all core code, pipelines, and utilities (`data_loader.py`, `logger.py`, `plotting.py`, `analysis/signal.py`, `analysis/stats.py`, `main.py`).
-- `context/`: Contains all project markdown documents, architectural plans, and `skills/`.
-- `tests/`: Contains all pytest suites and validation scripts.
-- `dashboard/`: Professional React/Vite frontend. Visualizes `outputs/oglo-8figs` and progress reports.
-- `Export_Staging/`: Payload staging area for cross-agent transfer.
-- `D:\drive\archive\omission_backup\`: Safe storage for all deprecated and legacy codes (old `codes/`, `operations/`, `outputs/`).
+## 4. Omission Terminal Protocol
+The dashboard at `dashboard/` is the authoritative **Neuroscience Terminal**. 
+- **Scoreboard Ledger**: High-density monitoring of analysis status and quality scores.
+- **Sentinel Audit**: Programmatic verification of figure integrity (Labels, NaN-check, White-bg).
+- **Madelane Theme**: Applied consistently across UI and figures.
 
-## Skills
-Refer to `context/skills/` for detailed project-specific skills (Science, Coding, Design). These have been fully updated to map to the `src/` architecture.
+## 5. Skills
+Refer to `.gemini/skills/` for executable operator contracts. These are the ONLY active instructions. All conceptual notes in `context/skills/` are secondary.

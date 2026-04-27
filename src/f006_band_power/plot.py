@@ -23,8 +23,7 @@ def plot_band_dynamics(results: dict, output_dir: str):
         onset_ms = loader.get_omission_onset(cond)
         for area, res in area_data.items():
             print(f"[action] Plotting Band Dynamics for {area} ({cond})")
-            plotter = OmissionPlotter(
-                title=f"Figure f006: {area} Band-Specific Omission Dynamics ({cond})",
+            plotter = OmissionPlotter(title=f"Figure f006: {area} Band-Specific Omission Dynamics ({cond}, x_label="Time", y_label="Power (dB)")",
                 subtitle="Relative Power (dB) with ±SEM | 0ms = Omission Onset | 30ms Smoothed"
             )
             plotter.set_axes("Time from Omission", "ms", "Relative Power", "dB")

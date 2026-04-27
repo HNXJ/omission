@@ -12,15 +12,62 @@ import {
   Eye,
   Settings,
   Maximize2,
-  X
+  X,
+  ShieldCheck,
+  TrendingUp,
+  Clock,
+  Terminal as TerminalIcon,
+  ChevronDown
 } from 'lucide-react';
 import manifest from './data/manifest.json';
+import scoreboard from './data/scoreboard.json';
+
+const PHASES = [
+  { id: 'p1', title: 'Phase 1: Baseline & PSTH', range: [1, 4] },
+  { id: 'p2', title: 'Phase 2: Spectral & Coordination', range: [5, 11] },
+  { id: 'p3', title: 'Phase 3: Connectivity & Granger', range: [12, 20] },
+  { id: 'p4', title: 'Phase 4: Decoding & Behavior', range: [21, 30] },
+  { id: 'p5', title: 'Phase 5: State-Space & RNN', range: [31, 50] }
+];
+
+const TerminalTicker = () => (
+  <div className="terminal-ticker">
+    <div className="ticker-item">
+      <ShieldCheck size={14} color="#000" />
+      <span className="ticker-label">STATUS:</span>
+      <span className="ticker-value">{scoreboard.system_status}</span>
+    </div>
+    <div className="ticker-item">
+      <Activity size={14} color="#000" />
+      <span className="ticker-label">PHASE:</span>
+      <span className="ticker-value">{scoreboard.active_phase}</span>
+    </div>
+    <div className="ticker-divider"></div>
+    <div className="ticker-item">
+      <TrendingUp size={14} color="#000" />
+      <span className="ticker-label">SESSIONS:</span>
+      <span className="ticker-value">{scoreboard.metrics.sessions}</span>
+    </div>
+    <div className="ticker-item">
+      <Zap size={14} color="#000" />
+      <span className="ticker-label">LATENCY:</span>
+      <span className="ticker-value">{scoreboard.metrics.latency_onset}</span>
+    </div>
+    <div className="ticker-item">
+      <Layers size={14} color="#000" />
+      <span className="ticker-label">UNITS:</span>
+      <span className="ticker-value">{scoreboard.metrics.units}</span>
+    </div>
+  </div>
+);
 
 const App = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [markdownContent, setMarkdownContent] = useState('');
   const [loading, setLoading] = useState(false);
   const [modalFile, setModalFile] = useState(null);
+  const [viewMode, setViewMode] = useState('gallery');
+  const [expandedPhases, setExpandedPhases] = useState(['p1', 'p2', 'p3', 'p4', 'p5']);
 
   useEffect(() => {
     if (selectedItem) {
@@ -45,6 +92,12 @@ const App = () => {
     }
   }, [selectedItem]);
 
+  const togglePhase = (phaseId) => {
+    setExpandedPhases(prev => 
+      prev.includes(phaseId) ? prev.filter(id => id !== phaseId) : [...prev, phaseId]
+    );
+  };
+
   const openModal = (file) => {
     setModalFile(`${selectedItem.baseUrl}/${file}`);
   };
@@ -53,29 +106,81 @@ const App = () => {
     setModalFile(null);
   };
 
+  const getStatusColor = (status) => {
+    switch(status) {
+      case 'awesome': return '#CFB87C';
+      case 'pass': return '#4CAF50';
+      case 'running': return '#2196F3';
+      case 'queued': return '#9E9E9E';
+      case 'fail': return '#F44336';
+      case 'pending agent action': return '#9400D3';
+      case 'pending user action': return '#FF9800';
+      default: return '#333';
+    }
+  };
+
+  const getFiguresForPhase = (phase) => {
+    return manifest.figures.filter(fig => {
+      const match = fig.id.match(/^f(\d+)/);
+      if (match) {
+        const num = parseInt(match[1]);
+        return num >= phase.range[0] && num <= phase.range[1];
+      }
+      return false;
+    });
+  };
+
+  const renderScoreboard = () => (
+    <div className="scoreboard-container">
+      <div className="scoreboard-header">
+        <BarChart3 size={24} color="#CFB87C" />
+        <h2>Analytical Scoreboard Ledger</h2>
+      </div>
+      <table className="scoreboard-table">
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th>Last Run</th>
+            <th>Status</th>
+            <th>Audit Score</th>
+            <th>Notes & Remediation</th>
+          </tr>
+        </thead>
+        <tbody>
+          {scoreboard.ledger.map((entry, idx) => (
+            <tr key={idx}>
+              <td>
+                <div className="bold">{entry.analysis}</div>
+                <div className="dim">{entry.file}</div>
+              </td>
+              <td className="dim"><Clock size={12} /> {entry.date} {entry.time}</td>
+              <td>
+                <span className="status-badge" style={{ backgroundColor: getStatusColor(entry.status) }}>
+                  {entry.status}
+                </span>
+              </td>
+              <td className="score-cell" style={{ color: entry.score >= 75 ? '#4CAF50' : '#F44336' }}>
+                {entry.score}/100
+              </td>
+              <td className="notes-cell">
+                <div className="notes-text">{entry.notes}</div>
+                <div className="code-ref"><TerminalIcon size={10} /> {entry.code}</div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+
   const renderContent = () => {
+    if (viewMode === 'scoreboard') return renderScoreboard();
     if (!selectedItem) {
       return (
         <div className="empty-state">
           <LayoutDashboard size={64} color="#CFB87C" style={{ opacity: 0.5, marginBottom: 24 }} />
-          <h2>Omission Project Dashboard</h2>
-          <p>Select a figure or progress report from the sidebar to begin.</p>
-        </div>
-      );
-    }
-
-    if (selectedItem.type === 'report') {
-      return (
-        <div className="viewer-container">
-          <div className="figure-card full-width">
-            <div className="figure-card-header">
-              <h3>Progress Report: {selectedItem.title}</h3>
-              <FileText size={20} color="#CFB87C" />
-            </div>
-            <div className="markdown-container">
-              <ReactMarkdown>{markdownContent}</ReactMarkdown>
-            </div>
-          </div>
+          <h2>Omission Terminal</h2>
+          <p>System Online. Awaiting analytical interrogation.</p>
         </div>
       );
     }
@@ -88,27 +193,16 @@ const App = () => {
               <div className="figure-card-header">
                 <h3>{file}</h3>
                 <div className="card-actions">
-                  <Maximize2 
-                    size={18} 
-                    color="#CFB87C" 
-                    style={{ cursor: 'pointer' }} 
-                    onClick={() => openModal(file)}
-                    title="Maximize View"
-                  />
+                  <Maximize2 size={18} color="#CFB87C" onClick={() => openModal(file)} style={{ cursor: 'pointer' }} />
                   <Activity size={18} color="#666" />
                 </div>
               </div>
               <div className="figure-iframe-container mini">
-                <iframe 
-                  src={`${selectedItem.baseUrl}/${file}`} 
-                  className="figure-iframe"
-                  title={file}
-                />
+                <iframe src={`${selectedItem.baseUrl}/${file}`} className="figure-iframe" title={file} />
               </div>
             </div>
           ))}
         </div>
-        
         {selectedItem.has_readme && (
           <div className="figure-card full-width">
             <div className="figure-card-header">
@@ -126,37 +220,55 @@ const App = () => {
 
   return (
     <>
+      <TerminalTicker />
       <div className="sidebar">
         <div className="sidebar-header">
           <h1>Omission</h1>
         </div>
+
+        <div className="sidebar-section">
+          <div className="sidebar-section-title">System Monitor</div>
+          <div 
+            className={`nav-item ${viewMode === 'scoreboard' ? 'active' : ''}`}
+            onClick={() => { setViewMode('scoreboard'); setSelectedItem(null); }}
+          >
+            <BarChart3 size={16} />
+            <span>Scoreboard Ledger</span>
+          </div>
+        </div>
         
         <div className="sidebar-section">
-          <div className="sidebar-section-title">Figures (Phase 1-5)</div>
-          {manifest.figures.map(fig => (
-            <div 
-              key={fig.id} 
-              className={`nav-item ${selectedItem?.id === fig.id ? 'active' : ''}`}
-              onClick={() => setSelectedItem({ ...fig, type: 'figure' })}
-            >
-              <Zap size={16} />
-              <span>{fig.title}</span>
-              <ChevronRight size={14} style={{ marginLeft: 'auto', opacity: 0.5 }} />
+          <div className="sidebar-section-title">Hierarchy Analysis</div>
+          {PHASES.map(phase => (
+            <div key={phase.id} className="phase-group">
+              <div className="phase-header" onClick={() => togglePhase(phase.id)}>
+                <span>{phase.title}</span>
+                <ChevronDown size={14} style={{ transform: expandedPhases.includes(phase.id) ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 0.2s' }} />
+              </div>
+              {expandedPhases.includes(phase.id) && getFiguresForPhase(phase).map(fig => (
+                <div 
+                  key={fig.id} 
+                  className={`nav-item sub-item ${selectedItem?.id === fig.id ? 'active' : ''}`}
+                  onClick={() => { setViewMode('gallery'); setSelectedItem({ ...fig, type: 'figure' }); }}
+                >
+                  <Zap size={14} />
+                  <span>{fig.title}</span>
+                </div>
+              ))}
             </div>
           ))}
         </div>
 
         <div className="sidebar-section">
-          <div className="sidebar-section-title">Progress Reports</div>
+          <div className="sidebar-section-title">Reports</div>
           {manifest.reports.map(report => (
             <div 
               key={report.id} 
               className={`nav-item ${selectedItem?.id === report.id ? 'active' : ''}`}
-              onClick={() => setSelectedItem({ ...report, type: 'report' })}
+              onClick={() => { setViewMode('gallery'); setSelectedItem({ ...report, type: 'report' }); }}
             >
               <FileText size={16} />
               <span>{report.title}</span>
-              <ChevronRight size={14} style={{ marginLeft: 'auto', opacity: 0.5 }} />
             </div>
           ))}
         </div>
@@ -165,38 +277,18 @@ const App = () => {
       <div className="main-content">
         <div className="header">
           <div className="header-title">
-            {selectedItem ? (
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                {selectedItem.type === 'figure' ? <Activity size={18} color="#CFB87C" /> : <FileText size={18} color="#CFB87C" />}
-                {selectedItem.title}
-              </span>
-            ) : 'Overview'}
+            {viewMode === 'scoreboard' ? 'Analytical Scoreboard' : selectedItem ? selectedItem.title : 'Terminal Overview'}
           </div>
-          <div style={{ display: 'flex', gap: 16 }}>
-            {selectedItem?.type === 'figure' && selectedItem.files.length > 0 && (
-              <a 
-                href={`${selectedItem.baseUrl}/${selectedItem.files[0]}`} 
-                target="_blank" 
-                rel="noreferrer"
-                title="Open main figure in new tab"
-              >
-                <ExternalLink size={20} color="#CFB87C" style={{ cursor: 'pointer' }} />
-              </a>
-            )}
-            <Settings size={20} color="#666" style={{ cursor: 'pointer' }} />
-          </div>
+          <Settings size={20} color="#666" style={{ cursor: 'pointer' }} />
         </div>
-        
-        <div className="scroll-wrapper">
-          {renderContent()}
-        </div>
+        <div className="scroll-wrapper">{renderContent()}</div>
       </div>
 
       {modalFile && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Interactive Analysis View</h3>
+              <h3>High-Fidelity Terminal View</h3>
               <X size={24} color="#FFF" style={{ cursor: 'pointer' }} onClick={closeModal} />
             </div>
             <iframe src={modalFile} className="modal-iframe" title="Maximized View" />
@@ -208,3 +300,5 @@ const App = () => {
 };
 
 export default App;
+
+

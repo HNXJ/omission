@@ -55,10 +55,19 @@ def analyze_unit_coding(loader: DataLoader, unit_id: str):
             mean_fr = fr_trials.mean(axis=0)
             sem_fr = fr_trials.std(axis=0) / np.sqrt(n_trials)
             
+            # NaN/INF Guard: Replace any invalid numbers with 0.0 before smoothing
+            mean_fr = np.nan_to_num(mean_fr, nan=0.0, posinf=0.0, neginf=0.0)
+            sem_fr = np.nan_to_num(sem_fr, nan=0.0, posinf=0.0, neginf=0.0)
+            
             # Gaussian Convolution Smoothing (sigma=50ms)
             mean_smoothed = smooth_fr(mean_fr, sigma=50)
             upper_smoothed = smooth_fr(mean_fr + sem_fr, sigma=50)
             lower_smoothed = smooth_fr(mean_fr - sem_fr, sigma=50)
+            
+            # Final sanity check: ensure no NaNs survived smoothing
+            mean_smoothed = np.nan_to_num(mean_smoothed, nan=0.0)
+            upper_smoothed = np.nan_to_num(upper_smoothed, nan=0.0)
+            lower_smoothed = np.nan_to_num(lower_smoothed, nan=0.0)
             
             time_ms = np.arange(len(mean_smoothed)) - 1000
             mask = (time_ms >= -1000) & (time_ms <= 4000)

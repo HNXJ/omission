@@ -15,9 +15,10 @@ class OmissionPlotter:
     - Efficient HTML and SVG export (without kaleido).
     """
 
-    def __init__(self, title: str, subtitle: str = "", template: str = "plotly_white"):
+    def __init__(self, title: str, x_label: str, y_label: str, subtitle: str = "", x_unit: str = "", y_unit: str = "", template: str = "plotly_white"):
         """
         Initialize a new canonical figure.
+        Mandatory: title, x_label, y_label.
         """
         self.fig = go.Figure()
         
@@ -46,12 +47,13 @@ class OmissionPlotter:
             margin=dict(l=80, r=40, t=100, b=80),
             modebar_add=['toImage']
         )
+        # Automatically set labels
+        self.set_axes(x_label, x_unit, y_label, y_unit)
         log.action(f"Initialized canonical plot: {title}")
 
     def set_axes(self, x_label: str, x_unit: str, y_label: str, y_unit: str):
         """
         Enforce strict X and Y axis labeling with mandatory units.
-        Fix: Do not add empty parentheses if unit is empty.
         """
         x_title = f"{x_label} ({x_unit})" if x_unit else x_label
         y_title = f"{y_label} ({y_unit})" if y_unit else y_label
@@ -72,7 +74,7 @@ class OmissionPlotter:
 
     def add_xline(self, x_val: float, name: str, color: str = "black", dash: str = "dash"):
         """
-        Add a vertical reference line (e.g., for stimulus onset/offset timing).
+        Add a vertical reference line.
         """
         self.fig.add_vline(
             x=x_val, line_width=2, line_dash=dash, line_color=color,
@@ -82,7 +84,7 @@ class OmissionPlotter:
 
     def add_yline(self, y_val: float, name: str, color: str = "red", dash: str = "dot"):
         """
-        Add a horizontal reference line (e.g., for statistical threshold like p < 0.05).
+        Add a horizontal reference line.
         """
         self.fig.add_hline(
             y=y_val, line_width=2, line_dash=dash, line_color=color,
@@ -95,7 +97,6 @@ class OmissionPlotter:
                              name: str = "Signal", color: str = "#CFB87C"):
         """
         Adds a mean trace with a shaded error (SEM/SD/CI) region.
-        If error_lower is None, assumes symmetric error.
         """
         x = np.array(x)
         mean = np.array(mean)
@@ -145,8 +146,8 @@ class OmissionPlotter:
 
     def save(self, output_dir: str, filename: str):
         """
-        Save the figure efficiently in Interactive HTML format.
-        Based on user override, additionally exports to SVG via Kaleido.
+        Save the figure efficiently in Interactive HTML format (Kaleido-Free).
+        SVG export is handled via the Plotly Modebar in the browser.
         """
         out_path = Path(output_dir)
         out_path.mkdir(parents=True, exist_ok=True)
@@ -159,16 +160,12 @@ class OmissionPlotter:
         config = {
             'toImageButtonOptions': {
                 'format': 'svg',
-                'filename': filename
+                'filename': filename,
+                'height': 800,
+                'width': 1000,
+                'scale': 2
             }
         }
         self.fig.write_html(str(html_file), include_plotlyjs="cdn", config=config)
-        log.progress(f"Saved interactive HTML figure (Kaleido-Free): {html_file}")
+        log.progress(f"Saved interactive HTML (Kaleido-Free | Madelane-Compliant): {html_file}")
 
-        # Explicit User Override: Generate Vectorized SVG
-        svg_file = out_path / f"{filename}.svg"
-        try:
-            self.fig.write_image(str(svg_file), engine="kaleido")
-            log.progress(f"Saved vectorized SVG (Mandate Override): {svg_file}")
-        except Exception as e:
-            log.warning(f"Failed to save SVG (Kaleido might not be installed properly): {e}")

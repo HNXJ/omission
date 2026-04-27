@@ -6,6 +6,15 @@ Export_Staging/
 context_for_agents/
 plans_for_agents/
 
+# Binary & Large Data Files (Global)
+*.npy
+*.pkl
+*.h5
+*.mat
+*.bin
+*.pt
+*.onnx
+
 # Python caches
 __pycache__/
 *.pyc
@@ -21,3 +30,4 @@ __pycache__/
 dashboard/node_modules/
 dashboard/dist/
 dashboard/.env
+

@@ -15,8 +15,7 @@ def plot_mi_matrix(results: dict, output_dir: str):
     ]
     
     for area, pop_csd in results.items():
-        plotter = OmissionPlotter(
-            title=f"Figure f012: {area} Current Source Density (CSD)",
+        plotter = OmissionPlotter(title=f"Figure f012: {area} Current Source Density (CSD, x_label="Time", y_label="Sink/Source Intensity")",
             subtitle="Spatiotemporal Heatmap Aligned to Layer 4 Sink"
         )
         
@@ -53,8 +52,7 @@ def plot_mi_matrix(results: dict, output_dir: str):
     # Plot global summary
     if results:
         global_csd = np.nanmean(np.array(list(results.values())), axis=0)
-        plotter = OmissionPlotter(
-            title="Figure f012: Global Current Source Density (CSD)",
+        plotter = OmissionPlotter(title="Figure f012: Global Current Source Density (CSD, x_label="Time", y_label="Sink/Source Intensity")",
             subtitle="Spatiotemporal Heatmap Aligned to Layer 4 Sink (Averaged Across All Areas)"
         )
         

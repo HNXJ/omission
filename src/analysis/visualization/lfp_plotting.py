@@ -18,10 +18,24 @@ def create_tfr_figure(freqs, times_ms, power, title="LFP TFR (dB)", area="V1"):
     """
     Creates standardized TFR Heatmap using OmissionPlotter.
     """
-    plotter = OmissionPlotter(title=title, subtitle=f"Area: {area}")
-    plotter.set_axes("Time from Omission", "ms", "Frequency", "Hz")
+    plotter = OmissionPlotter(
+        title=title, 
+        x_label="Time from Omission", 
+        y_label="Frequency", 
+        subtitle=f"Area: {area}",
+        x_unit="ms",
+        y_unit="Hz"
+    )
     
-    heatmap = go.Heatmap(z=power, x=times_ms, y=freqs, colorscale="Viridis", zmin=-3, zmax=3)
+    # Madelane-Compliant Heatmap: Enforce Plasma/Viridis with symmetric dB bounds
+    heatmap = go.Heatmap(
+        z=power, 
+        x=times_ms, 
+        y=freqs, 
+        colorscale="Viridis", 
+        zmin=-3, zmax=3,
+        colorbar=dict(title="dB")
+    )
     plotter.add_trace(heatmap, name="TFR")
     
     plotter.add_xline(0, "Omission", color="white")
@@ -32,14 +46,22 @@ def create_band_plot(times_ms, mean_pwr, sem_pwr, title="Band Power Trajectory",
     """
     Creates standardized band trajectory plot with ±SEM shading using OmissionPlotter.
     """
-    plotter = OmissionPlotter(title=title, subtitle=f"Area: {area}")
-    plotter.set_axes("Time from Omission", "ms", "Power", "dB")
+    plotter = OmissionPlotter(
+        title=title, 
+        x_label="Time from Omission", 
+        y_label="Power", 
+        subtitle=f"Area: {area}",
+        x_unit="ms",
+        y_unit="dB"
+    )
     
-    rgba = f'rgba{tuple(list(int(color.lstrip("#")[i:i+2], 16) for i in (0, 2, 4)) + [0.2])}'
-    
-    plotter.add_trace(go.Scatter(x=times_ms, y=mean_pwr + sem_pwr, mode='lines', line=dict(width=0), showlegend=False), name="SEM_up")
-    plotter.add_trace(go.Scatter(x=times_ms, y=mean_pwr - sem_pwr, fill='tonexty', mode='lines', line=dict(width=0), fillcolor=rgba, showlegend=False), name="SEM_down")
-    plotter.add_trace(go.Scatter(x=times_ms, y=mean_pwr, mode='lines', line=dict(color=color, width=3)), name="Mean Power")
+    plotter.add_shaded_error_bar(
+        x=times_ms, 
+        mean=mean_pwr, 
+        error_upper=sem_pwr, 
+        name="Mean Power", 
+        color=color
+    )
     
     plotter.add_xline(0, "Omission", color="black")
     return plotter
