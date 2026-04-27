@@ -67,7 +67,7 @@ def compute_granger_f(target, source, max_lag=10):
         print(f"""[error] GC computation failed: {e}""")
         return 0.0
 
-def run_spectral_granger():
+def run_f015():
     log.action("Starting f015: Spectral LFP Granger (Safe Session-Averaging)...")
     print(f"""[action] f015: Initializing spectral Granger pipeline""")
     loader = DataLoader()

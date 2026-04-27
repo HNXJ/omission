@@ -54,7 +54,7 @@ def compute_granger_f(target, source, max_lag=5):
         print(f"""[error] GC failed: {e}""")
         return 0.0
 
-def run_spiking_granger():
+def run_f014():
     log.action("Starting f014: Spiking Granger (Safe Session-Averaging)...")
     loader = DataLoader()
     output_dir = Path("D:/drive/outputs/oglo-8figs/f014-spiking-granger")

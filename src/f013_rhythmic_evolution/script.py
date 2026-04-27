@@ -7,7 +7,7 @@ from src.analysis.io.loader import DataLoader
 from src.analysis.visualization.plotting import OmissionPlotter
 from src.analysis.io.logger import log
 
-def run_rhythmic_evolution():
+def run_f013():
     log.action("Starting f013: Trial-by-Trial Rhythmic Evolution...")
     
     # 1. Initialize

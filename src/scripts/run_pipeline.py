@@ -3,7 +3,7 @@ import sys
 import time
 from src.analysis.io.logger import log
 
-# Figure Imports
+# Figure Imports (Canonical f001-f046)
 from src.f001_theory.script import run_f001
 from src.f002_psth.script import run_f002
 from src.f003_surprise.script import run_f003
@@ -38,46 +38,42 @@ from src.f031_spike_phase_locking.script import run_f031
 from src.f032_spike_triggered_average.script import run_f032
 from src.f033_spike_field_coherence.script import run_f033
 from src.f034_pev_analysis.script import run_f034
-from src.f034_spike_phase_consistency.script import run_f034
 from src.f035_deviance_scaling.script import run_f035
-from src.f035_spike_triggered_spectrum.script import run_f035
-from src.f036_cross_area_sfc_bu.script import run_f036
 from src.f036_interneuron_dynamics.script import run_f036
-from src.f037_cross_area_sfc_td.script import run_f037
-from src.f038_phase_dependent_fr.script import run_f038
 from src.f039_spike_field_coherence.script import run_f039
 from src.f040_onset_latency.script import run_f040
 from src.f044_laminar_pac.script import run_f044
 from src.f045_laminar_coherence.script import run_f045
+from src.f046_state_space_trajectories.script import run_f046
 
 def run_all():
     """
     Executes the comprehensive Omission analytical pipeline sequentially.
     """
-    log.progress(f"[action] Initializing Omission Analytical Batch Pipeline (f001-f040)...")
+    log.progress(f"[action] Initializing Omission Analytical Batch Pipeline (f001-f046)...")
     
     start_time = time.time()
     
     pipeline_steps = [
         ("Figure 1: Theory", run_f001),
-        ("Figure 2: Psth", run_f002),
+        ("Figure 2: PSTH", run_f002),
         ("Figure 3: Surprise", run_f003),
         ("Figure 4: Coding", run_f004),
-        ("Figure 5: Tfr", run_f005),
+        ("Figure 5: TFR", run_f005),
         ("Figure 6: Band Power", run_f006),
-        ("Figure 7: Sfc", run_f007),
+        ("Figure 7: SFC", run_f007),
         ("Figure 8: Coordination", run_f008),
-        ("Figure 9: Individual Sfc", run_f009),
-        ("Figure 10: Sfc Delta", run_f010),
-        ("Figure 11: Laminar", run_f011),
-        ("Figure 12: Csd Profiling", run_f012),
+        ("Figure 9: Individual SFC", run_f009),
+        ("Figure 10: Delta SFC", run_f010),
+        ("Figure 11: Laminar Alignment", run_f011),
+        ("Figure 12: CSD Profiling", run_f012),
         ("Figure 13: Rhythmic Evolution", run_f013),
         ("Figure 14: Spiking Granger", run_f014),
         ("Figure 15: Spectral Granger", run_f015),
         ("Figure 16: Impedance Profiles", run_f016),
         ("Figure 17: Prediction Errors", run_f017),
         ("Figure 18: Ghost Signals", run_f018),
-        ("Figure 19: Pac Analysis", run_f019),
+        ("Figure 19: PAC Analysis", run_f019),
         ("Figure 20: Effective Connectivity", run_f020),
         ("Figure 21: Pupil Decoding", run_f021),
         ("Figure 22: Dimensionality Reduction", run_f022),
@@ -92,18 +88,14 @@ def run_all():
         ("Figure 31: Spike Phase Locking", run_f031),
         ("Figure 32: Spike Triggered Average", run_f032),
         ("Figure 33: Spike Field Coherence", run_f033),
-        ("Figure 34: Pev Analysis", run_f034),
-        ("Figure 34: Spike Phase Consistency", run_f034),
+        ("Figure 34: PEV Analysis", run_f034),
         ("Figure 35: Deviance Scaling", run_f035),
-        ("Figure 35: Spike Triggered Spectrum", run_f035),
-        ("Figure 36: Cross Area Sfc Bu", run_f036),
         ("Figure 36: Interneuron Dynamics", run_f036),
-        ("Figure 37: Cross Area Sfc Td", run_f037),
-        ("Figure 38: Phase Dependent Fr", run_f038),
         ("Figure 39: Spike-Field Coherence (PPC)", run_f039),
         ("Figure 40: Population Sync Index", run_f040),
-        ("Figure 44: Laminar Pac", run_f044),
+        ("Figure 44: Laminar PAC", run_f044),
         ("Figure 45: Laminar Coherence", run_f045),
+        ("Figure 46: State-Space Trajectories", run_f046),
     ]
     
     for name, func in pipeline_steps:
@@ -114,7 +106,6 @@ def run_all():
             log.progress(f"[action] SUCCESS: {name}")
         except Exception as e:
             log.error(f"[action] FAILED: {name} - {e}")
-            # sys.exit(1) # Continue with others if one fails
             
     elapsed = time.time() - start_time
     log.progress(f"--------------------------------------------------")

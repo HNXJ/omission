@@ -37,7 +37,7 @@ def compute_omega_sq(data_list, labels):
         
     return np.array(pev_time)
 
-def run_pev_analysis():
+def run_f034():
     log.action("Starting f034: Percent Explained Variance (Omega-Squared)...")
     loader = DataLoader()
     output_dir = Path("D:/drive/outputs/oglo-8figs/f034-pev-analysis")

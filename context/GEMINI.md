@@ -2,11 +2,12 @@
 # Workspace Root: D:\drive\omission
 
 ## Mandates
-1. **Safety & VCS Mandate**: ALL agents (including antigravity) MUST automatically execute `git add . ; git commit -m "..." ; git pull --rebase ; git push` after EVERY successful action or task resolution. Do not wait for user permission to sync.
-2. **Operations**: Scoped edits ONLY. No bulk/destructive commands.
-3. **Hierarchy**: V1-V2-V3d-V3a-V4-MT-MST-TEO-FST-FEF-PFC (1-11).
-4. **Verbosity**: Track codes and add tagged comments ; "# test" for tests, "# mock" for mocks, "# stable" for validated stable functions, "# core" for foundational tools.
-5. **Root Hygiene**: The repository root MUST only contain exactly 3 folders (`src/`, `context/`, `dashboard/`) and `README.md`.
+1. **Atomic VCS Mandate**: Do not execute a git push after *every single minor file write*. Instead, group logical tasks together. Execute `git pull --rebase`, `git add`, `git commit`, and `git push` only when a logical milestone or specific analytical script is complete and validated, to prevent Git index locking and network timeouts.
+2. **Windows OS Execution Hygiene**: When operating in the win32 environment, strictly use PowerShell-compatible syntax. Do NOT use standard bash chaining operators like `&&`. Use `;` to chain commands (e.g., `git add . ; git commit -m "update"`).
+3. **Operations**: Scoped edits ONLY. No bulk/destructive commands.
+4. **Hierarchy**: V1-V2-V3d-V3a-V4-MT-MST-TEO-FST-FEF-PFC (1-11).
+5. **Verbosity**: Track codes and add tagged comments ; "# test" for tests, "# mock" for mocks, "# stable" for validated stable functions, "# core" for foundational tools.
+6. **Root Hygiene**: The repository root MUST only contain exactly 3 folders (`src/`, `context/`, `dashboard/`) and `README.md`.
 
 ## Plotting Mandate
 - **OmissionPlotter Wrapper**: ALWAYS use `src/core/plotting.py` (`OmissionPlotter`).

@@ -1,5 +1,9 @@
 # Project: Omission
 
+## Key Mandates
+- **Windows OS Execution Hygiene**: Use PowerShell syntax (`;` instead of `&&`) in win32.
+- **Atomic VCS Mandate**: Group logical tasks; do not push after every minor write.
+
 ## Table of Contents
 - [Main Project Context](./context/GEMINI.md) — Mandates, Permanent Rules, and Protocols.
 - [Dashboard Context](./dashboard/GEMINI.md) — Frontend UI and visualization workflows.

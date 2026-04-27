@@ -6,7 +6,7 @@ from src.analysis.io.loader import DataLoader
 from src.analysis.visualization.plotting import OmissionPlotter
 from src.analysis.io.logger import log
 
-def run_deviance_scaling():
+def run_f035():
     log.action("Starting f035: Deviance-Scaling Response Analysis...")
     loader = DataLoader()
     output_dir = Path("D:/drive/outputs/oglo-8figs/f035-deviance-scaling")
