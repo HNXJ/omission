@@ -12,11 +12,11 @@ def main():
     results = analyze_selectivity_index(loader, areas)
     
     print(f"""[f037] Generating Plot...""")
-    fig = plot_selectivity_index(results)
+    plotter = plot_selectivity_index(results)
     
-    export_path = os.path.join("Export_Staging", "f037_selectivity_index.html")
-    fig.write_html(export_path)
-    print(f"""[f037] Exported to {export_path}""")
+    output_dir = loader.get_output_dir("f037-selectivity-index")
+    plotter.save(output_dir, "f037_selectivity_index")
+    print(f"""[f037] Exported to {output_dir}""")
 
 if __name__ == "__main__":
     main()

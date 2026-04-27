@@ -39,7 +39,10 @@ def plot_ppc_band_comparison(results_df, output_dir: str):
     
     plotter = OmissionPlotter(
         title="Figure f039: Spike-Field Coherence (PPC)",
-        subtitle="Pairwise Phase Consistency: Baseline vs Omission across Frequency Bands"
+        x_label="Frequency Band",
+        y_label="PPC",
+        subtitle="Pairwise Phase Consistency: Baseline vs Omission across Frequency Bands",
+        y_unit="a.u."
     )
     
     for cond in conditions:
@@ -82,7 +85,6 @@ def plot_ppc_band_comparison(results_df, output_dir: str):
             name=f"{cond} Omission", color=PURPLE
         )
     
-    plotter.set_axes("Frequency Band", "", "PPC", "a.u.")
     plotter.add_yline(0, "No Phase-Locking", color="gray", dash="dot")
     plotter.save(output_dir, "f039_spike_field_coherence")
     print(f"""[action] PPC band comparison figure saved""")

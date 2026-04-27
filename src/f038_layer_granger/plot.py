@@ -9,7 +9,10 @@ def plot_layer_granger_contrast(results_df, output_dir):
     """
     plotter = OmissionPlotter(
         title="Layer-wise Directed Information Flow",
+        x_label="Temporal Window",
+        y_label="Granger F-Statistic",
         subtitle="V1 <-> PFC Cortical Feedback Reversal",
+        y_unit="a.u.",
         template="plotly_white"
     )
     
@@ -36,11 +39,7 @@ def plot_layer_granger_contrast(results_df, output_dir):
         marker_color='#9400D3'
     ), name='FB Flow')
     
-    plotter.set_axes("Temporal Window", "Category", "Granger F-Statistic", "a.u.")
-    
     plotter.fig.update_layout(
-        paper_bgcolor="#FFFFFF",
-        plot_bgcolor="#FFFFFF",
         xaxis=dict(gridcolor="#D3D3D3", linecolor="#000000"),
         yaxis=dict(gridcolor="#D3D3D3", linecolor="#000000"),
         barmode='group'

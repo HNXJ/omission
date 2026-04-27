@@ -40,6 +40,8 @@ from src.f033_spike_field_coherence.script import run_f033
 from src.f034_pev_analysis.script import run_f034
 from src.f035_deviance_scaling.script import run_f035
 from src.f036_interneuron_dynamics.script import run_f036
+from src.f037_selectivity_index.script import main as run_f037
+from src.f038_layer_granger.script import run_f038
 from src.f039_spike_field_coherence.script import run_f039
 from src.f040_onset_latency.script import run_f040
 from src.f044_laminar_pac.script import run_f044
@@ -91,6 +93,8 @@ def run_all():
         ("Figure 34: PEV Analysis", run_f034),
         ("Figure 35: Deviance Scaling", run_f035),
         ("Figure 36: Interneuron Dynamics", run_f036),
+        ("Figure 37: Selectivity Index", run_f037),
+        ("Figure 38: Layer Granger", run_f038),
         ("Figure 39: Spike-Field Coherence (PPC)", run_f039),
         ("Figure 40: Population Sync Index", run_f040),
         ("Figure 44: Laminar PAC", run_f044),

@@ -8,7 +8,10 @@ def plot_selectivity_index(results: dict):
     """
     plotter = OmissionPlotter(
         title="Stimulus Selectivity Index (SSI) during Omission",
-        subtitle="Comparing predictable stim (p1) vs Omission (p2)"
+        x_label="Cortical Area",
+        y_label="Selectivity Index",
+        subtitle="Comparing predictable stim (p1) vs Omission (p2)",
+        y_unit="norm"
     )
     
     areas = list(results.keys())
@@ -36,4 +39,4 @@ def plot_selectivity_index(results: dict):
     plotter.fig.update_xaxes(showgrid=True, gridcolor='lightgray', linecolor='black')
     plotter.fig.update_yaxes(showgrid=True, gridcolor='lightgray', linecolor='black')
     
-    return plotter.fig
+    return plotter
