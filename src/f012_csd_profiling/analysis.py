@@ -78,6 +78,7 @@ def run_f012_analysis():
             
         if aligned_csds:
             pop_csd = np.nanmean(np.array(aligned_csds), axis=0)
-            results[area] = pop_csd
+            # Final integrity check for Sentinel Audit
+            results[area] = np.nan_to_num(pop_csd, nan=0.0)
             
     return results

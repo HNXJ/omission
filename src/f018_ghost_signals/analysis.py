@@ -41,11 +41,16 @@ def analyze_ghost_signals(loader: DataLoader, sessions: list, areas: list):
                 
                 for u in range(psth_smooth.shape[0]):
                     y = psth_smooth[u, RAMP_WINDOW[0]:RAMP_WINDOW[1]]
-                    slope, intercept = np.polyfit(t, y, 1)
-                    y_pred = slope * t + intercept
-                    ss_res = np.sum((y - y_pred)**2)
-                    ss_tot = np.sum((y - np.mean(y))**2) + 1e-10
-                    r2 = 1 - (ss_res / ss_tot)
+                    
+                    if np.any(y > 0) and np.all(np.isfinite(y)):
+                        slope, intercept = np.polyfit(t, y, 1)
+                        y_pred = slope * t + intercept
+                        ss_res = np.sum((y - y_pred)**2)
+                        ss_tot = np.sum((y - np.mean(y))**2) + 1e-10
+                        r2 = 1 - (ss_res / ss_tot)
+                    else:
+                        slope, r2 = 0.0, 0.0
+                        
                     slopes.append(slope)
                     r_squared.append(r2)
                 

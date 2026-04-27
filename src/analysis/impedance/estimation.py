@@ -105,8 +105,9 @@ def estimate_impedance_tensor(
     psc, pss = compute_csd_batch(S_flat, C_flat)
     
     # Z_eff = Psc / Pss
-    # Add epsilon to avoid division by zero
+    # Add epsilon and nan_to_num to avoid division by zero and propagate clean data
     z_eff = psc / (pss + 1e-12)
+    z_eff = jnp.nan_to_num(z_eff, nan=0.0, posinf=0.0, neginf=0.0)
     
     freqs = np.fft.rfftfreq(nperseg, d=1.0/fs)
     

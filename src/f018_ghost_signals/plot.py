@@ -9,7 +9,8 @@ def plot_ghost_signals(results: dict, output_dir: str):
     Plots Figure 18: Ghost Signals (Anticipatory Ramping).
     results: {area: {'slopes': [], 'avg_psth': (time,)}}
     """
-    plotter = OmissionPlotter(title="Figure 18: Ghost Signals (Anticipatory Ramping, x_label="Time", y_label="LFP (uV)")",
+    plotter = OmissionPlotter(title="Figure 18: Ghost Signals (Anticipatory Ramping)",
+        x_label="Time", y_label="LFP (uV)",
         subtitle="Population Average of Ramping Units before Omission"
     )
     plotter.set_axes("Time from P1 Onset", "ms", "Firing Rate", "Hz")

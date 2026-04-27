@@ -11,6 +11,11 @@ def plot_laminar_routing(results: dict, output_dir: str):
         # Clean data first
         pop_hg = np.nan_to_num(pop_hg, nan=0.0)
         
+        # Define axes based on actual data shape
+        n_chans, n_times = pop_hg.shape
+        time_ms = np.linspace(-2000, 2000, n_times)
+        channels = np.arange(n_chans) - n_chans // 2 # Relative depth centered at 0
+
         plotter = OmissionPlotter(
             title=f"Figure f011: {area} Laminar Cortical Mapping",
             x_label="Time from Omission",
