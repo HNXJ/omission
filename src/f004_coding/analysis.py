@@ -79,4 +79,31 @@ def analyze_unit_coding(loader: DataLoader, unit_id: str):
                 'lower': lower_smoothed[mask]
             }
             
+        # 3. UNIT-LEVEL STATISTICAL PROOF (Significance-Tier Standard)
+        # Compare AAAB (Standard) vs AXAB (Omission) in the omission window (969-1500)
+        if 'AAAB' in results['psths'][group_name] and 'AXAB' in results['psths'][group_name]:
+            from scipy.stats import ranksums
+            from src.analysis.stats.tiers import get_significance_tier
+            
+            # Extract trial data for statistical test
+            spk_aaab = loader.load_unit_spikes(unit_id, 'AAAB')
+            spk_axab = loader.load_unit_spikes(unit_id, 'AXAB')
+            
+            if spk_aaab is not None and spk_axab is not None:
+                # Window 969 to 1500 (Omission Response)
+                win = slice(969, 1500)
+                fr_aaab = np.mean(spk_aaab[:, win], axis=1) * 1000.0
+                fr_axab = np.mean(spk_axab[:, win], axis=1) * 1000.0
+                
+                stat, p_val = ranksums(fr_aaab, fr_axab)
+                tier_name, k, stars = get_significance_tier(p_val)
+                
+                results['psths'][group_name]['stats'] = {
+                    'p': p_val,
+                    'tier': tier_name,
+                    'stars': stars,
+                    'test': 'Wilcoxon Rank-Sum'
+                }
+                print(f"[stats] Unit {unit_id} | {group_name} | {tier_name} ({p_val:.2e}) | {stars}")
+            
     return results

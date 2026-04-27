@@ -22,10 +22,19 @@ def plot_raster_suite(results: dict, unit_id: str, tag: str, area: str, output_d
     """Generates the 6-panel raster + PSTH suite for a specific unit."""
     print(f"[action] Plotting raster suite for {unit_id} ({tag})")
     
+    # Prepare Dynamic Subplot Titles with Stats
     raster_titles = ["RRRR Raster", "RXRR Raster", "RRXR Raster"]
+    final_titles = list(raster_titles)
+    for group in GROUP_NAMES:
+        title = group
+        if group in results['psths'] and 'stats' in results['psths'][group]:
+            s = results['psths'][group]['stats']
+            title = f"{group} ({s['stars'] if s['stars'] else 'n.s.'})"
+        final_titles.append(title)
+
     fig = make_subplots(
         rows=6, cols=1, 
-        subplot_titles=raster_titles + GROUP_NAMES,
+        subplot_titles=final_titles,
         vertical_spacing=0.04,
         shared_xaxes=True,
         row_heights=[0.08, 0.08, 0.08, 0.24, 0.24, 0.24]
@@ -55,6 +64,8 @@ def plot_raster_suite(results: dict, unit_id: str, tag: str, area: str, output_d
         row_idx = i + 4
         if group_name in results['psths']:
             for cond, p_data in results['psths'][group_name].items():
+                if cond == 'stats':
+                    continue
                 color = COND_COLORS.get(cond, 'gray')
                 
                 # SEM

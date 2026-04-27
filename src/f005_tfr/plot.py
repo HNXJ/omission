@@ -8,14 +8,21 @@ def plot_area_tfrs(results: dict, output_dir: str):
     os.makedirs(output_dir, exist_ok=True)
     loader = DataLoader()
     for cond, area_data in results.items():
+        if cond == "stats":
+            continue
         onset_ms = loader.get_omission_onset(cond)
         for area, res in area_data.items():
+            stats_str = ""
+            if "stats" in results and area in results["stats"]:
+                s = results["stats"][area]
+                stats_str = f" {s['stars'] if s['stars'] else '(n.s.)'}"
+
             print(f"[action] Plotting TFR for {area} ({cond})")
             plotter = create_tfr_figure(
                 freqs=res["freqs"], 
                 times_ms=res["times"], 
                 power=res["tfr"], 
-                title=f"Figure f005: {area} TFR ({cond})",
+                title=f"Figure f005: {area} TFR ({cond}){stats_str}",
                 area=area
             )
             

@@ -42,13 +42,32 @@ def analyze_area_psths(loader: DataLoader, areas: list):
         psths_aaab_smooth = gaussian_filter1d(psths_aaab, sigma=sigma_ms, axis=1)
         psths_axab_smooth = gaussian_filter1d(psths_axab, sigma=sigma_ms, axis=1)
         
+        # 3. STATISTICAL COMPARISON (Significance-Tier Standard)
+        from scipy.stats import ranksums
+        from src.analysis.stats.tiers import get_significance_tier
+        
+        # Omission response window: 969 to 1500 ms (Onset is 969)
+        win = slice(969, 1500)
+        mean_aaab = np.mean(psths_aaab_smooth[:, win], axis=1)
+        mean_axab = np.mean(psths_axab_smooth[:, win], axis=1)
+        
+        stat, p_val = ranksums(mean_aaab, mean_axab)
+        tier_name, k, stars = get_significance_tier(p_val)
+        
         results[area] = {
             'aaab': np.mean(psths_aaab_smooth, axis=0),
             'aaab_sem': np.std(psths_aaab_smooth, axis=0) / np.sqrt(n_units),
             'axab': np.mean(psths_axab_smooth, axis=0),
             'axab_sem': np.std(psths_axab_smooth, axis=0) / np.sqrt(n_units),
-            'n_units': n_units
+            'n_units': n_units,
+            'stats': {
+                'p': p_val,
+                'tier': tier_name,
+                'stars': stars,
+                'test': 'Wilcoxon Rank-Sum'
+            }
         }
+        print(f"[stats] Area {area} | {tier_name} ({p_val:.2e}) | {stars}")
         print(f"[result] Area {area} PSTH computed for {n_units} units.")
         
     return results

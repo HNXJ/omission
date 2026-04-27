@@ -12,12 +12,15 @@ def plot_area_psths(results: dict, output_dir: str):
     t_local = np.linspace(-1000, 1000, 2000) # Since align_to="omission" uses 2000 samples [-1000, +1000]
     
     for area, data in results.items():
-        print(f"[action] Plotting PSTH for {area}")
+        stats = data['stats']
+        proof_str = f"[{stats['test']}] {stats['tier']} (p={stats['p']:.2e}) {stats['stars']}"
+        
         plotter = OmissionPlotter(
-            title=f"Figure f002: {area} Omission-Local PSTH",
-            subtitle=f"n={data['n_units']} units | Mean ± SEM | 0ms = Omission Onset"
+            title=f"Figure f002: {area} Omission-Local PSTH {stats['stars']}",
+            x_label="Time from Omission",
+            y_label="Firing Rate",
+            subtitle=f"{proof_str} | n={data['n_units']} units | Mean ± SEM"
         )
-        plotter.set_axes("Time from Omission", "ms", "Firing Rate", "Hz")
         
         # Omission Plotter Madelane Golden Dark Theme
         GOLD = "#CFB87C"

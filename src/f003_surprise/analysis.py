@@ -50,11 +50,30 @@ def analyze_surprise(loader: DataLoader, areas: list):
         surprise_indices = (unit_axab_fr[valid] - unit_aaab_fr[valid]) / denom[valid]
         
         if len(surprise_indices) > 0:
+            # 3. STATISTICAL PROOF (Significance-Tier Standard)
+            # One-sample Wilcoxon signed-rank test vs 0
+            from scipy.stats import wilcoxon
+            from src.analysis.stats.tiers import get_significance_tier
+            
+            # wilcoxon requires at least one non-zero difference
+            if np.any(surprise_indices != 0):
+                stat, p_val = wilcoxon(surprise_indices)
+                tier_name, k, stars = get_significance_tier(p_val)
+            else:
+                p_val, tier_name, stars = 1.0, "Null", ""
+
             results[area] = {
                 'mean': np.mean(surprise_indices),
                 'sem': np.std(surprise_indices) / np.sqrt(len(surprise_indices)),
-                'n_units': len(surprise_indices)
+                'n_units': len(surprise_indices),
+                'stats': {
+                    'p': p_val,
+                    'tier': tier_name,
+                    'stars': stars,
+                    'test': 'Wilcoxon Signed-Rank'
+                }
             }
+            print(f"[stats] Area {area} | Surprise | {tier_name} ({p_val:.2e}) | {stars}")
             print(f"[result] Area {area}: Surprise = {results[area]['mean']:.3f} (n={len(surprise_indices)})")
             
     return results
