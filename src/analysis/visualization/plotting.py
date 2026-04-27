@@ -193,4 +193,3 @@ class OmissionPlotter:
         }
         self.fig.write_html(str(html_file), include_plotlyjs="cdn", config=config)
         log.progress(f"Saved interactive HTML (Kaleido-Free | Madelane-Compliant): {html_file}")
-

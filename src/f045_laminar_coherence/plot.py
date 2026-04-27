@@ -19,8 +19,7 @@ def plot_laminar_coherence(results: dict, output_dir: str):
         y_unit="Depth"
     )
 
-    import plotly.graph_objects as go
-
+    heatmap = go.Heatmap(
         z=mat, 
         x=layers, 
         y=layers, 

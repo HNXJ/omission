@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, Link, NavLink, useLocation, useParams, Navigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { 
   BarChart3, 
@@ -23,11 +24,11 @@ import manifest from './data/manifest.json';
 import scoreboard from './data/scoreboard.json';
 
 const PHASES = [
-  { id: 'p1', title: 'Phase 1: Baseline & PSTH', range: [1, 4] },
-  { id: 'p2', title: 'Phase 2: Spectral & Coordination', range: [5, 11] },
-  { id: 'p3', title: 'Phase 3: Connectivity & Granger', range: [12, 20] },
-  { id: 'p4', title: 'Phase 4: Decoding & Behavior', range: [21, 30] },
-  { id: 'p5', title: 'Phase 5: State-Space & RNN', range: [31, 50] }
+  { id: 'p1', title: 'Phase 1: Baseline & PSTH', range: [1, 4], path: '/phase/1' },
+  { id: 'p2', title: 'Phase 2: Spectral & Coordination', range: [5, 11], path: '/phase/2' },
+  { id: 'p3', title: 'Phase 3: Connectivity & Granger', range: [12, 20], path: '/phase/3' },
+  { id: 'p4', title: 'Phase 4: Decoding & Behavior', range: [21, 30], path: '/phase/4' },
+  { id: 'p5', title: 'Phase 5: State-Space & RNN', range: [31, 50], path: '/phase/5' }
 ];
 
 const TerminalTicker = () => (
@@ -59,6 +60,29 @@ const TerminalTicker = () => (
       <span className="ticker-value">{scoreboard.metrics.units}</span>
     </div>
   </div>
+);
+
+const TopNav = () => (
+  <nav className="top-nav">
+    <div className="top-nav-logo">OMISSION</div>
+    <div className="top-nav-links">
+      <NavLink to="/scoreboard" className={({ isActive }) => `top-nav-link ${isActive ? 'active' : ''}`}>
+        Scoreboard
+      </NavLink>
+      {PHASES.map(phase => (
+        <NavLink 
+          key={phase.id} 
+          to={phase.path} 
+          className={({ isActive }) => `top-nav-link ${isActive ? 'active' : ''}`}
+        >
+          {phase.id.toUpperCase()}
+        </NavLink>
+      ))}
+      <NavLink to="/reports" className={({ isActive }) => `top-nav-link ${isActive ? 'active' : ''}`}>
+        Reports
+      </NavLink>
+    </div>
+  </nav>
 );
 
 const App = () => {
@@ -218,70 +242,90 @@ const App = () => {
     );
   };
 
+  const Sidebar = () => {
+    const location = useLocation();
+    
+    // Determine if we are in a phase route
+    const phaseMatch = location.pathname.match(/\/phase\/(\d+)/);
+    const activePhaseId = phaseMatch ? `p${phaseMatch[1]}` : null;
+    const isScoreboard = location.pathname === '/scoreboard';
+    const isReports = location.pathname === '/reports';
+
+    return (
+      <div className="sidebar">
+        <div className="sidebar-header">
+          <h1>Analysis</h1>
+        </div>
+
+        {isScoreboard && (
+          <div className="sidebar-section">
+            <div className="sidebar-section-title">Scoreboard Navigation</div>
+            <div className="nav-item active">
+              <BarChart3 size={16} />
+              <span>Current Ledger</span>
+            </div>
+          </div>
+        )}
+
+        {activePhaseId && (
+          <div className="sidebar-section">
+            <div className="sidebar-section-title">
+              {PHASES.find(p => p.id === activePhaseId)?.title || 'Phase Modules'}
+            </div>
+            {getFiguresForPhase(PHASES.find(p => p.id === activePhaseId)).map(fig => (
+              <div 
+                key={fig.id} 
+                className={`nav-item ${selectedItem?.id === fig.id ? 'active' : ''}`}
+                onClick={() => setSelectedItem({ ...fig, type: 'figure' })}
+              >
+                <Zap size={14} />
+                <span>{fig.title}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {isReports && (
+          <div className="sidebar-section">
+            <div className="sidebar-section-title">Protocol Reports</div>
+            {manifest.reports.map(report => (
+              <div 
+                key={report.id} 
+                className={`nav-item ${selectedItem?.id === report.id ? 'active' : ''}`}
+                onClick={() => setSelectedItem({ ...report, type: 'report' })}
+              >
+                <FileText size={16} />
+                <span>{report.title}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <>
       <TerminalTicker />
-      <div className="sidebar">
-        <div className="sidebar-header">
-          <h1>Omission</h1>
-        </div>
-
-        <div className="sidebar-section">
-          <div className="sidebar-section-title">System Monitor</div>
-          <div 
-            className={`nav-item ${viewMode === 'scoreboard' ? 'active' : ''}`}
-            onClick={() => { setViewMode('scoreboard'); setSelectedItem(null); }}
-          >
-            <BarChart3 size={16} />
-            <span>Scoreboard Ledger</span>
+      <TopNav />
+      <div className="layout-wrapper">
+        <Sidebar />
+        <div className="main-content">
+          <div className="header">
+            <div className="header-title">
+              {selectedItem ? selectedItem.title : 'Analytical Terminal'}
+            </div>
+            <Settings size={20} color="#666" style={{ cursor: 'pointer' }} />
+          </div>
+          <div className="scroll-wrapper">
+            <Routes>
+              <Route path="/" element={<Navigate to="/scoreboard" replace />} />
+              <Route path="/scoreboard" element={renderScoreboard()} />
+              <Route path="/phase/:id" element={renderContent()} />
+              <Route path="/reports" element={renderContent()} />
+            </Routes>
           </div>
         </div>
-        
-        <div className="sidebar-section">
-          <div className="sidebar-section-title">Hierarchy Analysis</div>
-          {PHASES.map(phase => (
-            <div key={phase.id} className="phase-group">
-              <div className="phase-header" onClick={() => togglePhase(phase.id)}>
-                <span>{phase.title}</span>
-                <ChevronDown size={14} style={{ transform: expandedPhases.includes(phase.id) ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform 0.2s' }} />
-              </div>
-              {expandedPhases.includes(phase.id) && getFiguresForPhase(phase).map(fig => (
-                <div 
-                  key={fig.id} 
-                  className={`nav-item sub-item ${selectedItem?.id === fig.id ? 'active' : ''}`}
-                  onClick={() => { setViewMode('gallery'); setSelectedItem({ ...fig, type: 'figure' }); }}
-                >
-                  <Zap size={14} />
-                  <span>{fig.title}</span>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-
-        <div className="sidebar-section">
-          <div className="sidebar-section-title">Reports</div>
-          {manifest.reports.map(report => (
-            <div 
-              key={report.id} 
-              className={`nav-item ${selectedItem?.id === report.id ? 'active' : ''}`}
-              onClick={() => { setViewMode('gallery'); setSelectedItem({ ...report, type: 'report' }); }}
-            >
-              <FileText size={16} />
-              <span>{report.title}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="main-content">
-        <div className="header">
-          <div className="header-title">
-            {viewMode === 'scoreboard' ? 'Analytical Scoreboard' : selectedItem ? selectedItem.title : 'Terminal Overview'}
-          </div>
-          <Settings size={20} color="#666" style={{ cursor: 'pointer' }} />
-        </div>
-        <div className="scroll-wrapper">{renderContent()}</div>
       </div>
 
       {modalFile && (

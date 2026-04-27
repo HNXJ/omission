@@ -28,8 +28,17 @@ body {
 
 #root {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
   width: 100vw;
+  overflow: hidden;
+}
+
+.layout-wrapper {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  overflow: hidden;
 }
 
 .sidebar {
@@ -40,6 +49,7 @@ body {
   flex-direction: column;
   overflow-y: auto;
   transition: all 0.3s ease;
+  height: calc(100vh - 36px - 60px);
 }
 
 .sidebar-header {
@@ -96,6 +106,60 @@ body {
   flex-direction: column;
   background-color: var(--bg-dark);
   min-width: 0;
+  height: calc(100vh - 36px - 60px);
+}
+
+/* TOP NAVIGATION */
+.top-nav {
+  height: 60px;
+  background-color: var(--bg-sidebar);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
+  gap: 32px;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.top-nav-logo {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-right: 24px;
+}
+
+.top-nav-links {
+  display: flex;
+  height: 100%;
+}
+
+.top-nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.top-nav-link:hover {
+  color: #FFF;
+  background-color: rgba(255,255,255,0.02);
+}
+
+.top-nav-link.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+  background-color: rgba(207, 184, 124, 0.05);
 }
 
 .header {

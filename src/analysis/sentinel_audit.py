@@ -85,9 +85,9 @@ class GPAAuditor:
 
                 # Statistical Proof (40 pts)
                 # Tier detection (20) + P-value reporting (10) + Significance mapping (10)
-                tier_match = re.search(r'Sig-\d+|Insignificant|Null', content, re.I)
-                p_match = re.search(r'p=\d+\.\d+e[+-]\d+', content, re.I)
-                stars_match = re.search(r'\*+|n\.s\.|Null', content, re.I)
+                tier_match = re.search(r'Sig-\d+|\bInsignificant\b|\bNull\b', content, re.I)
+                p_match = re.search(r'\bp=\d+\.\d+e[+-]\d+', content, re.I)
+                stars_match = re.search(r'\*+|n\.s\.|\bNull\b', content, re.I)
                 
                 if tier_match: gpa += 20.0
                 else: details.append("No Sig-Tier")
@@ -139,9 +139,16 @@ def main():
              # Avoid legacy folders
              matches = [m for m in matches if "omission-psth" not in m]
              if matches: 
-                 # Sort matches to pick the most likely one (longest name usually more specific)
-                 matches.sort(key=len, reverse=True)
-                 path = os.path.join(OUTPUTS_DIR, matches[0])
+                 # Keyword prioritization: if registry title has 'PSTH', look for 'psth' in folder name
+                 keywords = fig['title'].lower().split()
+                 best_match = matches[0]
+                 best_score = -1
+                 for m in matches:
+                     score = sum(1 for k in keywords if k in m.lower())
+                     if score > best_score:
+                         best_score = score
+                         best_match = m
+                 path = os.path.join(OUTPUTS_DIR, best_match)
              else: registry_folder = "N/A"
 
         score, status, notes = auditor.audit_figure(path)
