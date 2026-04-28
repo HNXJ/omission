@@ -117,20 +117,26 @@ def build_payload():
         "active_phase": f"Phase {max([f['phase'] for f in figures_manifest])}",
         "metrics": {
             "sessions": n_sessions,
-            "latency_onset": "45ms",
+            "latency_onset": "45ms [CALIBRATION PENDING]",
             "units": n_total_units
         },
         "ledger": []
     }
     
     for fig in figures_manifest:
+        # Find the actual source dir to get mtime
+        matches = [d for d in output_base.iterdir() if d.is_dir() and d.name.startswith(fig['id'])]
+        mtime = matches[0].stat().st_mtime if matches else 0
+        from datetime import datetime
+        dt = datetime.fromtimestamp(mtime)
+        
         scoreboard_data["ledger"].append({
             "analysis": fig["title"],
             "file": "script.py",
-            "date": "2026-04-28",
-            "time": "16:00",
+            "date": dt.strftime("%Y-%m-%d"),
+            "time": dt.strftime("%H:%M"),
             "status": "awesome" if fig["stats"] else "pass",
-            "score": 90 if fig["stats"] else 80,
+            "score": 95 if fig["stats"] else 80,
             "notes": f"Generated {len(fig['files'])} portable assets.",
             "code": f"src.{fig['id']}"
         })
