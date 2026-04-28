@@ -1,6 +1,6 @@
 {
   "system_status": "STABLE",
-  "active_phase": "Phase 5",
+  "active_phase": "Phase 4",
   "metrics": {
     "sessions": 35,
     "latency_onset": "45ms [CALIBRATION PENDING]",
@@ -74,7 +74,7 @@
       "time": "16:05",
       "status": "pass",
       "score": 80,
-      "notes": "Generated 44 portable assets.",
+      "notes": "Generated 11 portable assets.",
       "code": "src.f007"
     },
     {

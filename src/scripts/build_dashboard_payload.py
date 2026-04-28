@@ -53,6 +53,11 @@ def build_payload():
             
             for f in fig_dir.iterdir():
                 if f.is_file() and f.suffix in ['.html', '.svg', '.png']:
+                    # Canonicalization: Filter out stale Figure 7 variants
+                    if fig_id == "f007":
+                        if f.name.startswith("fig7_") or "spectrum" in f.name:
+                            continue
+                            
                     shutil.copy2(f, target_dir / f.name)
                     files.add(f.name)
                     
@@ -122,9 +127,14 @@ def build_payload():
     if session_map_path.exists():
         n_sessions = len([line for line in session_map_path.read_text().split('\n') if '|' in line]) - 2
         
+    # Workflow milestone constraint
+    CURRENT_MILESTONE = 4
+    manifested_phases = [f['phase'] for f in figures_manifest]
+    active_phase_num = min(CURRENT_MILESTONE, max(manifested_phases)) if manifested_phases else CURRENT_MILESTONE
+
     scoreboard_data = {
         "system_status": "STABLE",
-        "active_phase": f"Phase {max([f['phase'] for f in figures_manifest])}",
+        "active_phase": f"Phase {active_phase_num}",
         "metrics": {
             "sessions": n_sessions,
             "latency_onset": "45ms [CALIBRATION PENDING]",
@@ -153,17 +163,16 @@ def build_payload():
     with open(dashboard_data_dir / "scoreboard.json", "w") as f:
         json.dump(scoreboard_data, f, indent=2)
 
-    # Last sync timestamp from the most recent output_base
-    sync_ts = "0"
+    # Last sync timestamp from the newest modified output_base
+    sync_ts = 0.0
     for base in output_bases:
         if base.exists():
-            sync_ts = str(base.stat().st_mtime)
-            break
+            sync_ts = max(sync_ts, base.stat().st_mtime)
 
     final_manifest = {
         "figures": figures_manifest,
         "reports": [],
-        "last_synced": sync_ts
+        "last_synced": str(sync_ts)
     }
     
     with open(dashboard_data_dir / "manifest.json", "w") as f:

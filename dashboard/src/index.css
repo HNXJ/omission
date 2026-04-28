@@ -221,6 +221,7 @@ body {
 .scroll-wrapper {
   flex: 1;
   background-color: #000;
+  overflow-y: auto;
 }
 
 .viewer-container {
