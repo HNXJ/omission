@@ -392,7 +392,7 @@ const App = () => {
           </div>
           <div className="scroll-wrapper">
             <Routes>
-              <Route path="/" element={<Navigate to="/scoreboard" replace />} />
+              <Route path="/" element={<Navigate to={`/phase/${scoreboard.active_phase.replace('Phase ', '')}`} replace />} />
               <Route path="/scoreboard" element={renderScoreboard()} />
               <Route path="/phase/:id" element={renderContent()} />
               <Route path="/reports" element={renderContent()} />
