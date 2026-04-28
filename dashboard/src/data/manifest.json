@@ -1286,67 +1286,6 @@
       }
     }
   ],
-  "reports": [
-    {
-      "id": "progress-report-2026-04-23-W",
-      "title": "2026-04-23-W",
-      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-23-W.md"
-    },
-    {
-      "id": "progress-report-2026-04-22-W",
-      "title": "2026-04-22-W",
-      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-22-W.md"
-    },
-    {
-      "id": "progress-report-2026-04-21-W",
-      "title": "2026-04-21-W",
-      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-21-W.md"
-    },
-    {
-      "id": "progress-report-2026-04-20-W",
-      "title": "2026-04-20-W",
-      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-20-W.md"
-    },
-    {
-      "id": "progress-report-2026-04-19-W",
-      "title": "2026-04-19-W",
-      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-19-W.md"
-    },
-    {
-      "id": "progress-report-2026-04-18-W",
-      "title": "2026-04-18-W",
-      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-18-W.md"
-    },
-    {
-      "id": "progress-report-2026-04-14-W",
-      "title": "2026-04-14-W",
-      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-14-W.md"
-    },
-    {
-      "id": "progress-report-2026-04-13-W",
-      "title": "2026-04-13-W",
-      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-13-W.md"
-    },
-    {
-      "id": "progress-report-2026-04-11-W",
-      "title": "2026-04-11-W",
-      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-11-W.md"
-    },
-    {
-      "id": "progress-report-2026-04-10-W",
-      "title": "2026-04-10-W",
-      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-10-W.md"
-    },
-    {
-      "id": "progress-report-2026-04-09-W",
-      "title": "2026-04-09-W",
-      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-09-W.md"
-    },
-    {
-      "id": "progress-report-2026-04-08-W",
-      "title": "2026-04-08-W",
-      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-08-W.md"
-    }
-  ],
+  "reports": [],
   "last_synced": "1777324383.1092727"
 }
