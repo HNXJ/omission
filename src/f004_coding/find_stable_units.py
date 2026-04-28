@@ -90,10 +90,86 @@ def find_highly_responsive_units(min_fr=5.0):
         'per_area': top_4_per_area
     }
 
+from scipy.stats import wilcoxon
+
+def compute_area_coding_stats():
+    """
+    Path B: True canonical population-counting analysis for f004.
+    Definitions:
+    - Fixation Window: -500 to 0ms (samples 500-1000)
+    - Stimulus (S) Window: 0 to 500ms (samples 1000-1500)
+    - Omission (O) Window: 1031 to 1531ms (samples 2031-2531)
+    - Stable-unit criteria: min_fr >= 1.0Hz (Stable+ population)
+    - Statistical Test: Wilcoxon Signed-Rank (Matched Trials)
+    - Threshold: p < 0.05
+    """
+    loader = DataLoader()
+    areas = loader.CANONICAL_AREAS
+    area_stats = {}
+    
+    print("[action] Computing canonical population coding counts (Wilcoxon p < 0.05)...")
+    
+    for area in areas:
+        units = loader.get_units_by_area(area)
+        n_stable = 0
+        n_s_plus = 0
+        n_s_minus = 0
+        n_o_plus = 0
+        n_o_minus = 0
+        
+        for unit_id in units:
+            # Load AXAB (contains Stim and Omission)
+            spk_data = loader.load_unit_spikes(unit_id, "AXAB", epoch="p1")
+            if spk_data is None or spk_data.shape[0] < 20: # Minimum trial presence
+                continue
+                
+            total_time_s = spk_data.shape[1] / 1000.0
+            mean_fr = np.mean(np.sum(spk_data, axis=1) / total_time_s)
+            
+            if mean_fr < 1.0: # Stable+ Criterion
+                continue
+            
+            n_stable += 1
+            
+            # Extract bins (1ms resolution)
+            fix_bins = np.sum(spk_data[:, 500:1000], axis=1)
+            s_bins = np.sum(spk_data[:, 1000:1500], axis=1)
+            o_bins = np.sum(spk_data[:, 2031:2531], axis=1)
+            
+            # Wilcoxon S vs Fix
+            try:
+                if np.any(s_bins != fix_bins):
+                    _, p_s = wilcoxon(s_bins, fix_bins)
+                    if p_s < 0.05:
+                        if np.mean(s_bins) > np.mean(fix_bins): n_s_plus += 1
+                        else: n_s_minus += 1
+                
+                # Wilcoxon O vs Fix
+                if np.any(o_bins != fix_bins):
+                    _, p_o = wilcoxon(o_bins, fix_bins)
+                    if p_o < 0.05:
+                        if np.mean(o_bins) > np.mean(fix_bins): n_o_plus += 1
+                        else: n_o_minus += 1
+            except ValueError:
+                continue # Insufficient differences
+                
+        area_stats[area] = {
+            "n_stable": n_stable,
+            "n_s_plus": n_s_plus,
+            "n_s_minus": n_s_minus,
+            "n_o_plus": n_o_plus,
+            "n_o_minus": n_o_minus,
+            "test": "Wilcoxon Signed-Rank",
+            "threshold": 0.05,
+            "fixation_win": [-500, 0],
+            "stim_win": [0, 500],
+            "omission_win": [1031, 1531]
+        }
+        print(f"[result] {area}: S+={n_s_plus}, O+={n_o_plus} (n={n_stable})")
+        
+    return area_stats
+
 if __name__ == "__main__":
-    results = find_highly_responsive_units()
-    print(f"Found S+: {len(results['s_plus'])}")
-    print(f"Found S-: {len(results['s_minus'])}")
-    print(f"Found O+: {len(results['o_plus'])}")
-    print(f"Found O-: {len(results['o_minus'])}")
-    print(f"Found Per Area: {len(results['per_area'])}")
+    #results = find_highly_responsive_units()
+    results = compute_area_coding_stats()
+    # ...

@@ -151,8 +151,16 @@ const App = () => {
 
   const filterFiles = (files) => {
     if (viewFilter === 'both') return files;
-    if (viewFilter === 'aaab') return files.filter(f => f.toLowerCase().includes('aaab') || f.toLowerCase().includes('standard'));
-    if (viewFilter === 'axab') return files.filter(f => f.toLowerCase().includes('axab') || f.toLowerCase().includes('omission'));
+    // Omission PSTHs (f002) are usually specific files, but for traces (f003+) they have conditions
+    if (viewFilter === 'aaab') return files.filter(f => 
+      f.toLowerCase().includes('aaab') || 
+      f.toLowerCase().includes('standard') ||
+      (selectedItem.id === 'f002' && !f.toLowerCase().includes('csd') && !f.toLowerCase().includes('timeline')) // f002 defaults to showing both; this needs manifest metadata
+    );
+    if (viewFilter === 'axab') return files.filter(f => 
+      f.toLowerCase().includes('axab') || 
+      f.toLowerCase().includes('omission')
+    );
     return files;
   };
 
@@ -201,21 +209,36 @@ const App = () => {
 
   const renderStats = (stats) => {
     if (!stats || Object.keys(stats).length === 0) return null;
+    
+    // Select the correct stats slice based on viewFilter
+    let activeStats = stats;
+    if (stats.both) {
+      activeStats = stats[viewFilter] || stats.both;
+    }
+    
+    if (Object.keys(activeStats).length === 0) return (
+      <div className="figure-card full-width">
+        <div className="figure-card-header">
+          <h3>Population Statistics (Standard Filter active - No Coding Data)</h3>
+        </div>
+      </div>
+    );
+
     return (
       <div className="figure-card full-width">
         <div className="figure-card-header">
-          <h3>Population Statistics (11 Areas)</h3>
+          <h3>Population Statistics (11 Areas) - {viewFilter.toUpperCase()} View</h3>
           <ShieldCheck size={20} color="#CFB87C" />
         </div>
         <div className="stats-grid">
-          {Object.entries(stats).map(([area, s]) => (
+          {Object.entries(activeStats).map(([area, s]) => (
             <div key={area} className="stat-unit">
               <div className="stat-unit-area">{area}</div>
-              <div className="stat-unit-tier" style={{ color: getStatusColor(s.tier.toLowerCase()) }}>
-                {s.tier} {s.stars}
+              <div className="stat-unit-tier" style={{ color: getStatusColor(s.tier ? s.tier.toLowerCase() : 'awesome') }}>
+                {s.tier || s.label || 'Sig-k'} {s.stars || ''}
               </div>
               <div className="stat-unit-meta">
-                p={s.p.toExponential(2)} | n={s.n_units || '?'}
+                {s.n !== undefined ? `count=${s.n}` : (s.p !== undefined ? `p=${s.p.toExponential(2)} | n=${s.n_units || s.n_stable || '?'}` : `count=${s.n_s_plus || 0}/${s.n_o_plus || 0}`)}
               </div>
             </div>
           ))}

@@ -2,22 +2,31 @@ import json
 import sys
 from pathlib import Path
 
-# Add project root to path
-sys.path.append(str(Path(__file__).parent.parent))
+# Resolve Repo Root
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.append(str(REPO_ROOT))
 
 from src.analysis.io.loader import DataLoader
 from src.analysis.registry import FigureRegistry
 from src.f002_psth.analysis import analyze_area_psths
 from src.f003_surprise.analysis import analyze_surprise
-from src.f004_coding.find_stable_units import find_highly_responsive_units
+from src.f004_coding.find_stable_units import find_highly_responsive_units, compute_area_coding_stats
 
 def build_payload():
     loader = DataLoader()
     registry = FigureRegistry.get_all()
-    output_base = Path(r"D:\drive\outputs\oglo-8figs")
-    dashboard_data_dir = Path(r"D:\drive\omission\dashboard\src\data")
     
-    print("[action] Initializing Portal Adapter: Building Dashboard Payload...")
+    # Repo-relative paths
+    output_base = REPO_ROOT.parent / "outputs" / "oglo-8figs" # External to repo but relative to root's parent
+    # Fallback to local outputs if external doesn't exist
+    if not output_base.exists():
+        output_base = REPO_ROOT / "outputs" / "oglo-8figs"
+        output_base.mkdir(parents=True, exist_ok=True)
+        
+    dashboard_data_dir = REPO_ROOT / "dashboard" / "src" / "data"
+    dashboard_data_dir.mkdir(parents=True, exist_ok=True)
+    
+    print(f"[action] Initializing Portal Adapter at {REPO_ROOT}...")
     
     figures_manifest = []
     
@@ -46,21 +55,37 @@ def build_payload():
             
         elif fig_id == "f004":
             print(f"[adapter] Generating summary stats for {fig_id} (Unit Coding)")
-            stable_results = find_highly_responsive_units()
-            # Definitions: S+ (Stimulus responsive), O+ (Omission responsive)
+            area_coding_stats = compute_area_coding_stats()
+            # Canonical Payload: explicit counts for S+ and O+
             for area in loader.CANONICAL_AREAS:
-                # Note: find_highly_responsive_units currently returns top 20s and area tops.
-                # In a real pipeline, we would count ALL units passing the threshold.
-                # For the dashboard summary, we manifest the responsive unit counts.
-                n_s_plus = len([u for u in stable_results['s_plus'] if u['area'] == area])
-                n_o_plus = len([u for u in stable_results['o_plus'] if u['area'] == area])
+                a_res = area_coding_stats.get(area, {})
                 stats[area] = {
-                    "tier": "Sig-k" if (n_s_plus + n_o_plus) > 0 else "Null",
-                    "stars": "*" * (n_s_plus + n_o_plus),
-                    "n_s_plus": n_s_plus,
-                    "n_o_plus": n_o_plus,
-                    "p": 0.0 # Coding doesn't have a single p-value in this summary
+                    "tier": "Sig-k" if (a_res.get('n_s_plus', 0) + a_res.get('n_o_plus', 0)) > 0 else "Null",
+                    "n_stable": a_res.get('n_stable', 0),
+                    "n_s_plus": a_res.get('n_s_plus', 0),
+                    "n_s_minus": a_res.get('n_s_minus', 0),
+                    "n_o_plus": a_res.get('n_o_plus', 0),
+                    "n_o_minus": a_res.get('n_o_minus', 0),
+                    "test": a_res.get('test', ''),
+                    "threshold": a_res.get('threshold', 0)
                 }
+
+        # Multi-Condition Stats Injection (Standard vs Omission)
+        # If the figure supports it, we nest stats by condition
+        if fig_id in ["f002", "f003", "f004"]:
+            # For f004, AAAB stats = Stimulus counts, AXAB stats = Omission counts
+            if fig_id == "f004":
+                stats = {
+                    "aaab": {a: {"n": stats[a]["n_s_plus"], "label": "S+"} for a in stats},
+                    "axab": {a: {"n": stats[a]["n_o_plus"], "label": "O+"} for a in stats},
+                    "both": stats
+                }
+            elif fig_id == "f002":
+                # f002 PSTH compares AXAB to AAAB directly, so the stats are already a comparison
+                # We'll keep them in 'both' and 'axab'
+                stats = {"both": stats, "axab": stats, "aaab": {}}
+            elif fig_id == "f003":
+                stats = {"both": stats, "axab": stats, "aaab": {}}
 
         # Build manifest entry
         files = sorted([f.name for f in fig_dir.iterdir() if f.is_file() and f.suffix in ['.html', '.svg', '.png']])

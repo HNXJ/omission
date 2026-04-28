@@ -8,8 +8,16 @@ sys.path.append(str(Path(__file__).parent.parent))
 from src.analysis.registry import FigureRegistry
 
 def sync():
-    outputs_dir = Path(r'D:\drive\outputs\oglo-8figs')
-    manifest_path = Path(r'D:\drive\omission\dashboard\src\data\manifest.json')
+    # Repo-relative paths
+    repo_root = Path(__file__).resolve().parent.parent
+    outputs_dir = repo_root.parent / 'outputs' / 'oglo-8figs'
+    # Fallback to local
+    if not outputs_dir.exists():
+        outputs_dir = repo_root / 'outputs' / 'oglo-8figs'
+        outputs_dir.mkdir(parents=True, exist_ok=True)
+        
+    manifest_path = repo_root / 'dashboard' / 'src' / 'data' / 'manifest.json'
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
     
     if not outputs_dir.exists():
         print(f"Error: {outputs_dir} does not exist.")
