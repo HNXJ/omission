@@ -1,31 +1,211 @@
 {
   "system_status": "STABLE",
-  "active_phase": "Phase 2",
+  "active_phase": "Phase 5",
   "metrics": {
-    "sessions": 12,
+    "sessions": 35,
     "latency_onset": "45ms",
-    "units": 5246
+    "units": 5121
   },
   "ledger": [
     {
-      "analysis": "f002 PSTH",
+      "analysis": "Theory Schematic",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 2 portable assets.",
+      "code": "src.f001"
+    },
+    {
+      "analysis": "Omission PSTH",
       "file": "script.py",
       "date": "2026-04-28",
       "time": "16:00",
       "status": "awesome",
-      "score": 95,
-      "notes": "Canonical population PSTHs generated.",
-      "code": "src.f002_psth"
+      "score": 90,
+      "notes": "Generated 24 portable assets.",
+      "code": "src.f002"
     },
     {
-      "analysis": "f004 Coding",
+      "analysis": "Surprise Dynamics",
       "file": "script.py",
       "date": "2026-04-28",
-      "time": "16:10",
+      "time": "16:00",
       "status": "awesome",
-      "score": 98,
-      "notes": "Wilcoxon population counts (Path B) verified.",
-      "code": "src.f004_coding"
+      "score": 90,
+      "notes": "Generated 26 portable assets.",
+      "code": "src.f003"
+    },
+    {
+      "analysis": "Unit Coding Suite",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "awesome",
+      "score": 90,
+      "notes": "Generated 141 portable assets.",
+      "code": "src.f004"
+    },
+    {
+      "analysis": "Time-Frequency Representation",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 46 portable assets.",
+      "code": "src.f005"
+    },
+    {
+      "analysis": "Band-Specific Power",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 48 portable assets.",
+      "code": "src.f006"
+    },
+    {
+      "analysis": "Spike-Field Coherence",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 33 portable assets.",
+      "code": "src.f007"
+    },
+    {
+      "analysis": "Cross-Area Coordination",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 14 portable assets.",
+      "code": "src.f008"
+    },
+    {
+      "analysis": "Individual SFC Units",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 37 portable assets.",
+      "code": "src.f009"
+    },
+    {
+      "analysis": "SFC Delta (Surprise)",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 33 portable assets.",
+      "code": "src.f010"
+    },
+    {
+      "analysis": "Laminar Mapping",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 33 portable assets.",
+      "code": "src.f011"
+    },
+    {
+      "analysis": "CSD Profiling",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 24 portable assets.",
+      "code": "src.f012"
+    },
+    {
+      "analysis": "Rhythmic Evolution",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f013"
+    },
+    {
+      "analysis": "Spiking Granger",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f014"
+    },
+    {
+      "analysis": "Spectral Granger",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f015"
+    },
+    {
+      "analysis": "Impedance Profiles",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 34 portable assets.",
+      "code": "src.f016"
+    },
+    {
+      "analysis": "Prediction Error Scaling",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f017"
+    },
+    {
+      "analysis": "Ghost Signals",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f018"
+    },
+    {
+      "analysis": "PAC Analysis",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f019"
+    },
+    {
+      "analysis": "Effective Connectivity",
+      "file": "script.py",
+      "date": "2026-04-28",
+      "time": "16:00",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f020"
     }
   ]
 }

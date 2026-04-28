@@ -4,7 +4,7 @@
       "id": "f001",
       "title": "Theory Schematic",
       "phase": 1,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f001-theory",
+      "baseUrl": "/figures/f001-theory",
       "files": [
         "fig1_theory_schematic.html",
         "fig1_theory_schematic.svg"
@@ -20,7 +20,7 @@
       "id": "f002",
       "title": "Omission PSTH",
       "phase": 1,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f002-psth",
+      "baseUrl": "/figures/f002-psth",
       "files": [
         "f002_psth_FEF.html",
         "f002_psth_FEF.svg",
@@ -218,7 +218,7 @@
       "id": "f003",
       "title": "Surprise Dynamics",
       "phase": 2,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f003-surprise",
+      "baseUrl": "/figures/f003-surprise",
       "files": [
         "f003_surprise_index.html",
         "fig3A_S_plus.html",
@@ -396,7 +396,7 @@
       "id": "f004",
       "title": "Unit Coding Suite",
       "phase": 2,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f004-coding",
+      "baseUrl": "/figures/f004-coding",
       "files": [
         "f004_coding_suite_O_plus_V1.html",
         "f004_coding_suite_S_minus.html",
@@ -756,7 +756,7 @@
       "id": "f005",
       "title": "Time-Frequency Representation",
       "phase": 3,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f005-tfr",
+      "baseUrl": "/figures/f005-tfr",
       "files": [
         "f005_tfr_local_FEF_AXAB.html",
         "f005_tfr_local_FST_AAAB.html",
@@ -816,7 +816,7 @@
       "id": "f006",
       "title": "Band-Specific Power",
       "phase": 3,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f006-band-power",
+      "baseUrl": "/figures/f006-band-power",
       "files": [
         "f006_band_power_local_FEF_AAAB.html",
         "f006_band_power_local_FEF_AXAB.html",
@@ -878,7 +878,7 @@
       "id": "f007",
       "title": "Spike-Field Coherence",
       "phase": 4,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f007-sfc",
+      "baseUrl": "/figures/f007-sfc",
       "files": [
         "f007_sfc_spectrum_FEF.html",
         "f007_sfc_spectrum_FST.html",
@@ -925,7 +925,7 @@
       "id": "f008",
       "title": "Cross-Area Coordination",
       "phase": 4,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f008-coordination",
+      "baseUrl": "/figures/f008-coordination",
       "files": [
         "f008_spectral_harmony_Beta_Baseline.html",
         "f008_spectral_harmony_Beta_Baseline.svg",
@@ -953,7 +953,7 @@
       "id": "f009",
       "title": "Individual SFC Units",
       "phase": 4,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f009-individual-sfc",
+      "baseUrl": "/figures/f009-individual-sfc",
       "files": [
         "f009_individual_sfc_FEF.html",
         "f009_individual_sfc_FST.html",
@@ -1004,7 +1004,7 @@
       "id": "f010",
       "title": "SFC Delta (Surprise)",
       "phase": 4,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f010-sfc-delta",
+      "baseUrl": "/figures/f010-sfc-delta",
       "files": [
         "f010_sfc_delta_FEF.html",
         "f010_sfc_delta_FEF.svg",
@@ -1051,7 +1051,7 @@
       "id": "f011",
       "title": "Laminar Mapping",
       "phase": 5,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f011-laminar-mapping",
+      "baseUrl": "/figures/f011-laminar-mapping",
       "files": [
         "f011_laminar_FEF.html",
         "f011_laminar_FEF.svg",
@@ -1098,7 +1098,7 @@
       "id": "f012",
       "title": "CSD Profiling",
       "phase": 5,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f012-csd-profiling",
+      "baseUrl": "/figures/f012-csd-profiling",
       "files": [
         "f012_csd_profiling.html",
         "f012_csd_profiling.svg",
@@ -1136,7 +1136,7 @@
       "id": "f013",
       "title": "Rhythmic Evolution",
       "phase": 5,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f013-rhythmic-evolution",
+      "baseUrl": "/figures/f013-rhythmic-evolution",
       "files": [
         "f013_rhythmic_evolution.html"
       ],
@@ -1151,7 +1151,7 @@
       "id": "f014",
       "title": "Spiking Granger",
       "phase": 5,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f014-spiking-granger",
+      "baseUrl": "/figures/f014-spiking-granger",
       "files": [
         "f014_spiking_granger.html"
       ],
@@ -1166,7 +1166,7 @@
       "id": "f015",
       "title": "Spectral Granger",
       "phase": 5,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f015-spectral-granger",
+      "baseUrl": "/figures/f015-spectral-granger",
       "files": [
         "f015_spectral_granger.html"
       ],
@@ -1181,7 +1181,7 @@
       "id": "f016",
       "title": "Impedance Profiles",
       "phase": 5,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f016-impedance-profiles",
+      "baseUrl": "/figures/f016-impedance-profiles",
       "files": [
         "fig16_impedance_profiles.html",
         "fig16_impedance_ses230629_p0.html",
@@ -1229,7 +1229,7 @@
       "id": "f017",
       "title": "Prediction Error Scaling",
       "phase": 5,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f017-prediction-error-scaling",
+      "baseUrl": "/figures/f017-prediction-error-scaling",
       "files": [
         "fig17_prediction_error_scaling.html"
       ],
@@ -1244,7 +1244,7 @@
       "id": "f018",
       "title": "Ghost Signals",
       "phase": 5,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f018-ghost-signals",
+      "baseUrl": "/figures/f018-ghost-signals",
       "files": [
         "fig18_ghost_signals.html"
       ],
@@ -1259,7 +1259,7 @@
       "id": "f019",
       "title": "PAC Analysis",
       "phase": 5,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f019-pac-analysis",
+      "baseUrl": "/figures/f019-pac-analysis",
       "files": [
         "fig19_pac_analysis.html"
       ],
@@ -1274,7 +1274,7 @@
       "id": "f020",
       "title": "Effective Connectivity",
       "phase": 5,
-      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f020-effective-connectivity",
+      "baseUrl": "/figures/f020-effective-connectivity",
       "files": [
         "fig20_effective_connectivity.html"
       ],
