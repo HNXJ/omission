@@ -1,0 +1,1352 @@
+{
+  "figures": [
+    {
+      "id": "f001",
+      "title": "Theory Schematic",
+      "phase": 1,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f001-theory",
+      "files": [
+        "fig1_theory_schematic.html",
+        "fig1_theory_schematic.svg"
+      ],
+      "has_readme": true,
+      "stats": {},
+      "metadata": {
+        "x": "Time",
+        "y": "Area Hierarchy"
+      }
+    },
+    {
+      "id": "f002",
+      "title": "Omission PSTH",
+      "phase": 1,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f002-psth",
+      "files": [
+        "f002_psth_FEF.html",
+        "f002_psth_FEF.svg",
+        "f002_psth_FST.html",
+        "f002_psth_FST.svg",
+        "f002_psth_MST.html",
+        "f002_psth_MST.svg",
+        "f002_psth_MT.html",
+        "f002_psth_MT.svg",
+        "f002_psth_PFC.html",
+        "f002_psth_PFC.svg",
+        "f002_psth_TEO.html",
+        "f002_psth_TEO.svg",
+        "f002_psth_V1.html",
+        "f002_psth_V1.svg",
+        "f002_psth_V2.html",
+        "f002_psth_V2.svg",
+        "f002_psth_V3a.html",
+        "f002_psth_V3a.svg",
+        "f002_psth_V3d.html",
+        "f002_psth_V3d.svg",
+        "f002_psth_V4.html",
+        "f002_psth_V4.svg",
+        "fig2A_task_timeline.html",
+        "fig2B_csd_map.html"
+      ],
+      "has_readme": true,
+      "stats": {
+        "both": {
+          "V1": {
+            "p": 1.1102675161599576e-17,
+            "tier": "Sig-10+",
+            "stars": "**********",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 871
+          },
+          "V2": {
+            "p": 0.041229810344956715,
+            "tier": "Sig-1",
+            "stars": "*",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 718
+          },
+          "V3d": {
+            "p": 0.4556834054945461,
+            "tier": "Insignificant",
+            "stars": "n.s.",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 379
+          },
+          "V3a": {
+            "p": 0.5821749488536718,
+            "tier": "Null",
+            "stars": "",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 380
+          },
+          "V4": {
+            "p": 0.7852051692505599,
+            "tier": "Null",
+            "stars": "",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 535
+          },
+          "MT": {
+            "p": 0.17154143797669164,
+            "tier": "Insignificant",
+            "stars": "n.s.",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 660
+          },
+          "MST": {
+            "p": 0.6185893003085865,
+            "tier": "Null",
+            "stars": "",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 305
+          },
+          "TEO": {
+            "p": 0.5158329498261549,
+            "tier": "Null",
+            "stars": "",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 263
+          },
+          "FST": {
+            "p": 0.449791555871931,
+            "tier": "Insignificant",
+            "stars": "n.s.",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 85
+          },
+          "FEF": {
+            "p": 0.7359693951734008,
+            "tier": "Null",
+            "stars": "",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 293
+          },
+          "PFC": {
+            "p": 0.29776504371384716,
+            "tier": "Insignificant",
+            "stars": "n.s.",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 632
+          }
+        },
+        "axab": {
+          "V1": {
+            "p": 1.1102675161599576e-17,
+            "tier": "Sig-10+",
+            "stars": "**********",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 871
+          },
+          "V2": {
+            "p": 0.041229810344956715,
+            "tier": "Sig-1",
+            "stars": "*",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 718
+          },
+          "V3d": {
+            "p": 0.4556834054945461,
+            "tier": "Insignificant",
+            "stars": "n.s.",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 379
+          },
+          "V3a": {
+            "p": 0.5821749488536718,
+            "tier": "Null",
+            "stars": "",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 380
+          },
+          "V4": {
+            "p": 0.7852051692505599,
+            "tier": "Null",
+            "stars": "",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 535
+          },
+          "MT": {
+            "p": 0.17154143797669164,
+            "tier": "Insignificant",
+            "stars": "n.s.",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 660
+          },
+          "MST": {
+            "p": 0.6185893003085865,
+            "tier": "Null",
+            "stars": "",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 305
+          },
+          "TEO": {
+            "p": 0.5158329498261549,
+            "tier": "Null",
+            "stars": "",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 263
+          },
+          "FST": {
+            "p": 0.449791555871931,
+            "tier": "Insignificant",
+            "stars": "n.s.",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 85
+          },
+          "FEF": {
+            "p": 0.7359693951734008,
+            "tier": "Null",
+            "stars": "",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 293
+          },
+          "PFC": {
+            "p": 0.29776504371384716,
+            "tier": "Insignificant",
+            "stars": "n.s.",
+            "test": "Wilcoxon Rank-Sum",
+            "n_units": 632
+          }
+        },
+        "aaab": {}
+      },
+      "metadata": {
+        "x": "Time",
+        "y": "Firing Rate"
+      }
+    },
+    {
+      "id": "f003",
+      "title": "Surprise Dynamics",
+      "phase": 2,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f003-surprise",
+      "files": [
+        "f003_surprise_index.html",
+        "fig3A_S_plus.html",
+        "fig3B_S_minus.html",
+        "fig3C_O_plus.html",
+        "fig3_PSTH_FEF.html",
+        "fig3_PSTH_FST.html",
+        "fig3_PSTH_MST.html",
+        "fig3_PSTH_MT.html",
+        "fig3_PSTH_PFC.html",
+        "fig3_PSTH_TEO.html",
+        "fig3_PSTH_V1.html",
+        "fig3_PSTH_V2.html",
+        "fig3_PSTH_V3a.html",
+        "fig3_PSTH_V3d.html",
+        "fig3_PSTH_V4.html",
+        "fig3_psth_local_FEF.html",
+        "fig3_psth_local_FST.html",
+        "fig3_psth_local_MST.html",
+        "fig3_psth_local_MT.html",
+        "fig3_psth_local_PFC.html",
+        "fig3_psth_local_TEO.html",
+        "fig3_psth_local_V1.html",
+        "fig3_psth_local_V2.html",
+        "fig3_psth_local_V3a.html",
+        "fig3_psth_local_V3d.html",
+        "fig3_psth_local_V4.html"
+      ],
+      "has_readme": true,
+      "stats": {
+        "both": {
+          "V1": {
+            "p": 1.1008517683642684e-52,
+            "tier": "Sig-10+",
+            "stars": "**********",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "V2": {
+            "p": 2.59576757795852e-07,
+            "tier": "Sig-6",
+            "stars": "******",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "V3d": {
+            "p": 0.0001364379619323928,
+            "tier": "Sig-3",
+            "stars": "***",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "V3a": {
+            "p": 0.4988701538471363,
+            "tier": "Insignificant",
+            "stars": "n.s.",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "V4": {
+            "p": 0.7059090242772323,
+            "tier": "Null",
+            "stars": "",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "MT": {
+            "p": 0.2267824480342593,
+            "tier": "Insignificant",
+            "stars": "n.s.",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "MST": {
+            "p": 0.4377966843952009,
+            "tier": "Insignificant",
+            "stars": "n.s.",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "TEO": {
+            "p": 0.01984860557725925,
+            "tier": "Sig-1",
+            "stars": "*",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "FST": {
+            "p": 0.038416493854690655,
+            "tier": "Sig-1",
+            "stars": "*",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "FEF": {
+            "p": 0.008331796245155234,
+            "tier": "Sig-2",
+            "stars": "**",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "PFC": {
+            "p": 1.6824822498517526e-11,
+            "tier": "Sig-10+",
+            "stars": "**********",
+            "test": "Wilcoxon Signed-Rank"
+          }
+        },
+        "axab": {
+          "V1": {
+            "p": 1.1008517683642684e-52,
+            "tier": "Sig-10+",
+            "stars": "**********",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "V2": {
+            "p": 2.59576757795852e-07,
+            "tier": "Sig-6",
+            "stars": "******",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "V3d": {
+            "p": 0.0001364379619323928,
+            "tier": "Sig-3",
+            "stars": "***",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "V3a": {
+            "p": 0.4988701538471363,
+            "tier": "Insignificant",
+            "stars": "n.s.",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "V4": {
+            "p": 0.7059090242772323,
+            "tier": "Null",
+            "stars": "",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "MT": {
+            "p": 0.2267824480342593,
+            "tier": "Insignificant",
+            "stars": "n.s.",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "MST": {
+            "p": 0.4377966843952009,
+            "tier": "Insignificant",
+            "stars": "n.s.",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "TEO": {
+            "p": 0.01984860557725925,
+            "tier": "Sig-1",
+            "stars": "*",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "FST": {
+            "p": 0.038416493854690655,
+            "tier": "Sig-1",
+            "stars": "*",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "FEF": {
+            "p": 0.008331796245155234,
+            "tier": "Sig-2",
+            "stars": "**",
+            "test": "Wilcoxon Signed-Rank"
+          },
+          "PFC": {
+            "p": 1.6824822498517526e-11,
+            "tier": "Sig-10+",
+            "stars": "**********",
+            "test": "Wilcoxon Signed-Rank"
+          }
+        },
+        "aaab": {}
+      },
+      "metadata": {
+        "x": "Time",
+        "y": "FR Delta"
+      }
+    },
+    {
+      "id": "f004",
+      "title": "Unit Coding Suite",
+      "phase": 2,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f004-coding",
+      "files": [
+        "f004_coding_suite_O_plus_V1.html",
+        "f004_coding_suite_S_minus.html",
+        "f004_coding_suite_S_plus.html",
+        "f004_coding_suite_Stable_Area_FEF_2.html",
+        "f004_coding_suite_Stable_Area_FEF_3.html",
+        "f004_coding_suite_Stable_Area_FEF_4.html",
+        "f004_coding_suite_Stable_Area_FST_1.html",
+        "f004_coding_suite_Stable_Area_FST_2.html",
+        "f004_coding_suite_Stable_Area_FST_3.html",
+        "f004_coding_suite_Stable_Area_FST_4.html",
+        "f004_coding_suite_Stable_Area_MST_1.html",
+        "f004_coding_suite_Stable_Area_MST_2.html",
+        "f004_coding_suite_Stable_Area_MST_3.html",
+        "f004_coding_suite_Stable_Area_MST_4.html",
+        "f004_coding_suite_Stable_Area_MT_1.html",
+        "f004_coding_suite_Stable_Area_MT_2.html",
+        "f004_coding_suite_Stable_Area_MT_3.html",
+        "f004_coding_suite_Stable_Area_MT_4.html",
+        "f004_coding_suite_Stable_Area_PFC_1.html",
+        "f004_coding_suite_Stable_Area_PFC_2.html",
+        "f004_coding_suite_Stable_Area_PFC_3.html",
+        "f004_coding_suite_Stable_Area_PFC_4.html",
+        "f004_coding_suite_Stable_Area_TEO_1.html",
+        "f004_coding_suite_Stable_Area_TEO_2.html",
+        "f004_coding_suite_Stable_Area_TEO_3.html",
+        "f004_coding_suite_Stable_Area_TEO_4.html",
+        "f004_coding_suite_Stable_Area_V1_1.html",
+        "f004_coding_suite_Stable_Area_V1_2.html",
+        "f004_coding_suite_Stable_Area_V1_3.html",
+        "f004_coding_suite_Stable_Area_V1_4.html",
+        "f004_coding_suite_Stable_Area_V2_1.html",
+        "f004_coding_suite_Stable_Area_V2_2.html",
+        "f004_coding_suite_Stable_Area_V2_3.html",
+        "f004_coding_suite_Stable_Area_V2_4.html",
+        "f004_coding_suite_Stable_Area_V3a_1.html",
+        "f004_coding_suite_Stable_Area_V3a_2.html",
+        "f004_coding_suite_Stable_Area_V3a_3.html",
+        "f004_coding_suite_Stable_Area_V3a_4.html",
+        "f004_coding_suite_Stable_Area_V3d_1.html",
+        "f004_coding_suite_Stable_Area_V3d_2.html",
+        "f004_coding_suite_Stable_Area_V3d_3.html",
+        "f004_coding_suite_Stable_Area_V3d_4.html",
+        "f004_coding_suite_Stable_Area_V4_1.html",
+        "f004_coding_suite_Stable_Area_V4_2.html",
+        "f004_coding_suite_Stable_Area_V4_3.html",
+        "f004_coding_suite_Stable_Area_V4_4.html",
+        "f004_coding_suite_Stable_FEF_21Hz.html",
+        "f004_coding_suite_Stable_FEF_27Hz.html",
+        "f004_coding_suite_Stable_PFC_15Hz.html",
+        "f004_coding_suite_Stable_PFC_30Hz.html",
+        "f004_coding_suite_Stable_V1_58Hz.html",
+        "f004_coding_suite_Stable_V1_75Hz.html",
+        "f004_coding_suite_Stable_V4_24Hz.html",
+        "f004_coding_suite_Stable_V4_44Hz.html",
+        "f004_coding_suite_Top_O_Minus_1.html",
+        "f004_coding_suite_Top_O_Minus_10.html",
+        "f004_coding_suite_Top_O_Minus_11.html",
+        "f004_coding_suite_Top_O_Minus_12.html",
+        "f004_coding_suite_Top_O_Minus_14.html",
+        "f004_coding_suite_Top_O_Minus_15.html",
+        "f004_coding_suite_Top_O_Minus_16.html",
+        "f004_coding_suite_Top_O_Minus_17.html",
+        "f004_coding_suite_Top_O_Minus_18.html",
+        "f004_coding_suite_Top_O_Minus_19.html",
+        "f004_coding_suite_Top_O_Minus_20.html",
+        "f004_coding_suite_Top_O_Minus_5.html",
+        "f004_coding_suite_Top_O_Minus_7.html",
+        "f004_coding_suite_Top_O_Minus_8.html",
+        "f004_coding_suite_Top_O_Minus_9.html",
+        "f004_coding_suite_Top_O_Plus_1.html",
+        "f004_coding_suite_Top_O_Plus_10.html",
+        "f004_coding_suite_Top_O_Plus_11.html",
+        "f004_coding_suite_Top_O_Plus_12.html",
+        "f004_coding_suite_Top_O_Plus_13.html",
+        "f004_coding_suite_Top_O_Plus_14.html",
+        "f004_coding_suite_Top_O_Plus_15.html",
+        "f004_coding_suite_Top_O_Plus_17.html",
+        "f004_coding_suite_Top_O_Plus_18.html",
+        "f004_coding_suite_Top_O_Plus_19.html",
+        "f004_coding_suite_Top_O_Plus_2.html",
+        "f004_coding_suite_Top_O_Plus_20.html",
+        "f004_coding_suite_Top_O_Plus_3.html",
+        "f004_coding_suite_Top_O_Plus_4.html",
+        "f004_coding_suite_Top_O_Plus_5.html",
+        "f004_coding_suite_Top_O_Plus_6.html",
+        "f004_coding_suite_Top_O_Plus_7.html",
+        "f004_coding_suite_Top_O_Plus_8.html",
+        "f004_coding_suite_Top_O_Plus_9.html",
+        "f004_coding_suite_Top_S_Minus_1.html",
+        "f004_coding_suite_Top_S_Minus_10.html",
+        "f004_coding_suite_Top_S_Minus_11.html",
+        "f004_coding_suite_Top_S_Minus_12.html",
+        "f004_coding_suite_Top_S_Minus_13.html",
+        "f004_coding_suite_Top_S_Minus_14.html",
+        "f004_coding_suite_Top_S_Minus_15.html",
+        "f004_coding_suite_Top_S_Minus_16.html",
+        "f004_coding_suite_Top_S_Minus_17.html",
+        "f004_coding_suite_Top_S_Minus_18.html",
+        "f004_coding_suite_Top_S_Minus_19.html",
+        "f004_coding_suite_Top_S_Minus_2.html",
+        "f004_coding_suite_Top_S_Minus_20.html",
+        "f004_coding_suite_Top_S_Minus_3.html",
+        "f004_coding_suite_Top_S_Minus_4.html",
+        "f004_coding_suite_Top_S_Minus_5.html",
+        "f004_coding_suite_Top_S_Minus_6.html",
+        "f004_coding_suite_Top_S_Minus_7.html",
+        "f004_coding_suite_Top_S_Minus_8.html",
+        "f004_coding_suite_Top_S_Minus_9.html",
+        "f004_coding_suite_Top_S_Plus_1.html",
+        "f004_coding_suite_Top_S_Plus_10.html",
+        "f004_coding_suite_Top_S_Plus_11.html",
+        "f004_coding_suite_Top_S_Plus_12.html",
+        "f004_coding_suite_Top_S_Plus_13.html",
+        "f004_coding_suite_Top_S_Plus_14.html",
+        "f004_coding_suite_Top_S_Plus_15.html",
+        "f004_coding_suite_Top_S_Plus_16.html",
+        "f004_coding_suite_Top_S_Plus_17.html",
+        "f004_coding_suite_Top_S_Plus_18.html",
+        "f004_coding_suite_Top_S_Plus_19.html",
+        "f004_coding_suite_Top_S_Plus_2.html",
+        "f004_coding_suite_Top_S_Plus_20.html",
+        "f004_coding_suite_Top_S_Plus_3.html",
+        "f004_coding_suite_Top_S_Plus_4.html",
+        "f004_coding_suite_Top_S_Plus_5.html",
+        "f004_coding_suite_Top_S_Plus_6.html",
+        "f004_coding_suite_Top_S_Plus_7.html",
+        "f004_coding_suite_Top_S_Plus_8.html",
+        "f004_coding_suite_Top_S_Plus_9.html",
+        "f004_coding_suite_Ultimate_Omission.html",
+        "fig4_population_manifold.html",
+        "fig4_population_manifold_FEF.html",
+        "fig4_population_manifold_FST.html",
+        "fig4_population_manifold_MST.html",
+        "fig4_population_manifold_MT.html",
+        "fig4_population_manifold_PFC.html",
+        "fig4_population_manifold_TEO.html",
+        "fig4_population_manifold_V1.html",
+        "fig4_population_manifold_V2.html",
+        "fig4_population_manifold_V3a.html",
+        "fig4_population_manifold_V3d.html",
+        "fig4_population_manifold_V4.html"
+      ],
+      "has_readme": true,
+      "stats": {
+        "aaab": {
+          "V1": {
+            "n": 236,
+            "label": "S+"
+          },
+          "V2": {
+            "n": 76,
+            "label": "S+"
+          },
+          "V3d": {
+            "n": 18,
+            "label": "S+"
+          },
+          "V3a": {
+            "n": 8,
+            "label": "S+"
+          },
+          "V4": {
+            "n": 39,
+            "label": "S+"
+          },
+          "MT": {
+            "n": 76,
+            "label": "S+"
+          },
+          "MST": {
+            "n": 39,
+            "label": "S+"
+          },
+          "TEO": {
+            "n": 35,
+            "label": "S+"
+          },
+          "FST": {
+            "n": 11,
+            "label": "S+"
+          },
+          "FEF": {
+            "n": 41,
+            "label": "S+"
+          },
+          "PFC": {
+            "n": 30,
+            "label": "S+"
+          }
+        },
+        "axab": {
+          "V1": {
+            "n": 13,
+            "label": "O+"
+          },
+          "V2": {
+            "n": 9,
+            "label": "O+"
+          },
+          "V3d": {
+            "n": 12,
+            "label": "O+"
+          },
+          "V3a": {
+            "n": 4,
+            "label": "O+"
+          },
+          "V4": {
+            "n": 25,
+            "label": "O+"
+          },
+          "MT": {
+            "n": 16,
+            "label": "O+"
+          },
+          "MST": {
+            "n": 10,
+            "label": "O+"
+          },
+          "TEO": {
+            "n": 12,
+            "label": "O+"
+          },
+          "FST": {
+            "n": 7,
+            "label": "O+"
+          },
+          "FEF": {
+            "n": 54,
+            "label": "O+"
+          },
+          "PFC": {
+            "n": 32,
+            "label": "O+"
+          }
+        },
+        "both": {
+          "V1": {
+            "tier": "Sig-k",
+            "n_stable": 491,
+            "n_s_plus": 236,
+            "n_s_minus": 35,
+            "n_o_plus": 13,
+            "n_o_minus": 60,
+            "test": "Wilcoxon Signed-Rank",
+            "threshold": 0.05
+          },
+          "V2": {
+            "tier": "Sig-k",
+            "n_stable": 334,
+            "n_s_plus": 76,
+            "n_s_minus": 52,
+            "n_o_plus": 9,
+            "n_o_minus": 32,
+            "test": "Wilcoxon Signed-Rank",
+            "threshold": 0.05
+          },
+          "V3d": {
+            "tier": "Sig-k",
+            "n_stable": 215,
+            "n_s_plus": 18,
+            "n_s_minus": 14,
+            "n_o_plus": 12,
+            "n_o_minus": 23,
+            "test": "Wilcoxon Signed-Rank",
+            "threshold": 0.05
+          },
+          "V3a": {
+            "tier": "Sig-k",
+            "n_stable": 182,
+            "n_s_plus": 8,
+            "n_s_minus": 4,
+            "n_o_plus": 4,
+            "n_o_minus": 4,
+            "test": "Wilcoxon Signed-Rank",
+            "threshold": 0.05
+          },
+          "V4": {
+            "tier": "Sig-k",
+            "n_stable": 446,
+            "n_s_plus": 39,
+            "n_s_minus": 79,
+            "n_o_plus": 25,
+            "n_o_minus": 57,
+            "test": "Wilcoxon Signed-Rank",
+            "threshold": 0.05
+          },
+          "MT": {
+            "tier": "Sig-k",
+            "n_stable": 570,
+            "n_s_plus": 76,
+            "n_s_minus": 33,
+            "n_o_plus": 16,
+            "n_o_minus": 29,
+            "test": "Wilcoxon Signed-Rank",
+            "threshold": 0.05
+          },
+          "MST": {
+            "tier": "Sig-k",
+            "n_stable": 248,
+            "n_s_plus": 39,
+            "n_s_minus": 31,
+            "n_o_plus": 10,
+            "n_o_minus": 14,
+            "test": "Wilcoxon Signed-Rank",
+            "threshold": 0.05
+          },
+          "TEO": {
+            "tier": "Sig-k",
+            "n_stable": 217,
+            "n_s_plus": 35,
+            "n_s_minus": 78,
+            "n_o_plus": 12,
+            "n_o_minus": 48,
+            "test": "Wilcoxon Signed-Rank",
+            "threshold": 0.05
+          },
+          "FST": {
+            "tier": "Sig-k",
+            "n_stable": 78,
+            "n_s_plus": 11,
+            "n_s_minus": 7,
+            "n_o_plus": 7,
+            "n_o_minus": 19,
+            "test": "Wilcoxon Signed-Rank",
+            "threshold": 0.05
+          },
+          "FEF": {
+            "tier": "Sig-k",
+            "n_stable": 278,
+            "n_s_plus": 41,
+            "n_s_minus": 14,
+            "n_o_plus": 54,
+            "n_o_minus": 13,
+            "test": "Wilcoxon Signed-Rank",
+            "threshold": 0.05
+          },
+          "PFC": {
+            "tier": "Sig-k",
+            "n_stable": 540,
+            "n_s_plus": 30,
+            "n_s_minus": 47,
+            "n_o_plus": 32,
+            "n_o_minus": 73,
+            "test": "Wilcoxon Signed-Rank",
+            "threshold": 0.05
+          }
+        }
+      },
+      "metadata": {
+        "x": "Time",
+        "y": "FR / Trials"
+      }
+    },
+    {
+      "id": "f005",
+      "title": "Time-Frequency Representation",
+      "phase": 3,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f005-tfr",
+      "files": [
+        "f005_tfr_local_FEF_AXAB.html",
+        "f005_tfr_local_FST_AAAB.html",
+        "f005_tfr_local_FST_AXAB.html",
+        "f005_tfr_local_MST_AXAB.html",
+        "f005_tfr_local_MT_AXAB.html",
+        "f005_tfr_local_PFC_AXAB.html",
+        "f005_tfr_local_TEO_AXAB.html",
+        "f005_tfr_local_V1_AXAB.html",
+        "f005_tfr_local_V2_AXAB.html",
+        "f005_tfr_local_V3a_AXAB.html",
+        "f005_tfr_local_V3d_AXAB.html",
+        "f005_tfr_local_V4_AXAB.html",
+        "fig5_TFR_FEF.html",
+        "fig5_TFR_FST.html",
+        "fig5_TFR_MST.html",
+        "fig5_TFR_MT.html",
+        "fig5_TFR_PFC.html",
+        "fig5_TFR_TEO.html",
+        "fig5_TFR_V1.html",
+        "fig5_TFR_V2.html",
+        "fig5_TFR_V3a.html",
+        "fig5_TFR_V3d.html",
+        "fig5_TFR_V4.html",
+        "fig5_tfr_FEF.svg",
+        "fig5_tfr_FST.svg",
+        "fig5_tfr_MST.svg",
+        "fig5_tfr_MT.svg",
+        "fig5_tfr_PFC.svg",
+        "fig5_tfr_TEO.svg",
+        "fig5_tfr_V1.svg",
+        "fig5_tfr_V2.svg",
+        "fig5_tfr_V3a.svg",
+        "fig5_tfr_V3d.svg",
+        "fig5_tfr_V4.svg",
+        "fig5_tfr_local_FEF.html",
+        "fig5_tfr_local_FST.html",
+        "fig5_tfr_local_MST.html",
+        "fig5_tfr_local_MT.html",
+        "fig5_tfr_local_PFC.html",
+        "fig5_tfr_local_TEO.html",
+        "fig5_tfr_local_V1.html",
+        "fig5_tfr_local_V2.html",
+        "fig5_tfr_local_V3a.html",
+        "fig5_tfr_local_V3d.html",
+        "fig5_tfr_local_V4.html",
+        "fig5_tfr_omission.html"
+      ],
+      "has_readme": true,
+      "stats": {},
+      "metadata": {
+        "x": "Time",
+        "y": "Frequency"
+      }
+    },
+    {
+      "id": "f006",
+      "title": "Band-Specific Power",
+      "phase": 3,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f006-band-power",
+      "files": [
+        "f006_band_power_local_FEF_AAAB.html",
+        "f006_band_power_local_FEF_AXAB.html",
+        "f006_band_power_local_FST_AAAB.html",
+        "f006_band_power_local_FST_AXAB.html",
+        "f006_band_power_local_MST_AXAB.html",
+        "f006_band_power_local_MT_AXAB.html",
+        "f006_band_power_local_PFC_AXAB.html",
+        "f006_band_power_local_TEO_AAAB.html",
+        "f006_band_power_local_TEO_AXAB.html",
+        "f006_band_power_local_V1_AXAB.html",
+        "f006_band_power_local_V2_AXAB.html",
+        "f006_band_power_local_V3a_AXAB.html",
+        "f006_band_power_local_V3d_AXAB.html",
+        "f006_band_power_local_V4_AXAB.html",
+        "fig6_band_power.html",
+        "fig6_band_power_FEF.html",
+        "fig6_band_power_FEF.svg",
+        "fig6_band_power_FST.html",
+        "fig6_band_power_FST.svg",
+        "fig6_band_power_MST.html",
+        "fig6_band_power_MST.svg",
+        "fig6_band_power_MT.html",
+        "fig6_band_power_MT.svg",
+        "fig6_band_power_PFC.html",
+        "fig6_band_power_PFC.svg",
+        "fig6_band_power_TEO.html",
+        "fig6_band_power_TEO.svg",
+        "fig6_band_power_V1.html",
+        "fig6_band_power_V1.svg",
+        "fig6_band_power_V2.html",
+        "fig6_band_power_V2.svg",
+        "fig6_band_power_V3a.html",
+        "fig6_band_power_V3a.svg",
+        "fig6_band_power_V3d.html",
+        "fig6_band_power_V3d.svg",
+        "fig6_band_power_V4.html",
+        "fig6_band_power_V4.svg",
+        "fig6_band_power_local_FEF.html",
+        "fig6_band_power_local_FST.html",
+        "fig6_band_power_local_MST.html",
+        "fig6_band_power_local_MT.html",
+        "fig6_band_power_local_PFC.html",
+        "fig6_band_power_local_TEO.html",
+        "fig6_band_power_local_V1.html",
+        "fig6_band_power_local_V2.html",
+        "fig6_band_power_local_V3a.html",
+        "fig6_band_power_local_V3d.html",
+        "fig6_band_power_local_V4.html"
+      ],
+      "has_readme": true,
+      "stats": {},
+      "metadata": {
+        "x": "Time",
+        "y": "Power (dB)"
+      }
+    },
+    {
+      "id": "f007",
+      "title": "Spike-Field Coherence",
+      "phase": 4,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f007-sfc",
+      "files": [
+        "f007_sfc_spectrum_FEF.html",
+        "f007_sfc_spectrum_FST.html",
+        "f007_sfc_spectrum_MST.html",
+        "f007_sfc_spectrum_MT.html",
+        "f007_sfc_spectrum_PFC.html",
+        "f007_sfc_spectrum_TEO.html",
+        "f007_sfc_spectrum_V1.html",
+        "f007_sfc_spectrum_V2.html",
+        "f007_sfc_spectrum_V3a.html",
+        "f007_sfc_spectrum_V3d.html",
+        "fig7_sfc_polar.html",
+        "fig7_sfc_polar_FEF.html",
+        "fig7_sfc_polar_FST.html",
+        "fig7_sfc_polar_MST.html",
+        "fig7_sfc_polar_MT.html",
+        "fig7_sfc_polar_PFC.html",
+        "fig7_sfc_polar_TEO.html",
+        "fig7_sfc_polar_V1.html",
+        "fig7_sfc_polar_V2.html",
+        "fig7_sfc_polar_V3a.html",
+        "fig7_sfc_polar_V3d.html",
+        "fig7_sfc_polar_V4.html",
+        "fig7_sfc_spectrum_FEF.html",
+        "fig7_sfc_spectrum_FST.html",
+        "fig7_sfc_spectrum_MST.html",
+        "fig7_sfc_spectrum_MT.html",
+        "fig7_sfc_spectrum_PFC.html",
+        "fig7_sfc_spectrum_TEO.html",
+        "fig7_sfc_spectrum_V1.html",
+        "fig7_sfc_spectrum_V2.html",
+        "fig7_sfc_spectrum_V3a.html",
+        "fig7_sfc_spectrum_V3d.html",
+        "fig7_sfc_spectrum_V4.html"
+      ],
+      "has_readme": true,
+      "stats": {},
+      "metadata": {
+        "x": "Frequency",
+        "y": "Coherence"
+      }
+    },
+    {
+      "id": "f008",
+      "title": "Cross-Area Coordination",
+      "phase": 4,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f008-coordination",
+      "files": [
+        "f008_spectral_harmony_Beta_Baseline.html",
+        "f008_spectral_harmony_Beta_Baseline.svg",
+        "f008_spectral_harmony_Beta_Omission.html",
+        "f008_spectral_harmony_Beta_Omission.svg",
+        "f008_spectral_harmony_Gamma_Baseline.html",
+        "f008_spectral_harmony_Gamma_Baseline.svg",
+        "f008_spectral_harmony_Gamma_Omission.html",
+        "f008_spectral_harmony_Gamma_Omission.svg",
+        "fig8_cross_area_cca.html",
+        "fig8_cross_area_cca_real.html",
+        "fig8_spectral_harmony_Beta_Omission.html",
+        "fig8_spectral_harmony_Beta_Stimulus.html",
+        "fig8_spectral_harmony_Gamma_Omission.html",
+        "fig8_spectral_harmony_Gamma_Stimulus.html"
+      ],
+      "has_readme": true,
+      "stats": {},
+      "metadata": {
+        "x": "Time",
+        "y": "Correlation"
+      }
+    },
+    {
+      "id": "f009",
+      "title": "Individual SFC Units",
+      "phase": 4,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f009-individual-sfc",
+      "files": [
+        "f009_individual_sfc_FEF.html",
+        "f009_individual_sfc_FST.html",
+        "f009_individual_sfc_MST.html",
+        "f009_individual_sfc_MT.html",
+        "f009_individual_sfc_PFC.html",
+        "f009_individual_sfc_TEO.html",
+        "f009_individual_sfc_V1.html",
+        "f009_individual_sfc_V2.html",
+        "f009_individual_sfc_V3a.html",
+        "f009_individual_sfc_V3d.html",
+        "f009_sfc_barplot_Null.html",
+        "f009_sfc_barplot_Null.svg",
+        "f009_sfc_barplot_Oplus.html",
+        "f009_sfc_barplot_Oplus.svg",
+        "f009_sfc_barplot_Sminus.html",
+        "f009_sfc_barplot_Sminus.svg",
+        "f009_sfc_barplot_Splus.html",
+        "f009_sfc_barplot_Splus.svg",
+        "f009_sfc_polar_Null.html",
+        "f009_sfc_polar_Null.svg",
+        "f009_sfc_polar_Oplus.html",
+        "f009_sfc_polar_Oplus.svg",
+        "f009_sfc_polar_Sminus.html",
+        "f009_sfc_polar_Sminus.svg",
+        "f009_sfc_polar_Splus.html",
+        "f009_sfc_polar_Splus.svg",
+        "fig9_individual_sfc_FEF.html",
+        "fig9_individual_sfc_FST.html",
+        "fig9_individual_sfc_MST.html",
+        "fig9_individual_sfc_MT.html",
+        "fig9_individual_sfc_PFC.html",
+        "fig9_individual_sfc_TEO.html",
+        "fig9_individual_sfc_V1.html",
+        "fig9_individual_sfc_V2.html",
+        "fig9_individual_sfc_V3a.html",
+        "fig9_individual_sfc_V3d.html",
+        "fig9_individual_sfc_V4.html"
+      ],
+      "has_readme": true,
+      "stats": {},
+      "metadata": {
+        "x": "Frequency",
+        "y": "Coherence"
+      }
+    },
+    {
+      "id": "f010",
+      "title": "SFC Delta (Surprise)",
+      "phase": 4,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f010-sfc-delta",
+      "files": [
+        "f010_sfc_delta_FEF.html",
+        "f010_sfc_delta_FEF.svg",
+        "f010_sfc_delta_FST.html",
+        "f010_sfc_delta_FST.svg",
+        "f010_sfc_delta_MST.html",
+        "f010_sfc_delta_MST.svg",
+        "f010_sfc_delta_MT.html",
+        "f010_sfc_delta_MT.svg",
+        "f010_sfc_delta_PFC.html",
+        "f010_sfc_delta_PFC.svg",
+        "f010_sfc_delta_TEO.html",
+        "f010_sfc_delta_TEO.svg",
+        "f010_sfc_delta_V1.html",
+        "f010_sfc_delta_V1.svg",
+        "f010_sfc_delta_V2.html",
+        "f010_sfc_delta_V2.svg",
+        "f010_sfc_delta_V3a.html",
+        "f010_sfc_delta_V3a.svg",
+        "f010_sfc_delta_V3d.html",
+        "f010_sfc_delta_V3d.svg",
+        "f010_sfc_delta_V4.html",
+        "f010_sfc_delta_V4.svg",
+        "fig10_sfc_delta_FEF.html",
+        "fig10_sfc_delta_FST.html",
+        "fig10_sfc_delta_MST.html",
+        "fig10_sfc_delta_MT.html",
+        "fig10_sfc_delta_PFC.html",
+        "fig10_sfc_delta_TEO.html",
+        "fig10_sfc_delta_V1.html",
+        "fig10_sfc_delta_V2.html",
+        "fig10_sfc_delta_V3a.html",
+        "fig10_sfc_delta_V3d.html",
+        "fig10_sfc_delta_V4.html"
+      ],
+      "has_readme": true,
+      "stats": {},
+      "metadata": {
+        "x": "Frequency",
+        "y": "Delta Coh"
+      }
+    },
+    {
+      "id": "f011",
+      "title": "Laminar Mapping",
+      "phase": 5,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f011-laminar-mapping",
+      "files": [
+        "f011_laminar_FEF.html",
+        "f011_laminar_FEF.svg",
+        "f011_laminar_FST.html",
+        "f011_laminar_FST.svg",
+        "f011_laminar_MST.html",
+        "f011_laminar_MST.svg",
+        "f011_laminar_MT.html",
+        "f011_laminar_MT.svg",
+        "f011_laminar_PFC.html",
+        "f011_laminar_PFC.svg",
+        "f011_laminar_TEO.html",
+        "f011_laminar_TEO.svg",
+        "f011_laminar_V1.html",
+        "f011_laminar_V1.svg",
+        "f011_laminar_V2.html",
+        "f011_laminar_V2.svg",
+        "f011_laminar_V3a.html",
+        "f011_laminar_V3a.svg",
+        "f011_laminar_V3d.html",
+        "f011_laminar_V3d.svg",
+        "f011_laminar_V4.html",
+        "f011_laminar_V4.svg",
+        "fig11_laminar_FEF.html",
+        "fig11_laminar_FST.html",
+        "fig11_laminar_MST.html",
+        "fig11_laminar_MT.html",
+        "fig11_laminar_PFC.html",
+        "fig11_laminar_TEO.html",
+        "fig11_laminar_V1.html",
+        "fig11_laminar_V2.html",
+        "fig11_laminar_V3a.html",
+        "fig11_laminar_V3d.html",
+        "fig11_laminar_V4.html"
+      ],
+      "has_readme": true,
+      "stats": {},
+      "metadata": {
+        "x": "Time",
+        "y": "Depth"
+      }
+    },
+    {
+      "id": "f012",
+      "title": "CSD Profiling",
+      "phase": 5,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f012-csd-profiling",
+      "files": [
+        "f012_csd_profiling.html",
+        "f012_csd_profiling.svg",
+        "f012_csd_profiling_FEF.html",
+        "f012_csd_profiling_FEF.svg",
+        "f012_csd_profiling_FST.html",
+        "f012_csd_profiling_FST.svg",
+        "f012_csd_profiling_MST.html",
+        "f012_csd_profiling_MST.svg",
+        "f012_csd_profiling_MT.html",
+        "f012_csd_profiling_MT.svg",
+        "f012_csd_profiling_PFC.html",
+        "f012_csd_profiling_PFC.svg",
+        "f012_csd_profiling_TEO.html",
+        "f012_csd_profiling_TEO.svg",
+        "f012_csd_profiling_V1.html",
+        "f012_csd_profiling_V1.svg",
+        "f012_csd_profiling_V2.html",
+        "f012_csd_profiling_V2.svg",
+        "f012_csd_profiling_V3a.html",
+        "f012_csd_profiling_V3a.svg",
+        "f012_csd_profiling_V3d.html",
+        "f012_csd_profiling_V3d.svg",
+        "f012_csd_profiling_V4.html",
+        "f012_csd_profiling_V4.svg"
+      ],
+      "has_readme": true,
+      "stats": {},
+      "metadata": {
+        "x": "Time",
+        "y": "Sink/Source Intensity"
+      }
+    },
+    {
+      "id": "f013",
+      "title": "Rhythmic Evolution",
+      "phase": 5,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f013-rhythmic-evolution",
+      "files": [
+        "f013_rhythmic_evolution.html"
+      ],
+      "has_readme": true,
+      "stats": {},
+      "metadata": {
+        "x": "Time",
+        "y": "Frequency"
+      }
+    },
+    {
+      "id": "f014",
+      "title": "Spiking Granger",
+      "phase": 5,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f014-spiking-granger",
+      "files": [
+        "f014_spiking_granger.html"
+      ],
+      "has_readme": true,
+      "stats": {},
+      "metadata": {
+        "x": "Frequency",
+        "y": "Causality (GC)"
+      }
+    },
+    {
+      "id": "f015",
+      "title": "Spectral Granger",
+      "phase": 5,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f015-spectral-granger",
+      "files": [
+        "f015_spectral_granger.html"
+      ],
+      "has_readme": true,
+      "stats": {},
+      "metadata": {
+        "x": "Frequency",
+        "y": "Causality (GC)"
+      }
+    },
+    {
+      "id": "f016",
+      "title": "Impedance Profiles",
+      "phase": 5,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f016-impedance-profiles",
+      "files": [
+        "fig16_impedance_profiles.html",
+        "fig16_impedance_ses230629_p0.html",
+        "fig16_impedance_ses230629_p1.html",
+        "fig16_impedance_ses230630_p0.html",
+        "fig16_impedance_ses230630_p1.html",
+        "fig16_impedance_ses230630_p2.html",
+        "fig16_impedance_ses230714_p0.html",
+        "fig16_impedance_ses230714_p1.html",
+        "fig16_impedance_ses230719_p0.html",
+        "fig16_impedance_ses230719_p2.html",
+        "fig16_impedance_ses230720_p0.html",
+        "fig16_impedance_ses230720_p1.html",
+        "fig16_impedance_ses230721_p0.html",
+        "fig16_impedance_ses230721_p1.html",
+        "fig16_impedance_ses230816_p0.html",
+        "fig16_impedance_ses230816_p1.html",
+        "fig16_impedance_ses230816_p2.html",
+        "fig16_impedance_ses230818_p0.html",
+        "fig16_impedance_ses230818_p1.html",
+        "fig16_impedance_ses230818_p2.html",
+        "fig16_impedance_ses230823_p0.html",
+        "fig16_impedance_ses230823_p1.html",
+        "fig16_impedance_ses230823_p2.html",
+        "fig16_impedance_ses230825_p0.html",
+        "fig16_impedance_ses230825_p1.html",
+        "fig16_impedance_ses230825_p2.html",
+        "fig16_impedance_ses230830_p0.html",
+        "fig16_impedance_ses230830_p1.html",
+        "fig16_impedance_ses230830_p2.html",
+        "fig16_impedance_ses230831_p0.html",
+        "fig16_impedance_ses230831_p1.html",
+        "fig16_impedance_ses230831_p2.html",
+        "fig16_impedance_ses230901_p0.html",
+        "fig16_impedance_ses230901_p2.html"
+      ],
+      "has_readme": true,
+      "stats": {},
+      "metadata": {
+        "x": "Frequency",
+        "y": "Impedance (kOhm)"
+      }
+    },
+    {
+      "id": "f017",
+      "title": "Prediction Error Scaling",
+      "phase": 5,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f017-prediction-error-scaling",
+      "files": [
+        "fig17_prediction_error_scaling.html"
+      ],
+      "has_readme": true,
+      "stats": {},
+      "metadata": {
+        "x": "Surprise Level",
+        "y": "Response Amplitude"
+      }
+    },
+    {
+      "id": "f018",
+      "title": "Ghost Signals",
+      "phase": 5,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f018-ghost-signals",
+      "files": [
+        "fig18_ghost_signals.html"
+      ],
+      "has_readme": true,
+      "stats": {},
+      "metadata": {
+        "x": "Time",
+        "y": "LFP (uV)"
+      }
+    },
+    {
+      "id": "f019",
+      "title": "PAC Analysis",
+      "phase": 5,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f019-pac-analysis",
+      "files": [
+        "fig19_pac_analysis.html"
+      ],
+      "has_readme": true,
+      "stats": {},
+      "metadata": {
+        "x": "Phase Freq",
+        "y": "Amp Freq"
+      }
+    },
+    {
+      "id": "f020",
+      "title": "Effective Connectivity",
+      "phase": 5,
+      "baseUrl": "/@fs/D:/drive/outputs/oglo-8figs/f020-effective-connectivity",
+      "files": [
+        "fig20_effective_connectivity.html"
+      ],
+      "has_readme": true,
+      "stats": {},
+      "metadata": {
+        "x": "Area 1",
+        "y": "Area 2"
+      }
+    }
+  ],
+  "reports": [
+    {
+      "id": "progress-report-2026-04-23-W",
+      "title": "2026-04-23-W",
+      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-23-W.md"
+    },
+    {
+      "id": "progress-report-2026-04-22-W",
+      "title": "2026-04-22-W",
+      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-22-W.md"
+    },
+    {
+      "id": "progress-report-2026-04-21-W",
+      "title": "2026-04-21-W",
+      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-21-W.md"
+    },
+    {
+      "id": "progress-report-2026-04-20-W",
+      "title": "2026-04-20-W",
+      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-20-W.md"
+    },
+    {
+      "id": "progress-report-2026-04-19-W",
+      "title": "2026-04-19-W",
+      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-19-W.md"
+    },
+    {
+      "id": "progress-report-2026-04-18-W",
+      "title": "2026-04-18-W",
+      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-18-W.md"
+    },
+    {
+      "id": "progress-report-2026-04-14-W",
+      "title": "2026-04-14-W",
+      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-14-W.md"
+    },
+    {
+      "id": "progress-report-2026-04-13-W",
+      "title": "2026-04-13-W",
+      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-13-W.md"
+    },
+    {
+      "id": "progress-report-2026-04-11-W",
+      "title": "2026-04-11-W",
+      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-11-W.md"
+    },
+    {
+      "id": "progress-report-2026-04-10-W",
+      "title": "2026-04-10-W",
+      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-10-W.md"
+    },
+    {
+      "id": "progress-report-2026-04-09-W",
+      "title": "2026-04-09-W",
+      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-09-W.md"
+    },
+    {
+      "id": "progress-report-2026-04-08-W",
+      "title": "2026-04-08-W",
+      "url": "/@fs/D:/drive/progress-report/progress-report-2026-04-08-W.md"
+    }
+  ],
+  "last_synced": "1777324383.1092727"
+}

@@ -1,0 +1,473 @@
+{
+  "last_updated": "2026-04-27T16:38:39.823682",
+  "system_status": "RESYNCING",
+  "active_phase": "Phase E (Global Sync - Resumed)",
+  "metrics": {
+    "sessions": "13/13",
+    "units": "842 Stable+",
+    "latency_onset": "76.5ms (V2)",
+    "peak_coherence": "18Hz (Beta)"
+  },
+  "ledger": [
+    {
+      "analysis": "f001-theory - F001 Theory",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f001-theory/fig1_theory_schematic.html",
+      "code": "src/main.py (via f001-theory)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f002-psth - F002 Psth",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f002-psth/f002_psth_FEF.html",
+      "code": "src/main.py (via f002-psth)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f003-surprise - F003 Surprise",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f003-surprise/f003_surprise_index.html",
+      "code": "src/main.py (via f003-surprise)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f004-coding - F004 Coding",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f004-coding/f004_coding_suite_O_plus_V1.html",
+      "code": "src/main.py (via f004-coding)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f005-tfr - F005 Tfr",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f005-tfr/f005_tfr_local_FEF_AXAB.html",
+      "code": "src/main.py (via f005-tfr)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f006-band-power - F006 Band Power",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f006-band-power/f006_band_power_local_FEF_AAAB.html",
+      "code": "src/main.py (via f006-band-power)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f007-sfc - F007 Sfc",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f007-sfc/f007_sfc_spectrum_FEF.html",
+      "code": "src/main.py (via f007-sfc)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f008-coordination - F008 Coordination",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f008-coordination/f008_spectral_harmony_Beta_Baseline.html",
+      "code": "src/main.py (via f008-coordination)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f009-individual-sfc - F009 Individual Sfc",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f009-individual-sfc/f009_individual_sfc_FEF.html",
+      "code": "src/main.py (via f009-individual-sfc)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f010-sfc-delta - F010 Sfc Delta",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f010-sfc-delta/f010_sfc_delta_FEF.html",
+      "code": "src/main.py (via f010-sfc-delta)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f011-laminar-mapping - F011 Laminar Mapping",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f011-laminar-mapping/f011_laminar_FEF.html",
+      "code": "src/main.py (via f011-laminar-mapping)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f012-csd-profiling - F012 Csd Profiling",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f012-csd-profiling/f012_csd_profiling.html",
+      "code": "src/main.py (via f012-csd-profiling)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f013-rhythmic-evolution - F013 Rhythmic Evolution",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f013-rhythmic-evolution/f013_rhythmic_evolution.html",
+      "code": "src/main.py (via f013-rhythmic-evolution)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f014-spiking-granger - F014 Spiking Granger",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f014-spiking-granger/f014_spiking_granger.html",
+      "code": "src/main.py (via f014-spiking-granger)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f015-spectral-granger - F015 Spectral Granger",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f015-spectral-granger/f015_spectral_granger.html",
+      "code": "src/main.py (via f015-spectral-granger)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f016-impedance-profiles - F016 Impedance Profiles",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f016-impedance-profiles/fig16_impedance_profiles.html",
+      "code": "src/main.py (via f016-impedance-profiles)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f017-prediction-error-scaling - F017 Prediction Error Scaling",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f017-prediction-error-scaling/fig17_prediction_error_scaling.html",
+      "code": "src/main.py (via f017-prediction-error-scaling)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f018-ghost-signals - F018 Ghost Signals",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f018-ghost-signals/fig18_ghost_signals.html",
+      "code": "src/main.py (via f018-ghost-signals)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f019-pac-analysis - F019 Pac Analysis",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f019-pac-analysis/fig19_pac_analysis.html",
+      "code": "src/main.py (via f019-pac-analysis)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f020-effective-connectivity - F020 Effective Connectivity",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f020-effective-connectivity/fig20_effective_connectivity.html",
+      "code": "src/main.py (via f020-effective-connectivity)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f021-pupil-decoding - F021 Pupil Decoding",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f021-pupil-decoding/fig21_pupil_surprise.html",
+      "code": "src/main.py (via f021-pupil-decoding)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f022-dimensionality-reduction - F022 Dimensionality Reduction",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f022-dimensionality-reduction/fig22_pca_trajectories_230630.html",
+      "code": "src/main.py (via f022-dimensionality-reduction)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f023-spectral-fingerprints - F023 Spectral Fingerprints",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f023-spectral-fingerprints/fig23_spectral_fingerprints.html",
+      "code": "src/main.py (via f023-spectral-fingerprints)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f024-fano-factor - F024 Fano Factor",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f024-fano-factor/fig24_fano_factor.html",
+      "code": "src/main.py (via f024-fano-factor)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f025-state-decoding - F025 State Decoding",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f025-state-decoding/fig25_state_decoding.html",
+      "code": "src/main.py (via f025-state-decoding)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f026-accuracy-timeseries - F026 Accuracy Timeseries",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f026-accuracy-timeseries/fig26A_accuracy_timeseries.html",
+      "code": "src/main.py (via f026-accuracy-timeseries)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f027-identity-decoding - F027 Identity Decoding",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f027-identity-decoding/fig27_identity_decoding.html",
+      "code": "src/main.py (via f027-identity-decoding)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f028-manifold-coupling - F028 Manifold Coupling",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f028-manifold-coupling/fig28_manifold_coupling.html",
+      "code": "src/main.py (via f028-manifold-coupling)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f029-effective-connectivity - F029 Effective Connectivity",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f029-effective-connectivity/fig29_info_bottleneck.html",
+      "code": "src/main.py (via f029-effective-connectivity)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f030-putative-cell-type - F030 Putative Cell Type",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f030-putative-cell-type/f030_putative_cell_types_ratio.html",
+      "code": "src/main.py (via f030-putative-cell-type)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f031-rnn-state - F031 Rnn State",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f031-rnn-state/fig31A_rnn_state.html",
+      "code": "src/main.py (via f031-rnn-state)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f032-spike-triggered-average - F032 Spike Triggered Average",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f032-spike-triggered-average/fig32_spike_triggered_average.html",
+      "code": "src/main.py (via f032-spike-triggered-average)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f033-hierarchy-synthesis - F033 Hierarchy Synthesis",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f033-hierarchy-synthesis/fig33_spike_field_coherence.html",
+      "code": "src/main.py (via f033-hierarchy-synthesis)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f034-pev-analysis - F034 Pev Analysis",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f034-pev-analysis/fig34_pev_analysis.html",
+      "code": "src/main.py (via f034-pev-analysis)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f035-deviance-scaling - F035 Deviance Scaling",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f035-deviance-scaling/f035_deviance_scaling.html",
+      "code": "src/main.py (via f035-deviance-scaling)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f036-interneuron-dynamics - F036 Interneuron Dynamics",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f036-interneuron-dynamics/f036_interneuron_dynamics.html",
+      "code": "src/main.py (via f036-interneuron-dynamics)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f037-placeholder - F037 Placeholder",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f037-placeholder/f037_selectivity_index.html",
+      "code": "src/main.py (via f037-placeholder)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f038 - F038",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f038/f038_granger_flow_reversal.html",
+      "code": "src/main.py (via f038)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f039-spike-field-coherence - F039 Spike Field Coherence",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f039-spike-field-coherence/f039_ppc_per_area.html",
+      "code": "src/main.py (via f039-spike-field-coherence)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f040-onset-latency - F040 Onset Latency",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f040-onset-latency/f040_latency_hierarchy.html",
+      "code": "src/main.py (via f040-onset-latency)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f041-laminar-analysis - F041 Laminar Analysis",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f041-laminar-analysis/waveform_duration_hist.html",
+      "code": "src/main.py (via f041-laminar-analysis)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f042-laminar-psd - F042 Laminar Psd",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f042-laminar-psd/f042_laminar_psd.html",
+      "code": "src/main.py (via f042-laminar-psd)",
+      "status": "awesome",
+      "score": 90,
+      "notes": "Non-white background detected"
+    },
+    {
+      "analysis": "f043-laminar-sfc - F043 Laminar Sfc",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f043-laminar-sfc/f043_laminar_sfc_PFC.html",
+      "code": "src/main.py (via f043-laminar-sfc)",
+      "status": "pass",
+      "score": 70,
+      "notes": "Non-white background detected; Missing essential labels (Title/X/Y)"
+    },
+    {
+      "analysis": "f044-laminar-pac - F044 Laminar Pac",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f044-laminar-pac/f044_laminar_pac.html",
+      "code": "src/main.py (via f044-laminar-pac)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f045-laminar-coherence - F045 Laminar Coherence",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f045-laminar-coherence/f045_laminar_coherence.html",
+      "code": "src/main.py (via f045-laminar-coherence)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    },
+    {
+      "analysis": "f046-state-space-trajectories - F046 State Space Trajectories",
+      "date": "2026-04-27",
+      "time": "16:38",
+      "file": "f046-state-space-trajectories/f046_trajectory_FEF.html",
+      "code": "src/main.py (via f046-state-space-trajectories)",
+      "status": "awesome",
+      "score": 100,
+      "notes": "All Sentinel checks passed."
+    }
+  ]
+}
