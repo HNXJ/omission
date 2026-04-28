@@ -1,5 +1,6 @@
 import json
 import sys
+import shutil
 from pathlib import Path
 
 # Resolve Repo Root
@@ -10,15 +11,14 @@ from src.analysis.io.loader import DataLoader
 from src.analysis.registry import FigureRegistry
 from src.f002_psth.analysis import analyze_area_psths
 from src.f003_surprise.analysis import analyze_surprise
-from src.f004_coding.find_stable_units import find_highly_responsive_units, compute_area_coding_stats
+from src.f004_coding.find_stable_units import compute_area_coding_stats
 
 def build_payload():
     loader = DataLoader()
     registry = FigureRegistry.get_all()
     
     # Repo-relative paths
-    output_base = REPO_ROOT.parent / "outputs" / "oglo-8figs" # External to repo but relative to root's parent
-    # Fallback to local outputs if external doesn't exist
+    output_base = REPO_ROOT.parent / "outputs" / "oglo-8figs"
     if not output_base.exists():
         output_base = REPO_ROOT / "outputs" / "oglo-8figs"
         output_base.mkdir(parents=True, exist_ok=True)
@@ -26,52 +26,44 @@ def build_payload():
     dashboard_data_dir = REPO_ROOT / "dashboard" / "src" / "data"
     dashboard_data_dir.mkdir(parents=True, exist_ok=True)
     
-    print(f"[action] Initializing Portal Adapter at {REPO_ROOT}...")
-    
-    # PORTABLE ASSET STRATEGY: Use dashboard/public/figures
     public_figures_dir = REPO_ROOT / "dashboard" / "public" / "figures"
     public_figures_dir.mkdir(parents=True, exist_ok=True)
+    
+    print(f"[action] Initializing Portable Portal Adapter at {REPO_ROOT}...")
     
     figures_manifest = []
     
     for fig in registry:
         fig_id = fig['id']
         matches = [d for d in output_base.iterdir() if d.is_dir() and d.name.startswith(fig_id)]
-        if not matches:
-            continue
+        if not matches: continue
             
         fig_dir = matches[0]
-        # Copy to public folder for portability
         target_dir = public_figures_dir / fig_dir.name
         target_dir.mkdir(parents=True, exist_ok=True)
         
-        # Manifest files and copy them
+        # Copy assets for portability
         files = []
         for f in fig_dir.iterdir():
             if f.is_file() and f.suffix in ['.html', '.svg', '.png']:
-                import shutil
                 shutil.copy2(f, target_dir / f.name)
                 files.append(f.name)
         
         files.sort()
         stats = {}
+        
         # FIGURE-SPECIFIC STATISTICAL ADAPTERS
         if fig_id == "f002":
-            print(f"[adapter] Generating summary stats for {fig_id} (Omission PSTH)")
             results = analyze_area_psths(loader, loader.CANONICAL_AREAS)
             stats = {area: results[area]['stats'] for area in results}
-            for area in stats:
-                stats[area]['n_units'] = int(results[area]['n_units'])
+            for area in stats: stats[area]['n_units'] = int(results[area]['n_units'])
         
         elif fig_id == "f003":
-            print(f"[adapter] Generating summary stats for {fig_id} (Surprise Dynamics)")
             results = analyze_surprise(loader, loader.CANONICAL_AREAS)
             stats = {area: results[area]['stats'] for area in results}
             
         elif fig_id == "f004":
-            print(f"[adapter] Generating summary stats for {fig_id} (Unit Coding)")
             area_coding_stats = compute_area_coding_stats()
-            # Canonical Payload: explicit counts for S+ and O+
             for area in loader.CANONICAL_AREAS:
                 a_res = area_coding_stats.get(area, {})
                 stats[area] = {
@@ -85,7 +77,7 @@ def build_payload():
                     "threshold": a_res.get('threshold', 0)
                 }
 
-        # Multi-Condition Stats Injection (Standard vs Omission)
+        # Multi-Condition Stats Injection
         if fig_id in ["f002", "f003", "f004"]:
             if fig_id == "f004":
                 stats = {
@@ -93,35 +85,32 @@ def build_payload():
                     "axab": {a: {"n": stats[a]["n_o_plus"], "label": "O+"} for a in stats},
                     "both": stats
                 }
-            elif fig_id == "f002":
+            else:
                 stats = {"both": stats, "axab": stats, "aaab": {}}
-            elif fig_id == "f003":
-                stats = {"both": stats, "axab": stats, "aaab": {}}
-        
+
         figures_manifest.append({
             "id": fig_id,
             "title": fig['title'],
             "phase": fig.get('phase', 1),
-            "baseUrl": f"/figures/{fig_dir.name}", # PORTABLE URL
+            "baseUrl": f"/figures/{fig_dir.name}", # PORTABLE ASSET PATH
             "files": files,
             "has_readme": (fig_dir / "README.md").exists(),
             "stats": stats,
             "metadata": {"x": fig.get('x', ''), "y": fig.get('y', '')}
         })
 
-    # FINAL MANIFEST ASSEMBLY
     if not figures_manifest:
-        raise ValueError("[error] No figures were manifested. Check output_base and registry.")
+        raise ValueError("[error] No figures were manifested.")
 
-    # GENERATE REAL SCOREBOARD
+    # GENERATE REAL METADATA-DERIVED SCOREBOARD
     n_total_units = 0
     for area in loader.CANONICAL_AREAS:
         n_total_units += len(loader.get_units_by_area(area))
-    # Estimate sessions from mapping file
+        
     session_map_path = REPO_ROOT / "context" / "overview" / "session-area-mapping.md"
     n_sessions = 0
     if session_map_path.exists():
-        n_sessions = len([line for line in session_map_path.read_text().split('\n') if '|' in line]) - 2 # Header offset
+        n_sessions = len([line for line in session_map_path.read_text().split('\n') if '|' in line]) - 2
         
     scoreboard_data = {
         "system_status": "STABLE",
@@ -149,7 +138,6 @@ def build_payload():
     with open(dashboard_data_dir / "scoreboard.json", "w") as f:
         json.dump(scoreboard_data, f, indent=2)
 
-    # FINAL MANIFEST WRITE
     final_manifest = {
         "figures": figures_manifest,
         "reports": [],
