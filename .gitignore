@@ -1,7 +1,7 @@
-# Data and figures
-data/
-figures/
-outputs/
+# Data and figures (Anchored to root)
+/data/
+/figures/
+/outputs/
 Export_Staging/
 context_for_agents/
 plans_for_agents/

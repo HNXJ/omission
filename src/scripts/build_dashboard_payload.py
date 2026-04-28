@@ -18,11 +18,11 @@ def build_payload():
     registry = FigureRegistry.get_all()
     
     # Repo-relative paths
-    output_base = REPO_ROOT.parent / "outputs" / "oglo-8figs"
-    if not output_base.exists():
-        output_base = REPO_ROOT / "outputs" / "oglo-8figs"
-        output_base.mkdir(parents=True, exist_ok=True)
-        
+    output_bases = [
+        REPO_ROOT / "outputs" / "oglo-8figs",
+        REPO_ROOT.parent / "outputs" / "oglo-8figs"
+    ]
+    
     dashboard_data_dir = REPO_ROOT / "dashboard" / "src" / "data"
     dashboard_data_dir.mkdir(parents=True, exist_ok=True)
     
@@ -35,21 +35,30 @@ def build_payload():
     
     for fig in registry:
         fig_id = fig['id']
-        matches = [d for d in output_base.iterdir() if d.is_dir() and d.name.startswith(fig_id)]
-        if not matches: continue
+        files = set()
+        max_mtime = 0
+        fig_dirname = ""
+        
+        # Merge assets from all bases (sibling then local to prioritize local overwrites)
+        for base in reversed(output_bases):
+            if not base.exists(): continue
+            matches = [d for d in base.iterdir() if d.is_dir() and d.name.startswith(fig_id)]
+            if not matches: continue
             
-        fig_dir = matches[0]
-        target_dir = public_figures_dir / fig_dir.name
-        target_dir.mkdir(parents=True, exist_ok=True)
+            fig_dir = matches[0]
+            fig_dirname = fig_dir.name
+            target_dir = public_figures_dir / fig_dirname
+            target_dir.mkdir(parents=True, exist_ok=True)
+            max_mtime = max(max_mtime, fig_dir.stat().st_mtime)
+            
+            for f in fig_dir.iterdir():
+                if f.is_file() and f.suffix in ['.html', '.svg', '.png']:
+                    shutil.copy2(f, target_dir / f.name)
+                    files.add(f.name)
+                    
+        if not fig_dirname: continue
         
-        # Copy assets for portability
-        files = []
-        for f in fig_dir.iterdir():
-            if f.is_file() and f.suffix in ['.html', '.svg', '.png']:
-                shutil.copy2(f, target_dir / f.name)
-                files.append(f.name)
-        
-        files.sort()
+        sorted_files = sorted(list(files))
         stats = {}
         
         # FIGURE-SPECIFIC STATISTICAL ADAPTERS
@@ -92,10 +101,11 @@ def build_payload():
             "id": fig_id,
             "title": fig['title'],
             "phase": fig.get('phase', 1),
-            "baseUrl": f"/figures/{fig_dir.name}", # PORTABLE ASSET PATH
-            "files": files,
-            "has_readme": (fig_dir / "README.md").exists(),
+            "baseUrl": f"/figures/{fig_dirname}", # PORTABLE ASSET PATH
+            "files": sorted_files,
+            "has_readme": (target_dir / "README.md").exists(),
             "stats": stats,
+            "mtime": max_mtime,
             "metadata": {"x": fig.get('x', ''), "y": fig.get('y', '')}
         })
 
@@ -124,9 +134,8 @@ def build_payload():
     }
     
     for fig in figures_manifest:
-        # Find the actual source dir to get mtime
-        matches = [d for d in output_base.iterdir() if d.is_dir() and d.name.startswith(fig['id'])]
-        mtime = matches[0].stat().st_mtime if matches else 0
+        # Use stored mtime
+        mtime = fig.get("mtime", 0)
         from datetime import datetime
         dt = datetime.fromtimestamp(mtime)
         
@@ -144,10 +153,17 @@ def build_payload():
     with open(dashboard_data_dir / "scoreboard.json", "w") as f:
         json.dump(scoreboard_data, f, indent=2)
 
+    # Last sync timestamp from the most recent output_base
+    sync_ts = "0"
+    for base in output_bases:
+        if base.exists():
+            sync_ts = str(base.stat().st_mtime)
+            break
+
     final_manifest = {
         "figures": figures_manifest,
         "reports": [],
-        "last_synced": str(output_base.stat().st_mtime) if output_base.exists() else "0"
+        "last_synced": sync_ts
     }
     
     with open(dashboard_data_dir / "manifest.json", "w") as f:

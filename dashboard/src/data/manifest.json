@@ -9,8 +9,9 @@
         "fig1_theory_schematic.html",
         "fig1_theory_schematic.svg"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {},
+      "mtime": 1777299943.7659135,
       "metadata": {
         "x": "Time",
         "y": "Area Hierarchy"
@@ -47,7 +48,7 @@
         "fig2A_task_timeline.html",
         "fig2B_csd_map.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {
         "both": {
           "V1": {
@@ -209,6 +210,7 @@
         },
         "aaab": {}
       },
+      "mtime": 1777316622.1794288,
       "metadata": {
         "x": "Time",
         "y": "Firing Rate"
@@ -247,7 +249,7 @@
         "fig3_psth_local_V3d.html",
         "fig3_psth_local_V4.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {
         "both": {
           "V1": {
@@ -387,6 +389,7 @@
         },
         "aaab": {}
       },
+      "mtime": 1777316626.464446,
       "metadata": {
         "x": "Time",
         "y": "FR Delta"
@@ -540,7 +543,7 @@
         "fig4_population_manifold_V3d.html",
         "fig4_population_manifold_V4.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {
         "aaab": {
           "V1": {
@@ -747,6 +750,7 @@
           }
         }
       },
+      "mtime": 1777385871.3767781,
       "metadata": {
         "x": "Time",
         "y": "FR / Trials"
@@ -756,7 +760,7 @@
       "id": "f005",
       "title": "Time-Frequency Representation",
       "phase": 3,
-      "baseUrl": "/figures/f005-tfr",
+      "baseUrl": "/figures/f005-time-frequency-representation",
       "files": [
         "f005_tfr_local_FEF_AXAB.html",
         "f005_tfr_local_FST_AAAB.html",
@@ -805,8 +809,9 @@
         "fig5_tfr_local_V4.html",
         "fig5_tfr_omission.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {},
+      "mtime": 1777284878.4592514,
       "metadata": {
         "x": "Time",
         "y": "Frequency"
@@ -867,8 +872,9 @@
         "fig6_band_power_local_V3d.html",
         "fig6_band_power_local_V4.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {},
+      "mtime": 1777092324.5157566,
       "metadata": {
         "x": "Time",
         "y": "Power (dB)"
@@ -880,6 +886,17 @@
       "phase": 4,
       "baseUrl": "/figures/f007-sfc",
       "files": [
+        "f007_circular_sfc_FEF.html",
+        "f007_circular_sfc_FST.html",
+        "f007_circular_sfc_MST.html",
+        "f007_circular_sfc_MT.html",
+        "f007_circular_sfc_PFC.html",
+        "f007_circular_sfc_TEO.html",
+        "f007_circular_sfc_V1.html",
+        "f007_circular_sfc_V2.html",
+        "f007_circular_sfc_V3a.html",
+        "f007_circular_sfc_V3d.html",
+        "f007_circular_sfc_V4.html",
         "f007_sfc_spectrum_FEF.html",
         "f007_sfc_spectrum_FST.html",
         "f007_sfc_spectrum_MST.html",
@@ -914,8 +931,9 @@
         "fig7_sfc_spectrum_V3d.html",
         "fig7_sfc_spectrum_V4.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {},
+      "mtime": 1777410308.536561,
       "metadata": {
         "x": "Frequency",
         "y": "Coherence"
@@ -942,8 +960,9 @@
         "fig8_spectral_harmony_Gamma_Omission.html",
         "fig8_spectral_harmony_Gamma_Stimulus.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {},
+      "mtime": 1777068822.6066947,
       "metadata": {
         "x": "Time",
         "y": "Correlation"
@@ -993,8 +1012,9 @@
         "fig9_individual_sfc_V3d.html",
         "fig9_individual_sfc_V4.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {},
+      "mtime": 1777142569.4103563,
       "metadata": {
         "x": "Frequency",
         "y": "Coherence"
@@ -1040,8 +1060,9 @@
         "fig10_sfc_delta_V3d.html",
         "fig10_sfc_delta_V4.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {},
+      "mtime": 1777144273.3414326,
       "metadata": {
         "x": "Frequency",
         "y": "Delta Coh"
@@ -1087,8 +1108,9 @@
         "fig11_laminar_V3d.html",
         "fig11_laminar_V4.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {},
+      "mtime": 1777142982.1568573,
       "metadata": {
         "x": "Time",
         "y": "Depth"
@@ -1125,8 +1147,9 @@
         "f012_csd_profiling_V4.html",
         "f012_csd_profiling_V4.svg"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {},
+      "mtime": 1777164178.9093306,
       "metadata": {
         "x": "Time",
         "y": "Sink/Source Intensity"
@@ -1140,8 +1163,9 @@
       "files": [
         "f013_rhythmic_evolution.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {},
+      "mtime": 1776870512.4058366,
       "metadata": {
         "x": "Time",
         "y": "Frequency"
@@ -1155,8 +1179,9 @@
       "files": [
         "f014_spiking_granger.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {},
+      "mtime": 1777049198.7879972,
       "metadata": {
         "x": "Frequency",
         "y": "Causality (GC)"
@@ -1170,8 +1195,9 @@
       "files": [
         "f015_spectral_granger.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {},
+      "mtime": 1777049198.7889977,
       "metadata": {
         "x": "Frequency",
         "y": "Causality (GC)"
@@ -1218,8 +1244,9 @@
         "fig16_impedance_ses230901_p0.html",
         "fig16_impedance_ses230901_p2.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {},
+      "mtime": 1776797091.8207526,
       "metadata": {
         "x": "Frequency",
         "y": "Impedance (kOhm)"
@@ -1233,8 +1260,9 @@
       "files": [
         "fig17_prediction_error_scaling.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {},
+      "mtime": 1776797091.8212638,
       "metadata": {
         "x": "Surprise Level",
         "y": "Response Amplitude"
@@ -1248,8 +1276,9 @@
       "files": [
         "fig18_ghost_signals.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {},
+      "mtime": 1776797091.8217716,
       "metadata": {
         "x": "Time",
         "y": "LFP (uV)"
@@ -1263,8 +1292,9 @@
       "files": [
         "fig19_pac_analysis.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {},
+      "mtime": 1776797091.822329,
       "metadata": {
         "x": "Phase Freq",
         "y": "Amp Freq"
@@ -1278,8 +1308,9 @@
       "files": [
         "fig20_effective_connectivity.html"
       ],
-      "has_readme": true,
+      "has_readme": false,
       "stats": {},
+      "mtime": 1776797091.822329,
       "metadata": {
         "x": "Area 1",
         "y": "Area 2"
@@ -1287,5 +1318,5 @@
     }
   ],
   "reports": [],
-  "last_synced": "1777324383.1092727"
+  "last_synced": "1777410214.8207252"
 }

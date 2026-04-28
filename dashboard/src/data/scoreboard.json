@@ -70,11 +70,11 @@
     {
       "analysis": "Spike-Field Coherence",
       "file": "script.py",
-      "date": "2026-04-24",
-      "time": "11:46",
+      "date": "2026-04-28",
+      "time": "16:05",
       "status": "pass",
       "score": 80,
-      "notes": "Generated 33 portable assets.",
+      "notes": "Generated 44 portable assets.",
       "code": "src.f007"
     },
     {
