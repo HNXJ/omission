@@ -12,17 +12,6 @@ def run_f002():
     results = analyze_area_psths(loader, areas)
     if results:
         plot_area_psths(results, output_dir=str(output_dir))
-        
-        # Export summary stats for the manifest
-        import json
-        summary_stats = {area: results[area]['stats'] for area in results}
-        # Add N units
-        for area in summary_stats:
-            summary_stats[area]['n_units'] = results[area]['n_units']
-            
-        with open(output_dir / "stats.json", "w") as f:
-            json.dump(summary_stats, f, indent=2)
-            print(f"[progress] Exported stats.json to {output_dir}")
     log.progress("Analysis f002 complete.")
 
 if __name__ == "__main__":
