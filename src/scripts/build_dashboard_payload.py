@@ -7,6 +7,14 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.append(str(REPO_ROOT))
 
+# Load Global Config
+CONFIG_PATH = REPO_ROOT / "context" / "milestone.json"
+if CONFIG_PATH.exists():
+    with open(CONFIG_PATH, "r") as f:
+        GLOBAL_CONFIG = json.load(f)
+else:
+    GLOBAL_CONFIG = {"CURRENT_MILESTONE": 4}
+
 from src.analysis.io.loader import DataLoader
 from src.analysis.registry import FigureRegistry
 from src.f002_psth.analysis import analyze_area_psths
@@ -38,8 +46,10 @@ def build_payload():
         files = set()
         max_mtime = 0
         fig_dirname = ""
+        target_dir = public_figures_dir / fig_id # Temporary
         
         # Merge assets from all bases (sibling then local to prioritize local overwrites)
+        first_match = True
         for base in reversed(output_bases):
             if not base.exists(): continue
             matches = [d for d in base.iterdir() if d.is_dir() and d.name.startswith(fig_id)]
@@ -48,7 +58,14 @@ def build_payload():
             fig_dir = matches[0]
             fig_dirname = fig_dir.name
             target_dir = public_figures_dir / fig_dirname
-            target_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Atomic Cleanup: Ensure no stale files exist in the public target (run once)
+            if first_match:
+                if target_dir.exists():
+                    shutil.rmtree(target_dir)
+                target_dir.mkdir(parents=True, exist_ok=True)
+                first_match = False
+            
             max_mtime = max(max_mtime, fig_dir.stat().st_mtime)
             
             for f in fig_dir.iterdir():
@@ -128,7 +145,7 @@ def build_payload():
         n_sessions = len([line for line in session_map_path.read_text().split('\n') if '|' in line]) - 2
         
     # Workflow milestone constraint
-    CURRENT_MILESTONE = 4
+    CURRENT_MILESTONE = GLOBAL_CONFIG.get("CURRENT_MILESTONE", 4)
     manifested_phases = [f['phase'] for f in figures_manifest]
     active_phase_num = min(CURRENT_MILESTONE, max(manifested_phases)) if manifested_phases else CURRENT_MILESTONE
 
@@ -163,11 +180,10 @@ def build_payload():
     with open(dashboard_data_dir / "scoreboard.json", "w") as f:
         json.dump(scoreboard_data, f, indent=2)
 
-    # Last sync timestamp from the newest modified output_base
+    # Precise Sync: Take the max mtime from the manifested figure objects
     sync_ts = 0.0
-    for base in output_bases:
-        if base.exists():
-            sync_ts = max(sync_ts, base.stat().st_mtime)
+    if figures_manifest:
+        sync_ts = max([f.get("mtime", 0) for f in figures_manifest])
 
     final_manifest = {
         "figures": figures_manifest,
