@@ -66,8 +66,6 @@ def build_payload():
                 target_dir.mkdir(parents=True, exist_ok=True)
                 first_match = False
             
-            max_mtime = max(max_mtime, fig_dir.stat().st_mtime)
-            
             for f in fig_dir.iterdir():
                 if f.is_file() and f.suffix in ['.html', '.svg', '.png']:
                     # Canonicalization: Filter out stale Figure 7 variants
@@ -77,6 +75,7 @@ def build_payload():
                             
                     shutil.copy2(f, target_dir / f.name)
                     files.add(f.name)
+                    max_mtime = max(max_mtime, f.stat().st_mtime)
                     
         if not fig_dirname: continue
         

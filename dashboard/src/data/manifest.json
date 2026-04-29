@@ -11,7 +11,7 @@
       ],
       "has_readme": false,
       "stats": {},
-      "mtime": 1777299943.7659135,
+      "mtime": 1777313180.778151,
       "metadata": {
         "x": "Time",
         "y": "Area Hierarchy"
@@ -210,7 +210,7 @@
         },
         "aaab": {}
       },
-      "mtime": 1777316622.1794288,
+      "mtime": 1777394918.5516877,
       "metadata": {
         "x": "Time",
         "y": "Firing Rate"
@@ -389,7 +389,7 @@
         },
         "aaab": {}
       },
-      "mtime": 1777316626.464446,
+      "mtime": 1777394922.3472087,
       "metadata": {
         "x": "Time",
         "y": "FR Delta"
@@ -750,7 +750,7 @@
           }
         }
       },
-      "mtime": 1777385871.3767781,
+      "mtime": 1777395047.6862411,
       "metadata": {
         "x": "Time",
         "y": "FR / Trials"
@@ -811,7 +811,7 @@
       ],
       "has_readme": false,
       "stats": {},
-      "mtime": 1777284878.4592514,
+      "mtime": 1777284929.0322485,
       "metadata": {
         "x": "Time",
         "y": "Frequency"
@@ -874,7 +874,7 @@
       ],
       "has_readme": false,
       "stats": {},
-      "mtime": 1777092324.5157566,
+      "mtime": 1777092394.9948895,
       "metadata": {
         "x": "Time",
         "y": "Power (dB)"
@@ -900,7 +900,7 @@
       ],
       "has_readme": false,
       "stats": {},
-      "mtime": 1777410308.536561,
+      "mtime": 1777410308.5470016,
       "metadata": {
         "x": "Frequency",
         "y": "Coherence"
@@ -929,7 +929,7 @@
       ],
       "has_readme": false,
       "stats": {},
-      "mtime": 1777068822.6066947,
+      "mtime": 1777307342.5101278,
       "metadata": {
         "x": "Time",
         "y": "Correlation"
@@ -981,7 +981,7 @@
       ],
       "has_readme": false,
       "stats": {},
-      "mtime": 1777142569.4103563,
+      "mtime": 1777305676.2772615,
       "metadata": {
         "x": "Frequency",
         "y": "Coherence"
@@ -1029,7 +1029,7 @@
       ],
       "has_readme": false,
       "stats": {},
-      "mtime": 1777144273.3414326,
+      "mtime": 1777307461.9835622,
       "metadata": {
         "x": "Frequency",
         "y": "Delta Coh"
@@ -1077,7 +1077,7 @@
       ],
       "has_readme": false,
       "stats": {},
-      "mtime": 1777142982.1568573,
+      "mtime": 1777304666.9980943,
       "metadata": {
         "x": "Time",
         "y": "Depth"
@@ -1116,7 +1116,7 @@
       ],
       "has_readme": false,
       "stats": {},
-      "mtime": 1777164178.9093306,
+      "mtime": 1777307465.8621297,
       "metadata": {
         "x": "Time",
         "y": "Sink/Source Intensity"
@@ -1132,7 +1132,7 @@
       ],
       "has_readme": false,
       "stats": {},
-      "mtime": 1776870512.4058366,
+      "mtime": 1776995648.8151088,
       "metadata": {
         "x": "Time",
         "y": "Frequency"
@@ -1148,7 +1148,7 @@
       ],
       "has_readme": false,
       "stats": {},
-      "mtime": 1777049198.7879972,
+      "mtime": 1776977936.1812677,
       "metadata": {
         "x": "Frequency",
         "y": "Causality (GC)"
@@ -1164,7 +1164,7 @@
       ],
       "has_readme": false,
       "stats": {},
-      "mtime": 1777049198.7889977,
+      "mtime": 1776977938.5808046,
       "metadata": {
         "x": "Frequency",
         "y": "Causality (GC)"
@@ -1213,7 +1213,7 @@
       ],
       "has_readme": false,
       "stats": {},
-      "mtime": 1776797091.8207526,
+      "mtime": 1776542919.5300117,
       "metadata": {
         "x": "Frequency",
         "y": "Impedance (kOhm)"
@@ -1229,7 +1229,7 @@
       ],
       "has_readme": false,
       "stats": {},
-      "mtime": 1776797091.8212638,
+      "mtime": 1776995698.6975484,
       "metadata": {
         "x": "Surprise Level",
         "y": "Response Amplitude"
@@ -1245,7 +1245,7 @@
       ],
       "has_readme": false,
       "stats": {},
-      "mtime": 1776797091.8217716,
+      "mtime": 1776996759.1660037,
       "metadata": {
         "x": "Time",
         "y": "LFP (uV)"
@@ -1261,7 +1261,7 @@
       ],
       "has_readme": false,
       "stats": {},
-      "mtime": 1776797091.822329,
+      "mtime": 1776996763.4519129,
       "metadata": {
         "x": "Phase Freq",
         "y": "Amp Freq"
@@ -1277,7 +1277,7 @@
       ],
       "has_readme": false,
       "stats": {},
-      "mtime": 1776797091.822329,
+      "mtime": 1776543517.210724,
       "metadata": {
         "x": "Area 1",
         "y": "Area 2"
@@ -1285,5 +1285,5 @@
     }
   ],
   "reports": [],
-  "last_synced": "1777410308.536561"
+  "last_synced": "1777410308.5470016"
 }
