@@ -1802,6 +1802,46 @@
         "x": "Area 1",
         "y": "Area 2"
       }
+    },
+    {
+      "id": "f021",
+      "title": "MaDeLaMo Schematic",
+      "phase": 5,
+      "baseUrl": "/figures/f021-pupil-decoding",
+      "files": [
+        "fig21_pupil_surprise.html",
+        "fig21_pupil_surprise.svg"
+      ],
+      "file_mtimes": {
+        "fig21_pupil_surprise.html": 1777069480.928066,
+        "fig21_pupil_surprise.svg": 1777069485.7933433
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1777069485.7933433,
+      "metadata": {
+        "x": "Latent State",
+        "y": "Area Activity"
+      }
+    },
+    {
+      "id": "f022",
+      "title": "MaDeLaNe Projection",
+      "phase": 5,
+      "baseUrl": "/figures/f022-dimensionality-reduction",
+      "files": [
+        "fig22_pca_trajectories_230630.html"
+      ],
+      "file_mtimes": {
+        "fig22_pca_trajectories_230630.html": 1776978561.0636516
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1776978561.0636516,
+      "metadata": {
+        "x": "Component 1",
+        "y": "Component 2"
+      }
     }
   ],
   "reports": [],

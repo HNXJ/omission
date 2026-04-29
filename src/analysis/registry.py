@@ -26,7 +26,10 @@ class FigureRegistry:
         {"id": "f017", "title": "Prediction Error Scaling", "module": "src/f017_prediction_errors", "phase": 5, "x": "Surprise Level", "y": "Response Amplitude"},
         {"id": "f018", "title": "Ghost Signals", "module": "src/f018_ghost_signals", "phase": 5, "x": "Time", "y": "LFP (uV)"},
         {"id": "f019", "title": "PAC Analysis", "module": "src/f019_pac_analysis", "phase": 5, "x": "Phase Freq", "y": "Amp Freq"},
-        {"id": "f020", "title": "Effective Connectivity", "module": "src/f020_effective_connectivity", "phase": 5, "x": "Area 1", "y": "Area 2"}
+        {"id": "f020", "title": "Effective Connectivity", "module": "src/f020_effective_connectivity", "phase": 5, "x": "Area 1", "y": "Area 2"},
+        
+        {"id": "f021", "title": "MaDeLaMo Schematic", "module": "src/f021_madelamo", "phase": 5, "x": "Latent State", "y": "Area Activity"},
+        {"id": "f022", "title": "MaDeLaNe Projection", "module": "src/f022_madelane", "phase": 5, "x": "Component 1", "y": "Component 2"}
     ]
 
     @classmethod
