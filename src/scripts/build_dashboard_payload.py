@@ -60,16 +60,15 @@ def build_payload():
             matches = [d for d in base.iterdir() if d.is_dir() and d.name.startswith(fig_id)]
             if not matches: continue
             
+            # Found the source directory - use it and stop looking in other bases
             fig_dir = matches[0]
             fig_dirname = fig_dir.name
             target_dir = public_figures_dir / fig_dirname
             
             # Atomic Cleanup: Ensure no stale files exist in the public target (run once)
-            if first_match:
-                if target_dir.exists():
-                    shutil.rmtree(target_dir)
-                target_dir.mkdir(parents=True, exist_ok=True)
-                first_match = False
+            if target_dir.exists():
+                shutil.rmtree(target_dir)
+            target_dir.mkdir(parents=True, exist_ok=True)
             
             for f in fig_dir.iterdir():
                 if f.is_file() and f.suffix in ['.html', '.svg', '.png']:
@@ -83,6 +82,9 @@ def build_payload():
                     files.add(f.name)
                     file_mtimes[f.name] = f.stat().st_mtime
                     max_mtime = max(max_mtime, f.stat().st_mtime)
+            
+            # Break after first match to enforce base priority (local-first)
+            break
                     
         if not fig_dirname: continue
         
