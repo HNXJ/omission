@@ -961,7 +961,7 @@
       "id": "f005",
       "title": "Time-Frequency Representation",
       "phase": 3,
-      "baseUrl": "/figures/f005-time-frequency-representation",
+      "baseUrl": "/figures/f005-tfr",
       "files": [
         "f005_tfr_local_FEF_AXAB.html",
         "f005_tfr_local_FST_AAAB.html",
@@ -1011,6 +1011,7 @@
         "fig5_tfr_omission.html"
       ],
       "file_mtimes": {
+        "f005_tfr_local_V1_AXAB.html": 1777048478.1987767,
         "f005_tfr_local_FEF_AXAB.html": 1777055439.467656,
         "f005_tfr_local_FST_AAAB.html": 1777055439.5572996,
         "f005_tfr_local_FST_AXAB.html": 1777055439.3870358,
@@ -1018,7 +1019,6 @@
         "f005_tfr_local_MT_AXAB.html": 1777055439.1331053,
         "f005_tfr_local_PFC_AXAB.html": 1777048479.1082118,
         "f005_tfr_local_TEO_AXAB.html": 1777055439.3015244,
-        "f005_tfr_local_V1_AXAB.html": 1777046107.4317746,
         "f005_tfr_local_V2_AXAB.html": 1777048478.2983873,
         "f005_tfr_local_V3a_AXAB.html": 1777048478.4757426,
         "f005_tfr_local_V3d_AXAB.html": 1777048478.3976212,
@@ -1810,15 +1810,17 @@
       "baseUrl": "/figures/f021-pupil-decoding",
       "files": [
         "fig21_pupil_surprise.html",
-        "fig21_pupil_surprise.svg"
+        "fig21_pupil_surprise.svg",
+        "madelamo.png"
       ],
       "file_mtimes": {
+        "madelamo.png": 1777484518.418,
         "fig21_pupil_surprise.html": 1777069480.928066,
         "fig21_pupil_surprise.svg": 1777069485.7933433
       },
       "has_readme": false,
       "stats": {},
-      "mtime": 1777069485.7933433,
+      "mtime": 1777484518.418,
       "metadata": {
         "x": "Latent State",
         "y": "Area Activity"
@@ -1830,14 +1832,16 @@
       "phase": 5,
       "baseUrl": "/figures/f022-dimensionality-reduction",
       "files": [
-        "fig22_pca_trajectories_230630.html"
+        "fig22_pca_trajectories_230630.html",
+        "madelane.png"
       ],
       "file_mtimes": {
+        "madelane.png": 1777483568.462,
         "fig22_pca_trajectories_230630.html": 1776978561.0636516
       },
       "has_readme": false,
       "stats": {},
-      "mtime": 1776978561.0636516,
+      "mtime": 1777483568.462,
       "metadata": {
         "x": "Component 1",
         "y": "Component 2"
@@ -1845,5 +1849,5 @@
     }
   ],
   "reports": [],
-  "last_synced": "1777410308.5470016"
+  "last_synced": "1777484518.418"
 }

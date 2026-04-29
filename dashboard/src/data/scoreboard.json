@@ -210,21 +210,21 @@
     {
       "analysis": "MaDeLaMo Schematic",
       "file": "script.py",
-      "date": "2026-04-24",
-      "time": "17:24",
+      "date": "2026-04-29",
+      "time": "12:41",
       "status": "pass",
       "score": 80,
-      "notes": "Generated 2 portable assets.",
+      "notes": "Generated 3 portable assets.",
       "code": "src.f021"
     },
     {
       "analysis": "MaDeLaNe Projection",
       "file": "script.py",
-      "date": "2026-04-23",
-      "time": "16:09",
+      "date": "2026-04-29",
+      "time": "12:26",
       "status": "pass",
       "score": 80,
-      "notes": "Generated 1 portable assets.",
+      "notes": "Generated 2 portable assets.",
       "code": "src.f022"
     }
   ]

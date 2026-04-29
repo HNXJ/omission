@@ -31,6 +31,10 @@ def build_payload():
         REPO_ROOT.parent / "outputs" / "oglo-8figs"
     ]
     
+    # Prioritize local by checking bases in order (first match wins)
+    # Actually, the loop currently does 'for base in reversed(output_bases)' 
+    # which checks the parent first. I will fix it to check local first.
+    
     dashboard_data_dir = REPO_ROOT / "dashboard" / "src" / "data"
     dashboard_data_dir.mkdir(parents=True, exist_ok=True)
     
@@ -49,9 +53,9 @@ def build_payload():
         fig_dirname = ""
         target_dir = public_figures_dir / fig_id # Temporary
         
-        # Merge assets from all bases (sibling then local to prioritize local overwrites)
+        # Merge assets from all bases (local then sibling to prioritize local)
         first_match = True
-        for base in reversed(output_bases):
+        for base in output_bases:
             if not base.exists(): continue
             matches = [d for d in base.iterdir() if d.is_dir() and d.name.startswith(fig_id)]
             if not matches: continue
