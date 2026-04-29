@@ -44,6 +44,7 @@ def build_payload():
     for fig in registry:
         fig_id = fig['id']
         files = set()
+        file_mtimes = {}
         max_mtime = 0
         fig_dirname = ""
         target_dir = public_figures_dir / fig_id # Temporary
@@ -74,7 +75,9 @@ def build_payload():
                             continue
                             
                     shutil.copy2(f, target_dir / f.name)
+                    # Track per-file mtime for asset-level precision
                     files.add(f.name)
+                    file_mtimes[f.name] = f.stat().st_mtime
                     max_mtime = max(max_mtime, f.stat().st_mtime)
                     
         if not fig_dirname: continue
@@ -124,6 +127,7 @@ def build_payload():
             "phase": fig.get('phase', 1),
             "baseUrl": f"/figures/{fig_dirname}", # PORTABLE ASSET PATH
             "files": sorted_files,
+            "file_mtimes": file_mtimes,
             "has_readme": (target_dir / "README.md").exists(),
             "stats": stats,
             "mtime": max_mtime,
