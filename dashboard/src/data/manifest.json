@@ -1792,8 +1792,134 @@
         "x": "Test Case",
         "y": "Pass/Fail"
       }
+    },
+    {
+      "id": "f048",
+      "title": "Profile Search Utility",
+      "phase": 6,
+      "baseUrl": "/figures/f048-profile-analysis",
+      "entry": "index.html",
+      "files": [
+        "exemplar_psth_230825-probe2-unit36.html",
+        "exemplar_psth_230825-probe2-unit36_p2.html",
+        "exemplar_psth_230825-probe2-unit36_p3.html",
+        "exemplar_psth_230825-probe2-unit36_p4.html",
+        "index.html",
+        "repetition_exemplar_AXAB_facilitator_230629-probe0-unit268.html",
+        "repetition_exemplar_AXAB_facilitator_230629-probe1-unit104.html",
+        "repetition_exemplar_AXAB_suppressor_230629-probe0-unit276.html",
+        "repetition_exemplar_AXAB_suppressor_230630-probe1-unit71.html",
+        "repetition_exemplar_BXBA_facilitator_230629-probe0-unit76.html",
+        "repetition_exemplar_BXBA_facilitator_230630-probe0-unit27.html",
+        "repetition_exemplar_BXBA_suppressor_230629-probe0-unit77.html",
+        "repetition_exemplar_BXBA_suppressor_230629-probe1-unit88.html",
+        "repetition_exemplar_RXRR_facilitator_230629-probe0-unit104.html",
+        "repetition_exemplar_RXRR_facilitator_230630-probe1-unit25.html",
+        "repetition_exemplar_RXRR_suppressor_230629-probe0-unit72.html",
+        "repetition_exemplar_RXRR_suppressor_230721-probe0-unit38.html"
+      ],
+      "file_mtimes": {
+        "exemplar_psth_230825-probe2-unit36.html": 1777574075.504712,
+        "exemplar_psth_230825-probe2-unit36_p2.html": 1777574906.088511,
+        "exemplar_psth_230825-probe2-unit36_p3.html": 1777574906.0224495,
+        "exemplar_psth_230825-probe2-unit36_p4.html": 1777574906.157834,
+        "index.html": 1777574906.22481,
+        "repetition_exemplar_AXAB_facilitator_230629-probe0-unit268.html": 1777575498.2927375,
+        "repetition_exemplar_AXAB_facilitator_230629-probe1-unit104.html": 1777575498.2437866,
+        "repetition_exemplar_AXAB_suppressor_230629-probe0-unit276.html": 1777575498.3913803,
+        "repetition_exemplar_AXAB_suppressor_230630-probe1-unit71.html": 1777575498.3429594,
+        "repetition_exemplar_BXBA_facilitator_230629-probe0-unit76.html": 1777575498.5012214,
+        "repetition_exemplar_BXBA_facilitator_230630-probe0-unit27.html": 1777575498.4464214,
+        "repetition_exemplar_BXBA_suppressor_230629-probe0-unit77.html": 1777575498.5500412,
+        "repetition_exemplar_BXBA_suppressor_230629-probe1-unit88.html": 1777575498.6027215,
+        "repetition_exemplar_RXRR_facilitator_230629-probe0-unit104.html": 1777575498.6553936,
+        "repetition_exemplar_RXRR_facilitator_230630-probe1-unit25.html": 1777575498.7127643,
+        "repetition_exemplar_RXRR_suppressor_230629-probe0-unit72.html": 1777575498.767094,
+        "repetition_exemplar_RXRR_suppressor_230721-probe0-unit38.html": 1777575498.8171525
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1777575498.8171525,
+      "metadata": {
+        "x": "Effect Size",
+        "y": "Count"
+      }
+    },
+    {
+      "id": "f049",
+      "title": "Omission Profile Figures",
+      "phase": 6,
+      "baseUrl": "/figures/f049-omission-profiles",
+      "entry": "omission_exemplars.html",
+      "files": [
+        "omission_exemplars.html",
+        "profile_population_summary.html",
+        "repetition_exemplars.html"
+      ],
+      "file_mtimes": {
+        "omission_exemplars.html": 1777575989.3511355,
+        "profile_population_summary.html": 1777575989.4139464,
+        "repetition_exemplars.html": 1777575989.1417015
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1777575989.4139464,
+      "metadata": {
+        "x": "Time (ms)",
+        "y": "Firing Rate (Hz)"
+      }
+    },
+    {
+      "id": "f050",
+      "title": "Conjunction Profiles",
+      "phase": 6,
+      "baseUrl": "/figures/f050-conjunction-profiles",
+      "entry": "conjunction_loose_0_230816-probe0-unit5.html",
+      "files": [
+        "conjunction_loose_0_230816-probe0-unit5.html",
+        "conjunction_loose_1_230816-probe0-unit3.html",
+        "conjunction_loose_2_230629-probe1-unit7.html",
+        "conjunction_loose_3_230823-probe2-unit54.html",
+        "conjunction_loose_4_230629-probe0-unit266.html",
+        "conjunction_loose_5_230721-probe1-unit209.html",
+        "conjunction_strict_0_230816-probe0-unit5.html",
+        "conjunction_strict_1_230816-probe0-unit3.html",
+        "conjunction_strict_2_230629-probe1-unit7.html",
+        "conjunction_strict_3_230823-probe2-unit54.html",
+        "conjunction_strict_4_230629-probe0-unit266.html",
+        "conjunction_strict_5_230721-probe1-unit209.html",
+        "conjunction_summary_hardened.html",
+        "hardened_exemplar_0_230630-probe0-unit22.html",
+        "hardened_exemplar_1_230630-probe1-unit81.html",
+        "hardened_exemplar_2_230629-probe0-unit70.html"
+      ],
+      "file_mtimes": {
+        "conjunction_loose_0_230816-probe0-unit5.html": 1777577532.328199,
+        "conjunction_loose_1_230816-probe0-unit3.html": 1777577532.5394912,
+        "conjunction_loose_2_230629-probe1-unit7.html": 1777577532.7851257,
+        "conjunction_loose_3_230823-probe2-unit54.html": 1777577533.021126,
+        "conjunction_loose_4_230629-probe0-unit266.html": 1777577533.256808,
+        "conjunction_loose_5_230721-probe1-unit209.html": 1777577533.5085547,
+        "conjunction_strict_0_230816-probe0-unit5.html": 1777577533.7575333,
+        "conjunction_strict_1_230816-probe0-unit3.html": 1777577534.0030324,
+        "conjunction_strict_2_230629-probe1-unit7.html": 1777577534.2055845,
+        "conjunction_strict_3_230823-probe2-unit54.html": 1777577534.4287899,
+        "conjunction_strict_4_230629-probe0-unit266.html": 1777577534.6584127,
+        "conjunction_strict_5_230721-probe1-unit209.html": 1777577534.8698242,
+        "conjunction_summary_hardened.html": 1777577957.3656633,
+        "hardened_exemplar_0_230630-probe0-unit22.html": 1777577957.579748,
+        "hardened_exemplar_1_230630-probe1-unit81.html": 1777577957.7852886,
+        "hardened_exemplar_2_230629-probe0-unit70.html": 1777577957.9870503
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1777577957.9870503,
+      "metadata": {
+        "x": "Time (ms)",
+        "y": "Firing Rate (Hz)"
+      }
     }
   ],
   "reports": [],
-  "last_synced": "1777514683.453544"
+  "last_synced": "1777577957.9870503"
 }

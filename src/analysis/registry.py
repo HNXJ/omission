@@ -31,7 +31,10 @@ class FigureRegistry:
         {"id": "f021", "title": "MaDeLaMo Schematic", "module": "src/f021_madelamo", "phase": 5, "x": "Latent State", "y": "Area Activity"},
         {"id": "f022", "title": "MaDeLaNe Projection", "module": "src/f022_madelane", "phase": 5, "x": "Component 1", "y": "Component 2"},
         
-        {"id": "f047", "title": "Pipeline Stability Audit", "module": "src/f047_stability_audit", "phase": 6, "x": "Test Case", "y": "Pass/Fail"}
+        {"id": "f047", "title": "Pipeline Stability Audit", "module": "src/f047_stability_audit", "phase": 6, "x": "Test Case", "y": "Pass/Fail"},
+        {"id": "f048", "title": "Profile Search Utility", "module": "src/f048_profile_analysis", "phase": 6, "x": "Effect Size", "y": "Count"},
+        {"id": "f049", "title": "Omission Profile Figures", "module": "src/f049_omission_profiles", "phase": 6, "x": "Time (ms)", "y": "Firing Rate (Hz)"},
+        {"id": "f050", "title": "Conjunction Profiles", "module": "src/f050_conjunction_profiles", "phase": 6, "x": "Time (ms)", "y": "Firing Rate (Hz)"}
     ]
 
     # SCIENTIFIC CALIBRATION: Processing latencies per area

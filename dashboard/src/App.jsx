@@ -28,7 +28,8 @@ const PHASES = [
   { id: 'p2', title: 'Phase 2: Spectral & Coordination', range: [5, 11], path: '/phase/2' },
   { id: 'p3', title: 'Phase 3: Connectivity & Granger', range: [12, 20], path: '/phase/3' },
   { id: 'p4', title: 'Phase 4: Decoding & Behavior', range: [21, 30], path: '/phase/4' },
-  { id: 'p5', title: 'Phase 5: State-Space & RNN', range: [31, 50], path: '/phase/5' }
+  { id: 'p5', title: 'Phase 5: State-Space & RNN', range: [31, 40], path: '/phase/5' },
+  { id: 'p6', title: 'Phase 6: Stability & Profiles', range: [41, 50], path: '/phase/6' }
 ];
 
 const TerminalTicker = () => (
@@ -91,7 +92,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [modalFile, setModalFile] = useState(null);
   const [viewMode, setViewMode] = useState('gallery');
-  const [expandedPhases, setExpandedPhases] = useState(['p1', 'p2', 'p3', 'p4', 'p5']);
+  const [expandedPhases, setExpandedPhases] = useState(['p1', 'p2', 'p3', 'p4', 'p5', 'p6']);
 
   useEffect(() => {
     if (selectedItem) {

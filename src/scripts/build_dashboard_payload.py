@@ -70,7 +70,15 @@ def build_payload():
                 
                 # Atomic Cleanup: Ensure no stale files exist in the public target
                 if target_dir.exists():
-                    shutil.rmtree(target_dir)
+                    try:
+                        shutil.rmtree(target_dir)
+                    except Exception as e:
+                        print(f"[warning] Failed to remove {target_dir}: {e}. Retrying with file-level deletion.")
+                        for item in target_dir.glob('*'):
+                            try:
+                                if item.is_file(): item.unlink()
+                                elif item.is_dir(): shutil.rmtree(item)
+                            except: pass
                 target_dir.mkdir(parents=True, exist_ok=True)
                 
                 for f in target_source_dir.iterdir():
