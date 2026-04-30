@@ -5,6 +5,8 @@ from src.analysis.io.logger import log
 from src.analysis.lfp.sfc import get_plv_spectrum, apply_subsampling
 from src.analysis.stats.tiers import get_significance_tier, run_permutation_test
 
+from src.analysis.registry import FigureRegistry
+
 def get_band_phases(lfp, freqs, fs=1000):
     """
     Filters LFP and extracts instantaneous phase using Hilbert transform.
@@ -34,6 +36,13 @@ def analyze_circular_sfc(loader: DataLoader, areas: list):
     for area in areas:
         print(f"[action] Computing Circular SFC for {area}")
         
+        # Determine area-specific latency offset
+        latency = FigureRegistry.AREA_LATENCY.get(area, FigureRegistry.AREA_LATENCY["DEFAULT"])
+        t_start = 1000 + latency
+        t_end = t_start + 500
+        t_mask = slice(t_start, t_end)
+        print(f"[debug] Using {area} latency: {latency}ms (Window: {t_start}-{t_end})")
+        
         # Load aligned signals (omission window)
         spk_s = loader.get_signal(mode="spk", condition="AAAB", area=area, align_to="omission")
         lfp_s = loader.get_signal(mode="lfp", condition="AAAB", area=area, align_to="omission")
@@ -51,7 +60,7 @@ def analyze_circular_sfc(loader: DataLoader, areas: list):
         for lfp_arr, spk_arr in zip(lfp_s, spk_s):
             if lfp_arr.size == 0: continue
             mean_lfp = np.mean(lfp_arr, axis=1) # (trials, time)
-            fr = np.mean(spk_arr[:, :, 1000:1500], axis=(0, 2))
+            fr = np.mean(spk_arr[:, :, t_mask], axis=(0, 2))
             for u_idx, val in enumerate(fr):
                 if val > 0.1: s_unit_data.append((val, mean_lfp, spk_arr[:, u_idx, :]))
         s_unit_data.sort(key=lambda x: x[0], reverse=True)
@@ -62,7 +71,7 @@ def analyze_circular_sfc(loader: DataLoader, areas: list):
         for lfp_arr, spk_arr in zip(lfp_o, spk_o):
             if lfp_arr.size == 0: continue
             mean_lfp = np.mean(lfp_arr, axis=1)
-            fr = np.mean(spk_arr[:, :, 1000:1500], axis=(0, 2))
+            fr = np.mean(spk_arr[:, :, t_mask], axis=(0, 2))
             for u_idx, val in enumerate(fr):
                 if val > 0.1: o_unit_data.append((val, mean_lfp, spk_arr[:, u_idx, :]))
         o_unit_data.sort(key=lambda x: x[0], reverse=True)
@@ -77,8 +86,6 @@ def analyze_circular_sfc(loader: DataLoader, areas: list):
             # Extract phases for S+
             for _, lfp_mat, spk_mat in top_s:
                 phase_mat = get_band_phases(lfp_mat, None)[name] # (trials, time)
-                # Spike indices in window 1031-1531 (relative to omission)
-                t_mask = slice(1031, 1531)
                 unit_phases = phase_mat[:, t_mask][spk_mat[:, t_mask] > 0]
                 results[area]['bands'][name]['s_phases'].extend(unit_phases.tolist())
                 

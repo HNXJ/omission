@@ -274,6 +274,26 @@ body {
   gap: 16px;
 }
 
+.figure-viewport {
+  width: 100%;
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.figure-viewport.large {
+  min-height: 600px;
+}
+
+.artifact-image {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
 .figure-iframe-container {
   width: 100%;
   background-color: #000;

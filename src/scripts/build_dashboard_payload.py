@@ -25,7 +25,7 @@ def build_payload():
     loader = DataLoader()
     registry = FigureRegistry.get_all()
     
-    # Repo-relative paths
+    # Repo-relative paths: Search local then siblings
     output_bases = [
         REPO_ROOT / "outputs" / "oglo-8figs",
         REPO_ROOT.parent / "outputs" / "oglo-8figs"
@@ -54,39 +54,43 @@ def build_payload():
         target_dir = public_figures_dir / fig_id # Temporary
         
         # Merge assets from all bases (local then sibling to prioritize local)
-        first_match = True
-        for base in output_bases:
-            if not base.exists(): continue
+        target_source_dir = None
+        for base_path in output_bases:
+            base = Path(base_path)
+            if not base.exists():
+                print(f"[debug] Base path does not exist: {base}")
+                continue
+            
             matches = [d for d in base.iterdir() if d.is_dir() and d.name.startswith(fig_id)]
-            if not matches: continue
-            
-            # Found the source directory - use it and stop looking in other bases
-            fig_dir = matches[0]
-            fig_dirname = fig_dir.name
-            target_dir = public_figures_dir / fig_dirname
-            
-            # Atomic Cleanup: Ensure no stale files exist in the public target (run once)
-            if target_dir.exists():
-                shutil.rmtree(target_dir)
-            target_dir.mkdir(parents=True, exist_ok=True)
-            
-            for f in fig_dir.iterdir():
-                if f.is_file() and f.suffix in ['.html', '.svg', '.png']:
-                    # Canonicalization: Filter out stale Figure 7 variants
-                    if fig_id == "f007":
-                        if f.name.startswith("fig7_") or "spectrum" in f.name:
+            if matches:
+                print(f"[debug] Found matches for {fig_id}: {matches}")
+                target_source_dir = matches[0]
+                fig_dirname = target_source_dir.name
+                target_dir = public_figures_dir / fig_dirname
+                
+                # Atomic Cleanup: Ensure no stale files exist in the public target
+                if target_dir.exists():
+                    shutil.rmtree(target_dir)
+                target_dir.mkdir(parents=True, exist_ok=True)
+                
+                for f in target_source_dir.iterdir():
+                    if f.is_file() and f.suffix in ['.html', '.svg', '.png']:
+                        # Policy Layer: Use registry to decide inclusion
+                        if not FigureRegistry.should_include_file(fig_id, f.name):
                             continue
-                            
-                    shutil.copy2(f, target_dir / f.name)
-                    # Track per-file mtime for asset-level precision
-                    files.add(f.name)
-                    file_mtimes[f.name] = f.stat().st_mtime
-                    max_mtime = max(max_mtime, f.stat().st_mtime)
-            
-            # Break after first match to enforce base priority (local-first)
-            break
+                                
+                        shutil.copy2(f, target_dir / f.name)
+                        # Track per-file mtime for asset-level precision
+                        files.add(f.name)
+                        file_mtimes[f.name] = f.stat().st_mtime
+                        max_mtime = max(max_mtime, f.stat().st_mtime)
+                
+                # Break after first match to enforce base priority (local-first)
+                break
                     
-        if not fig_dirname: continue
+        if not target_source_dir:
+            print(f"[debug] No source directory found for {fig_id}")
+            continue
         
         sorted_files = sorted(list(files))
         stats = {}
@@ -132,6 +136,7 @@ def build_payload():
             "title": fig['title'],
             "phase": fig.get('phase', 1),
             "baseUrl": f"/figures/{fig_dirname}", # PORTABLE ASSET PATH
+            "entry": "index.html" if (target_dir / "index.html").exists() else sorted_files[0] if sorted_files else None,
             "files": sorted_files,
             "file_mtimes": file_mtimes,
             "has_readme": (target_dir / "README.md").exists(),

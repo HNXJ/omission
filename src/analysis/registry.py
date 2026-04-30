@@ -29,8 +29,26 @@ class FigureRegistry:
         {"id": "f020", "title": "Effective Connectivity", "module": "src/f020_effective_connectivity", "phase": 5, "x": "Area 1", "y": "Area 2"},
         
         {"id": "f021", "title": "MaDeLaMo Schematic", "module": "src/f021_madelamo", "phase": 5, "x": "Latent State", "y": "Area Activity"},
-        {"id": "f022", "title": "MaDeLaNe Projection", "module": "src/f022_madelane", "phase": 5, "x": "Component 1", "y": "Component 2"}
+        {"id": "f022", "title": "MaDeLaNe Projection", "module": "src/f022_madelane", "phase": 5, "x": "Component 1", "y": "Component 2"},
+        
+        {"id": "f047", "title": "Pipeline Stability Audit", "module": "src/f047_stability_audit", "phase": 6, "x": "Test Case", "y": "Pass/Fail"}
     ]
+
+    # SCIENTIFIC CALIBRATION: Processing latencies per area
+    AREA_LATENCY = {
+        "V1": 31,
+        "V2": 45,
+        "V3": 50,
+        "V4": 60,
+        "FEF": 80,
+        "PFC": 100,
+        "DEFAULT": 31
+    }
+
+    # POLICY LAYER: Centralized semantic rules
+    STALE_PATTERNS = {
+        "f007": [r"^fig7_.*", r".*spectrum.*"]
+    }
 
     @classmethod
     def get_all(cls):
@@ -46,3 +64,16 @@ class FigureRegistry:
     @classmethod
     def get_by_phase(cls, phase_num):
         return [f for f in cls.FIGURE_DATA if f['phase'] == phase_num]
+
+    @classmethod
+    def should_include_file(cls, fig_id, filename):
+        """
+        Policy enforcement for artifact inclusion.
+        Returns False if the file matches a stale pattern for the figure.
+        """
+        import re
+        patterns = cls.STALE_PATTERNS.get(fig_id, [])
+        for pattern in patterns:
+            if re.match(pattern, filename):
+                return False
+        return True

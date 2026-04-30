@@ -5,6 +5,7 @@
       "title": "Theory Schematic",
       "phase": 1,
       "baseUrl": "/figures/f001-theory",
+      "entry": "fig1_theory_schematic.html",
       "files": [
         "fig1_theory_schematic.html",
         "fig1_theory_schematic.svg"
@@ -26,6 +27,7 @@
       "title": "Omission PSTH",
       "phase": 1,
       "baseUrl": "/figures/f002-psth",
+      "entry": "f002_psth_FEF.html",
       "files": [
         "f002_psth_FEF.html",
         "f002_psth_FEF.svg",
@@ -251,6 +253,7 @@
       "title": "Surprise Dynamics",
       "phase": 2,
       "baseUrl": "/figures/f003-surprise",
+      "entry": "f003_surprise_index.html",
       "files": [
         "f003_surprise_index.html",
         "fig3A_S_plus.html",
@@ -458,6 +461,7 @@
       "title": "Unit Coding Suite",
       "phase": 2,
       "baseUrl": "/figures/f004-coding",
+      "entry": "f004_coding_suite_O_plus_V1.html",
       "files": [
         "f004_coding_suite_O_plus_V1.html",
         "f004_coding_suite_S_minus.html",
@@ -962,6 +966,7 @@
       "title": "Time-Frequency Representation",
       "phase": 3,
       "baseUrl": "/figures/f005-time-frequency-representation",
+      "entry": "f005_tfr_local_V1_AXAB.html",
       "files": [
         "f005_tfr_local_V1_AXAB.html"
       ],
@@ -981,6 +986,7 @@
       "title": "Band-Specific Power",
       "phase": 3,
       "baseUrl": "/figures/f006-band-power",
+      "entry": "f006_band_power_local_FEF_AAAB.html",
       "files": [
         "f006_band_power_local_FEF_AAAB.html",
         "f006_band_power_local_FEF_AXAB.html",
@@ -1094,6 +1100,7 @@
       "title": "Spike-Field Coherence",
       "phase": 4,
       "baseUrl": "/figures/f007-sfc",
+      "entry": "f007_circular_sfc_FEF.html",
       "files": [
         "f007_circular_sfc_FEF.html",
         "f007_circular_sfc_FST.html",
@@ -1133,6 +1140,7 @@
       "title": "Cross-Area Coordination",
       "phase": 4,
       "baseUrl": "/figures/f008-coordination",
+      "entry": "f008_spectral_harmony_Beta_Baseline.html",
       "files": [
         "f008_spectral_harmony_Beta_Baseline.html",
         "f008_spectral_harmony_Beta_Baseline.svg",
@@ -1178,6 +1186,7 @@
       "title": "Individual SFC Units",
       "phase": 4,
       "baseUrl": "/figures/f009-individual-sfc",
+      "entry": "f009_individual_sfc_FEF.html",
       "files": [
         "f009_individual_sfc_FEF.html",
         "f009_individual_sfc_FST.html",
@@ -1269,6 +1278,7 @@
       "title": "SFC Delta (Surprise)",
       "phase": 4,
       "baseUrl": "/figures/f010-sfc-delta",
+      "entry": "f010_sfc_delta_FEF.html",
       "files": [
         "f010_sfc_delta_FEF.html",
         "f010_sfc_delta_FEF.svg",
@@ -1352,6 +1362,7 @@
       "title": "Laminar Mapping",
       "phase": 5,
       "baseUrl": "/figures/f011-laminar-mapping",
+      "entry": "f011_laminar_FEF.html",
       "files": [
         "f011_laminar_FEF.html",
         "f011_laminar_FEF.svg",
@@ -1435,6 +1446,7 @@
       "title": "CSD Profiling",
       "phase": 5,
       "baseUrl": "/figures/f012-csd-profiling",
+      "entry": "f012_csd_profiling.html",
       "files": [
         "f012_csd_profiling.html",
         "f012_csd_profiling.svg",
@@ -1500,6 +1512,7 @@
       "title": "Rhythmic Evolution",
       "phase": 5,
       "baseUrl": "/figures/f013-rhythmic-evolution",
+      "entry": "f013_rhythmic_evolution.html",
       "files": [
         "f013_rhythmic_evolution.html"
       ],
@@ -1519,6 +1532,7 @@
       "title": "Spiking Granger",
       "phase": 5,
       "baseUrl": "/figures/f014-spiking-granger",
+      "entry": "f014_spiking_granger.html",
       "files": [
         "f014_spiking_granger.html"
       ],
@@ -1538,6 +1552,7 @@
       "title": "Spectral Granger",
       "phase": 5,
       "baseUrl": "/figures/f015-spectral-granger",
+      "entry": "f015_spectral_granger.html",
       "files": [
         "f015_spectral_granger.html"
       ],
@@ -1557,6 +1572,7 @@
       "title": "Impedance Profiles",
       "phase": 5,
       "baseUrl": "/figures/f016-impedance-profiles",
+      "entry": "fig16_impedance_profiles.html",
       "files": [
         "fig16_impedance_profiles.html",
         "fig16_impedance_ses230629_p0.html",
@@ -1642,6 +1658,7 @@
       "title": "Prediction Error Scaling",
       "phase": 5,
       "baseUrl": "/figures/f017-prediction-error-scaling",
+      "entry": "fig17_prediction_error_scaling.html",
       "files": [
         "fig17_prediction_error_scaling.html"
       ],
@@ -1661,6 +1678,7 @@
       "title": "Ghost Signals",
       "phase": 5,
       "baseUrl": "/figures/f018-ghost-signals",
+      "entry": "fig18_ghost_signals.html",
       "files": [
         "fig18_ghost_signals.html"
       ],
@@ -1680,6 +1698,7 @@
       "title": "PAC Analysis",
       "phase": 5,
       "baseUrl": "/figures/f019-pac-analysis",
+      "entry": "fig19_pac_analysis.html",
       "files": [
         "fig19_pac_analysis.html"
       ],
@@ -1699,6 +1718,7 @@
       "title": "Effective Connectivity",
       "phase": 5,
       "baseUrl": "/figures/f020-effective-connectivity",
+      "entry": "fig20_effective_connectivity.html",
       "files": [
         "fig20_effective_connectivity.html"
       ],
@@ -1718,6 +1738,7 @@
       "title": "MaDeLaMo Schematic",
       "phase": 5,
       "baseUrl": "/figures/f021-madelamo",
+      "entry": "madelamo.png",
       "files": [
         "madelamo.png"
       ],
@@ -1737,6 +1758,7 @@
       "title": "MaDeLaNe Projection",
       "phase": 5,
       "baseUrl": "/figures/f022-madelane",
+      "entry": "madelane.png",
       "files": [
         "madelane.png"
       ],
@@ -1750,8 +1772,28 @@
         "x": "Component 1",
         "y": "Component 2"
       }
+    },
+    {
+      "id": "f047",
+      "title": "Pipeline Stability Audit",
+      "phase": 6,
+      "baseUrl": "/figures/f047-stability-audit",
+      "entry": "index.html",
+      "files": [
+        "index.html"
+      ],
+      "file_mtimes": {
+        "index.html": 1777514683.453544
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1777514683.453544,
+      "metadata": {
+        "x": "Test Case",
+        "y": "Pass/Fail"
+      }
     }
   ],
   "reports": [],
-  "last_synced": "1777484518.418"
+  "last_synced": "1777514683.453544"
 }

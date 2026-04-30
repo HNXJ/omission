@@ -263,26 +263,61 @@ const App = () => {
       );
     }
 
+    // ARTIFACT-AGNOSTIC RENDERING LOGIC
+    const isPrimaryArtifact = selectedItem.entry;
+    const isImage = isPrimaryArtifact && isPrimaryArtifact.toLowerCase().endsWith('.png');
+
     return (
       <div className="viewer-container">
         {renderStats(selectedItem.stats)}
         
-        <div className="gallery-grid">
-          {filterFiles(selectedItem.files).map((file, idx) => (
-            <div className="figure-card" key={idx}>
+        {isPrimaryArtifact ? (
+          <div className="primary-artifact-container">
+            <div className="figure-card full-width primary-artifact">
               <div className="figure-card-header">
-                <h3>{file}</h3>
+                <h3>{selectedItem.entry}</h3>
                 <div className="card-actions">
-                  <Maximize2 size={18} color="#CFB87C" onClick={() => openModal(file)} style={{ cursor: 'pointer' }} />
-                  <Activity size={18} color="#666" />
+                  <Maximize2 size={18} color="#CFB87C" onClick={() => setModalFile(`${selectedItem.baseUrl}/${selectedItem.entry}`)} style={{ cursor: 'pointer' }} />
+                  <ExternalLink size={18} color="#666" onClick={() => window.open(`${selectedItem.baseUrl}/${selectedItem.entry}`, '_blank')} style={{ cursor: 'pointer' }} />
                 </div>
               </div>
-              <div className="figure-iframe-container mini">
-                <iframe src={`${selectedItem.baseUrl}/${file}`} className="figure-iframe" title={file} />
+              <div className="figure-viewport large">
+                {isImage ? (
+                  <img 
+                    src={`${selectedItem.baseUrl}/${selectedItem.entry}`} 
+                    className="artifact-image" 
+                    alt={selectedItem.entry} 
+                    onError={(e) => { e.target.src = 'https://via.placeholder.com/800x400?text=Artifact+Missing'; }}
+                  />
+                ) : (
+                  <iframe 
+                    src={`${selectedItem.baseUrl}/${selectedItem.entry}`} 
+                    className="figure-iframe" 
+                    title={selectedItem.entry} 
+                    loading="lazy"
+                  />
+                )}
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ) : (
+          <div className="gallery-grid">
+            {filterFiles(selectedItem.files).map((file, idx) => (
+              <div className="figure-card" key={idx}>
+                <div className="figure-card-header">
+                  <h3>{file}</h3>
+                  <div className="card-actions">
+                    <Maximize2 size={18} color="#CFB87C" onClick={() => openModal(file)} style={{ cursor: 'pointer' }} />
+                    <Activity size={18} color="#666" />
+                  </div>
+                </div>
+                <div className="figure-iframe-container mini">
+                  <iframe src={`${selectedItem.baseUrl}/${file}`} className="figure-iframe" title={file} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
         {selectedItem.has_readme && (
           <div className="figure-card full-width">
             <div className="figure-card-header">
