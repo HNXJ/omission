@@ -90,28 +90,35 @@ class ProfileSearcher:
                 lfp_list = self.loader.get_signal("lfp", condition=cond, area=area)
                 if not lfp_list: continue
                 
-                # Average across all channels in area
-                mean_lfp = np.mean([np.mean(arr, axis=1) for arr in lfp_list], axis=0) # (trials, time)
+                # Collect power values for each band across all data segments
+                # Structure: power_samples[band][period] = [val1, val2, ...]
+                power_samples = {b: {p: [] for p in self.slices.keys()} for b in bands}
                 
-                # Compute power for each period
+                for arr in lfp_list:
+                    # Average over channels and trials
+                    seg_mean = np.mean(arr, axis=(0, 1))
+                    
+                    for b_name in bands:
+                        for p_name, p_slice in self.slices.items():
+                            segment = seg_mean[p_slice]
+                            p_val = list(get_band_power(segment.reshape(1, -1))[b_name])[0]
+                            power_samples[b_name][p_name].append(p_val)
+
+                # Aggregate results for this area/cond
                 for b_name in bands:
-                    p_data = {}
-                    for p_name, p_slice in self.slices.items():
-                        # Extract period, compute power
-                        segment = mean_lfp[:, p_slice]
-                        # Narrowband power proxy
-                        p_data[p_name] = np.mean(get_band_power(segment)[b_name])
+                    p_means = {p: np.mean(vals) if vals else 0 for p, vals in power_samples[b_name].items()}
                     
                     results.append({
                         'type': 'lfp_band', 'id': f"{area}_{b_name}", 'area': area, 'band': b_name,
-                        'x': p_data['p3'], 'y': p_data['p1'], 'z': p_data['d3'], 'w': p_data['d1'],
-                        'ratio_xy': p_data['p3'] / p_data['p1'] if p_data['p1'] > 0 else 0,
-                        'ratio_zw': p_data['d3'] / p_data['d1'] if p_data['d1'] > 0 else 0
+                        'x': p_means['p3'], 'y': p_means['p1'], 'z': p_means['d3'], 'w': p_means['d1'],
+                        'ratio_xy': p_means['p3'] / p_means['p1'] if p_means['p1'] > 0 else 0,
+                        'ratio_zw': p_means['d3'] / p_means['d1'] if p_means['d1'] > 0 else 0
                     })
         
         # Aggregate across conditions for LFP
         df = pd.DataFrame(results)
         if df.empty: return df
-        agg_df = df.groupby(['id', 'area', 'band']).mean().reset_index()
+        # Drop string columns that shouldn't be averaged
+        agg_df = df.groupby(['id', 'area', 'band']).mean(numeric_only=True).reset_index()
         agg_df['type'] = 'lfp_band'
         return agg_df
