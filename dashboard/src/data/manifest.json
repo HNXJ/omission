@@ -1792,8 +1792,84 @@
         "x": "Test Case",
         "y": "Pass/Fail"
       }
+    },
+    {
+      "id": "f048",
+      "title": "Profile Search Utility",
+      "phase": 6,
+      "baseUrl": "/figures/f048-profile-analysis",
+      "entry": "index.html",
+      "files": [
+        "exemplar_psth_230825-probe2-unit36.html",
+        "exemplar_psth_230825-probe2-unit36_p2.html",
+        "exemplar_psth_230825-probe2-unit36_p3.html",
+        "exemplar_psth_230825-probe2-unit36_p4.html",
+        "index.html",
+        "repetition_exemplar_AXAB_facilitator_230629-probe0-unit268.html",
+        "repetition_exemplar_AXAB_facilitator_230629-probe1-unit104.html",
+        "repetition_exemplar_AXAB_suppressor_230629-probe0-unit276.html",
+        "repetition_exemplar_AXAB_suppressor_230630-probe1-unit71.html",
+        "repetition_exemplar_BXBA_facilitator_230629-probe0-unit76.html",
+        "repetition_exemplar_BXBA_facilitator_230630-probe0-unit27.html",
+        "repetition_exemplar_BXBA_suppressor_230629-probe0-unit77.html",
+        "repetition_exemplar_BXBA_suppressor_230629-probe1-unit88.html",
+        "repetition_exemplar_RXRR_facilitator_230629-probe0-unit104.html",
+        "repetition_exemplar_RXRR_facilitator_230630-probe1-unit25.html",
+        "repetition_exemplar_RXRR_suppressor_230629-probe0-unit72.html",
+        "repetition_exemplar_RXRR_suppressor_230721-probe0-unit38.html"
+      ],
+      "file_mtimes": {
+        "exemplar_psth_230825-probe2-unit36.html": 1777574075.504712,
+        "exemplar_psth_230825-probe2-unit36_p2.html": 1777574906.088511,
+        "exemplar_psth_230825-probe2-unit36_p3.html": 1777574906.0224495,
+        "exemplar_psth_230825-probe2-unit36_p4.html": 1777574906.157834,
+        "index.html": 1777574906.22481,
+        "repetition_exemplar_AXAB_facilitator_230629-probe0-unit268.html": 1777575498.2927375,
+        "repetition_exemplar_AXAB_facilitator_230629-probe1-unit104.html": 1777575498.2437866,
+        "repetition_exemplar_AXAB_suppressor_230629-probe0-unit276.html": 1777575498.3913803,
+        "repetition_exemplar_AXAB_suppressor_230630-probe1-unit71.html": 1777575498.3429594,
+        "repetition_exemplar_BXBA_facilitator_230629-probe0-unit76.html": 1777575498.5012214,
+        "repetition_exemplar_BXBA_facilitator_230630-probe0-unit27.html": 1777575498.4464214,
+        "repetition_exemplar_BXBA_suppressor_230629-probe0-unit77.html": 1777575498.5500412,
+        "repetition_exemplar_BXBA_suppressor_230629-probe1-unit88.html": 1777575498.6027215,
+        "repetition_exemplar_RXRR_facilitator_230629-probe0-unit104.html": 1777575498.6553936,
+        "repetition_exemplar_RXRR_facilitator_230630-probe1-unit25.html": 1777575498.7127643,
+        "repetition_exemplar_RXRR_suppressor_230629-probe0-unit72.html": 1777575498.767094,
+        "repetition_exemplar_RXRR_suppressor_230721-probe0-unit38.html": 1777575498.8171525
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1777575498.8171525,
+      "metadata": {
+        "x": "Effect Size",
+        "y": "Count"
+      }
+    },
+    {
+      "id": "f049",
+      "title": "Omission Profile Figures",
+      "phase": 6,
+      "baseUrl": "/figures/f049-omission-profiles",
+      "entry": "omission_exemplars.html",
+      "files": [
+        "omission_exemplars.html",
+        "profile_population_summary.html",
+        "repetition_exemplars.html"
+      ],
+      "file_mtimes": {
+        "omission_exemplars.html": 1777575989.3511355,
+        "profile_population_summary.html": 1777575989.4139464,
+        "repetition_exemplars.html": 1777575989.1417015
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1777575989.4139464,
+      "metadata": {
+        "x": "Time (ms)",
+        "y": "Firing Rate (Hz)"
+      }
     }
   ],
   "reports": [],
-  "last_synced": "1777514683.453544"
+  "last_synced": "1777575989.4139464"
 }

@@ -203,7 +203,7 @@ class DataLoader:
         """Returns the canonical output directory for a specific figure."""
         root = Path(__file__).parent.parent.parent.parent
         dashboard_id = fig_id.replace("_", "-")
-        out_dir = root.parent / "outputs" / "oglo-8figs" / dashboard_id
+        out_dir = root / "outputs" / "oglo-8figs" / dashboard_id
         out_dir.mkdir(parents=True, exist_ok=True)
         return out_dir
 

@@ -3,47 +3,28 @@ from plotly.subplots import make_subplots
 import numpy as np
 import pandas as pd
 from pathlib import Path
-from src.analysis.profile_search import ProfileSearcher, get_band_power
+from src.analysis.profile_search import ProfileSearcher
 from src.analysis.io.loader import DataLoader
 from src.analysis.io.logger import log
 
-def plot_psth_exemplar(loader, unit_id, family, om_conds, ctrl_conds, onset_ms, output_path):
-    """Plots Omission vs Control PSTH for a single unit."""
-    print(f"""[action] Plotting PSTH exemplar for {unit_id} ({family})...""")
+def plot_repetition_exemplar(loader, unit_id, family, cond, onset_ms, p1_val, p3_val, output_path):
+    """Plots validated repetition exemplar with highlighted windows."""
+    print(f"""[action] Plotting Repetition Exemplar for {unit_id} ({family})...""")
+    time = np.linspace(-1000, 3000, 4000)
     
-    # Time axis (ms relative to p1 onset)
-    # Load full 4s stim block
-    time = np.linspace(-1000, 3000, 4000) # Assuming 4s total in these npy files
+    spk = loader.load_unit_spikes(unit_id, condition=cond)
+    if spk is None: return
+    trace = np.mean(spk, axis=0) * 1000
     
     fig = go.Figure()
+    fig.add_trace(go.Scatter(x=time, y=trace, name=cond, line=dict(color='royalblue')))
     
-    # 1. Load Omission Trace
-    om_traces = []
-    for cond in om_conds:
-        spk = loader.load_unit_spikes(unit_id, condition=cond)
-        if spk is not None:
-            # Average across trials
-            om_traces.append(np.mean(spk, axis=0) * 1000)
+    # Highlight p1 and p3 windows
+    fig.add_vrect(x0=0, x1=515, fillcolor="rgba(0,255,0,0.1)", layer="below", line_width=0, annotation_text="p1")
+    fig.add_vrect(x0=2062, x1=2577, fillcolor="rgba(255,0,0,0.1)", layer="below", line_width=0, annotation_text="p3")
     
-    if om_traces:
-        avg_om = np.mean(om_traces, axis=0)
-        fig.add_trace(go.Scatter(x=time, y=avg_om, name='Omission Trial', line=dict(color='red')))
-        
-    # 2. Load Control Trace
-    ctrl_traces = []
-    for cond in ctrl_conds:
-        spk = loader.load_unit_spikes(unit_id, condition=cond)
-        if spk is not None:
-            ctrl_traces.append(np.mean(spk, axis=0) * 1000)
-            
-    if ctrl_traces:
-        avg_ctrl = np.mean(ctrl_traces, axis=0)
-        fig.add_trace(go.Scatter(x=time, y=avg_ctrl, name='Matched Control', line=dict(color='black', dash='dash')))
-
-    # Layout
-    fig.add_vline(x=onset_ms, line_width=2, line_dash="dash", line_color="green", annotation_text="Omission Onset")
     fig.update_layout(
-        title=f"Unit Omission Response: {unit_id} ({family})",
+        title=f"Repetition Profile: {unit_id} ({family}) | p1={p1_val:.1f}Hz, p3={p3_val:.1f}Hz, Ratio={p3_val/p1_val if p1_val>0 else 0:.2f}",
         xaxis_title="Time (ms from p1 onset)",
         yaxis_title="Firing Rate (Hz)",
         template="plotly_white"
@@ -52,76 +33,66 @@ def plot_psth_exemplar(loader, unit_id, family, om_conds, ctrl_conds, onset_ms, 
 
 def run_f048():
     """
-    Standard runner for Figure 48: Omission-Grounded Profile Analysis.
+    Standard runner for Figure 48: Repetition QA & Omission Profiles.
     """
-    print(f"""[action] Initializing Figure 48: Omission Profiles...""")
+    print(f"""[action] Initializing Figure 48 QA Cycle...""")
     loader = DataLoader()
     searcher = ProfileSearcher(loader=loader)
     
-    # 1. SEARCH BRANCHES
-    print(f"""[action] Searching SPK omission profiles...""")
+    # 1. SEARCH
     spk_df = searcher.search_omission_profiles(mode="spk")
+    rep_spk_df = searcher.search_repetition_profiles(mode="spk")
     
-    print(f"""[action] Searching LFP omission profiles...""")
-    lfp_df = searcher.search_omission_profiles(mode="lfp")
-    
-    # 2. DESCRIPTIVE AUXILIARY (Repetition Scaling)
-    print(f"""[action] Running auxiliary repetition scaling search...""")
-    rep_df = searcher.search_repetition_profiles(mode="spk")
-    
-    # 3. OUTPUT GENERATION
     output_dir = loader.get_output_dir("f048_profile_analysis")
     
-    # Save Raw Results
-    spk_df.to_csv(output_dir / "omission_profiles_spk.csv", index=False)
-    lfp_df.to_csv(output_dir / "omission_profiles_lfp.csv", index=False)
-    rep_df.to_csv(output_dir / "aux_repetition_scaling.csv", index=False)
-    
-    # 4. SUMMARY QA TABLE
-    print(f"""[action] Generating QA Summary Table...""")
-    qa_rows = []
-    for family in ['p2', 'p3', 'p4']:
-        f_spk = spk_df[spk_df['family'] == family]
-        f_lfp = lfp_df[lfp_df['family'] == family]
-        qa_rows.append({
-            'Family': family,
-            'Total Units': len(f_spk),
-            'Om-Positive Units': f_spk['is_omission_positive'].sum(),
-            'LFP Gamma Suppression': (f_lfp[f_lfp['band']=='Gamma']['ratio'] < 0.8).sum()
+    # 2. AUDIT TABLE (Compact anchor)
+    print(f"""[action] Building Repetition Audit Table...""")
+    audit_rows = []
+    for (fam, area), group in rep_spk_df.groupby(['family', 'area']):
+        audit_rows.append({
+            'family': fam, 'area': area, 'modality': 'spk',
+            'total_n': len(group),
+            'gt_1': group['gt_1'].sum(),
+            'gt_1p5': group['gt_1p5'].sum(),
+            'gt_2': group['gt_2'].sum(),
+            'lt_1': group['lt_1'].sum(),
+            'lt_0p67': group['lt_0p67'].sum(),
+            'lt_0p5': group['lt_0p5'].sum(),
+            'median_ratio': group['p3_over_p1'].median(),
+            'median_diff': group['p3_minus_p1'].median()
         })
-    qa_df = pd.DataFrame(qa_rows)
-    qa_df.to_csv(output_dir / "qa_summary_table.csv", index=False)
-    print(qa_df)
+    audit_df = pd.DataFrame(audit_rows)
+    audit_df.to_csv(output_dir / "repetition_audit_table.csv", index=False)
 
-    # 5. EXEMPLAR PLOTS
-    print(f"""[action] Identifying top omission-positive SPK units...""")
-    if not spk_df.empty:
-        # Find top overall omission responder
-        top_unit = spk_df.sort_values('effect_size', ascending=False).iloc[0]
-        uid = top_unit['id']
-        fam = top_unit['family']
-        cfg = ProfileSearcher.OMISSION_FAMILIES[fam]
+    # 3. DELAY SCALING SUMMARY
+    print(f"""[action] Generating Delay Scaling Summary...""")
+    delay_rows = []
+    for cond in ["AXAB", "BXBA", "RXRR"]:
+        f_df = rep_spk_df[rep_spk_df['family'] == cond]
+        delay_rows.append({
+            'Family': cond,
+            'n(d3>d1)': f_df['d_gt_1'].sum(),
+            'n(d3>2*d1)': f_df['d_gt_2'].sum(),
+            'n(d3<0.5*d1)': f_df['d_lt_0p5'].sum()
+        })
+    pd.DataFrame(delay_rows).to_csv(output_dir / "delay_scaling_summary.csv", index=False)
+
+    # 4. EXAMPLES (Validated by Activity Guard)
+    print(f"""[action] Exporting validated repetition exemplars...""")
+    for fam in ["AXAB", "BXBA", "RXRR"]:
+        fam_df = rep_spk_df[rep_spk_df['family'] == fam]
+        # Top Facilitators
+        tops = fam_df.sort_values('p3_over_p1', ascending=False).head(2)
+        # Top Suppressors
+        bottoms = fam_df.sort_values('p3_over_p1', ascending=True).head(2)
         
-        plot_psth_exemplar(
-            loader, uid, fam, 
-            cfg['omission'], cfg['control'], cfg['onset'],
-            output_dir / f"exemplar_psth_{uid}.html"
-        )
-
-    # 6. LFP SUMMARY FIGURE
-    print(f"""[action] Generating LFP Omission Ratio Summary...""")
-    fig_lfp = go.Figure()
-    for band in ['Theta', 'Alpha', 'Beta', 'Gamma']:
-        b_data = lfp_df[lfp_df['band'] == band]
-        if b_data.empty: continue
-        fig_lfp.add_trace(go.Box(y=b_data['ratio'], name=band))
-    
-    fig_lfp.update_layout(
-        title="Omission/Control Power Ratio by LFP Band",
-        yaxis_title="Ratio (Om/Ctrl)",
-        template="plotly_white"
-    )
-    fig_lfp.write_html(str(output_dir / "index.html")) # Main dashboard landing for f048
+        for i, row in enumerate(pd.concat([tops, bottoms]).iterrows()):
+            r = row[1]
+            cat = "facilitator" if i < 2 else "suppressor"
+            plot_repetition_exemplar(
+                loader, r['id'], fam, fam, 0, r['p1_value'], r['p3_value'],
+                output_dir / f"repetition_exemplar_{fam}_{cat}_{r['id']}.html"
+            )
 
     print(f"""[action] Figure 48 generation complete.""")
 
