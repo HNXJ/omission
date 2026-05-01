@@ -94,6 +94,7 @@ def run_f050():
         'bxba_p3_over_p1': 'bxba_ratio',
         'rxrr_p3_over_p1': 'rxrr_ratio'
     })
+    })
     
     # Selectivity Score
     # Reward facilitation in A/B, penalize facilitation in R
@@ -106,6 +107,7 @@ def run_f050():
     print(f"""[action] Running trial-level statistical hardening...""")
     
     target_units = pivoted[pivoted['axab_ratio'] > 1.0].id.unique()
+    target_units = pivoted[pivoted['axab_ratio'] > 1.0].id.unique()
     
     hardened_results = []
     for i, uid in enumerate(target_units):
@@ -115,6 +117,7 @@ def run_f050():
             if spk is None or spk.shape[0] < 3: continue
             p1_trials = np.mean(spk[:, 1000:1515], axis=1)
             p3_trials = np.mean(spk[:, 3062:3577], axis=1)
+            
             
             if np.all(p1_trials == p3_trials): 
                 p = 1.0
@@ -131,6 +134,7 @@ def run_f050():
     pivoted = pivoted.merge(hardened_df, on='id', how='left')
     
     # 4. FINAL LOGICAL CLASSES
+    
     pivoted['is_hardened'] = (pivoted['p_axab'] < 0.1) & (pivoted['p_bxba'] < 0.1) & (pivoted['p_rxrr'] > 0.05)
     pivoted['is_omission_overlap'] = pivoted['id'].isin(om_positive_ids)
     
