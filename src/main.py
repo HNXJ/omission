@@ -12,7 +12,7 @@ def main():
     """
     parser = argparse.ArgumentParser(description="Omission Project Central Pipeline CLI")
     parser.add_argument("--verbosity", type=float, default=1.0, help="Set the verbosity level (0.0 to 1.0)")
-    parser.add_argument("--run-all", action="store_true", help="Run the full analytical batch pipeline (f001-f046)")
+    parser.add_argument("--run-all", action="store_true", help="Run the full analytical batch pipeline (f001-f050)")
     
     args = parser.parse_args()
     log.set_verbosity(args.verbosity)

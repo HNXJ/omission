@@ -1,19 +1,24 @@
-import os
 import re
 from pathlib import Path
+import pytest
 
 def test_skill_paths():
-    repo_root = Path(r"D:\drive\omission")
+    """
+    Validates that all file:/// links within SKILL.md files point to existent paths.
+    Enforces repo-relative portability by dynamically resolving the root.
+    """
+    repo_root = Path(__file__).parent.parent.absolute()
     skills_dir = repo_root / ".gemini" / "skills"
     
+    # If skills are absent, we skip rather than failing or returning early silently
     if not skills_dir.exists():
-        print("No skills directory found.")
-        return
+        pytest.skip("No .gemini/skills directory found for this environment.")
 
-    failed = False
+    failed_links = []
     
-    # Regex to find standard markdown file links like [name](file:///D:/drive/omission/path/to/file)
-    link_pattern = re.compile(r'\[.*?\]\(file:///(.*?)\)')
+    # Regex to find standard markdown file links like [name](file:///path/to/file)
+    # We capture the path part after file:///
+    link_pattern = re.compile(r'\[.*?\]\(file:///([a-zA-Z]:/.*?|/.*?)\)')
     
     for skill_dir in skills_dir.iterdir():
         if not skill_dir.is_dir():
@@ -23,24 +28,33 @@ def test_skill_paths():
         if not skill_file.exists():
             continue
             
-        with open(skill_file, "r", encoding="utf-8") as f:
-            content = f.read()
-            
+        content = skill_file.read_text(encoding="utf-8")
         links = link_pattern.findall(content)
+        
         for link in links:
-            # Handle Windows paths by replacing forward slashes with backslashes
-            if "D:/drive/omission" in link:
-                normalized_path = Path(link.replace("D:/drive/omission", "D:\\drive\\omission"))
-                if not normalized_path.exists():
-                    print(f"FAIL: {skill_dir.name} references non-existent path: {normalized_path}")
-                    failed = True
+            # We assume the link should be absolute on the host or relative to root
+            # Most Antigravity links are absolute. We check if they exist.
+            # To make it portable, we check if the link *contains* the repo root's basename 
+            # or if it's already a valid path on this machine.
+            link_path = Path(link)
+            
+            if not link_path.exists():
+                # Try to resolve it relative to current repo_root if it looks like a project path
+                # e.g. if it has 'omission' in it but the prefix is wrong
+                if "omission" in link:
+                    rel_parts = link.split("omission")[-1].lstrip("/\\")
+                    resolved_path = repo_root / rel_parts
+                    if resolved_path.exists():
+                        continue
+                
+                failed_links.append(f"{skill_dir.name}: {link}")
 
-    if failed:
-        print("Test failed: Some skills reference non-existent paths.")
-        exit(1)
-    else:
-        print("Success: All referenced paths in active skills exist.")
-        exit(0)
+    assert not failed_links, f"The following skill links are broken: {failed_links}"
 
 if __name__ == "__main__":
-    test_skill_paths()
+    # Allow manual execution
+    try:
+        test_skill_paths()
+        print("Success: All skill paths verified.")
+    except Exception as e:
+        print(f"Error: {e}")

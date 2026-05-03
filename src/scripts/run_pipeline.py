@@ -24,8 +24,8 @@ from src.f017_prediction_errors.script import run_f017
 from src.f018_ghost_signals.script import run_f018
 from src.f019_pac_analysis.script import run_f019
 from src.f020_effective_connectivity.script import run_f020
-from src.f021_pupil_decoding.script import run_f021
-from src.f022_dimensionality_reduction.script import run_f022
+from src.f021_madelamo.script import run_f021
+from src.f022_madelane.script import run_f022
 from src.f023_spectral_fingerprints.script import run_f023
 from src.f024_fano_factor.script import run_f024
 from src.f025_state_decoding.script import run_f025
@@ -47,6 +47,10 @@ from src.f040_onset_latency.script import run_f040
 from src.f044_laminar_pac.script import run_f044
 from src.f045_laminar_coherence.script import run_f045
 from src.f046_state_space_trajectories.script import run_f046
+from src.f047_stability_audit.script import run_f047
+from src.f048_profile_analysis.script import run_f048
+from src.f049_omission_profiles.script import run_f049
+from src.f050_conjunction_profiles.script import run_f050
 
 def run_all():
     """
@@ -77,8 +81,8 @@ def run_all():
         ("Figure 18: Ghost Signals", run_f018),
         ("Figure 19: PAC Analysis", run_f019),
         ("Figure 20: Effective Connectivity", run_f020),
-        ("Figure 21: Pupil Decoding", run_f021),
-        ("Figure 22: Dimensionality Reduction", run_f022),
+        ("Figure 21: MaDeLaMo Schematic", run_f021),
+        ("Figure 22: MaDeLaNe Projection", run_f022),
         ("Figure 23: Spectral Fingerprints", run_f023),
         ("Figure 24: Fano Factor", run_f024),
         ("Figure 25: State Decoding", run_f025),
@@ -100,6 +104,10 @@ def run_all():
         ("Figure 44: Laminar PAC", run_f044),
         ("Figure 45: Laminar Coherence", run_f045),
         ("Figure 46: State-Space Trajectories", run_f046),
+        ("Figure 47: Stability Audit", run_f047),
+        ("Figure 48: Profile Analysis", run_f048),
+        ("Figure 49: Omission Profiles", run_f049),
+        ("Figure 50: Conjunction Profiles", run_f050),
     ]
     
     for name, func in pipeline_steps:

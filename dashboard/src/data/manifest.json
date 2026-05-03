@@ -1774,6 +1774,480 @@
       }
     },
     {
+      "id": "f023",
+      "title": "Spectral Fingerprints",
+      "phase": 5,
+      "baseUrl": "/figures/f023-spectral-fingerprints",
+      "entry": "fig23_spectral_fingerprints.html",
+      "files": [
+        "fig23_spectral_fingerprints.html"
+      ],
+      "file_mtimes": {
+        "fig23_spectral_fingerprints.html": 1776996766.2096713
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1776996766.2096713,
+      "metadata": {
+        "x": "Frequency",
+        "y": "Power"
+      }
+    },
+    {
+      "id": "f024",
+      "title": "Fano Factor",
+      "phase": 5,
+      "baseUrl": "/figures/f024-fano-factor",
+      "entry": "fig24_fano_factor.html",
+      "files": [
+        "fig24_fano_factor.html"
+      ],
+      "file_mtimes": {
+        "fig24_fano_factor.html": 1776544410.4890552
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1776544410.4890552,
+      "metadata": {
+        "x": "Time",
+        "y": "Fano Factor"
+      }
+    },
+    {
+      "id": "f025",
+      "title": "State Decoding",
+      "phase": 5,
+      "baseUrl": "/figures/f025-state-decoding",
+      "entry": "fig25_state_decoding.html",
+      "files": [
+        "fig25_state_decoding.html"
+      ],
+      "file_mtimes": {
+        "fig25_state_decoding.html": 1776544463.2682247
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1776544463.2682247,
+      "metadata": {
+        "x": "Time",
+        "y": "Accuracy"
+      }
+    },
+    {
+      "id": "f026",
+      "title": "State Latency",
+      "phase": 5,
+      "baseUrl": "/figures/f026-accuracy-timeseries",
+      "entry": "fig26A_accuracy_timeseries.html",
+      "files": [
+        "fig26A_accuracy_timeseries.html",
+        "fig26B_latency_hierarchy.html"
+      ],
+      "file_mtimes": {
+        "fig26A_accuracy_timeseries.html": 1776550911.1624765,
+        "fig26B_latency_hierarchy.html": 1776550911.2003727
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1776550911.2003727,
+      "metadata": {
+        "x": "Area",
+        "y": "Latency (ms)"
+      }
+    },
+    {
+      "id": "f027",
+      "title": "Identity Coding",
+      "phase": 5,
+      "baseUrl": "/figures/f027-identity-decoding",
+      "entry": "fig27_identity_decoding.html",
+      "files": [
+        "fig27_identity_decoding.html"
+      ],
+      "file_mtimes": {
+        "fig27_identity_decoding.html": 1776550952.4830132
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1776550952.4830132,
+      "metadata": {
+        "x": "Time",
+        "y": "Information"
+      }
+    },
+    {
+      "id": "f028",
+      "title": "State Manifolds",
+      "phase": 5,
+      "baseUrl": "/figures/f028-manifold-coupling",
+      "entry": "fig28_manifold_coupling.html",
+      "files": [
+        "fig28_manifold_coupling.html"
+      ],
+      "file_mtimes": {
+        "fig28_manifold_coupling.html": 1776550974.8187554
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1776550974.8187554,
+      "metadata": {
+        "x": "Dim 1",
+        "y": "Dim 2"
+      }
+    },
+    {
+      "id": "f029",
+      "title": "Info Bottleneck",
+      "phase": 5,
+      "baseUrl": "/figures/f029-effective-connectivity",
+      "entry": "fig29_info_bottleneck.html",
+      "files": [
+        "fig29_info_bottleneck.html"
+      ],
+      "file_mtimes": {
+        "fig29_info_bottleneck.html": 1776550998.2355483
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1776550998.2355483,
+      "metadata": {
+        "x": "Complexity",
+        "y": "Informativeness"
+      }
+    },
+    {
+      "id": "f030",
+      "title": "Recurrence Dynamics",
+      "phase": 5,
+      "baseUrl": "/figures/f030-putative-cell-type",
+      "entry": "f030_putative_cell_types_ratio.html",
+      "files": [
+        "f030_putative_cell_types_ratio.html",
+        "f030_putative_cell_types_summary.html",
+        "fig30_recurrence_radius.html"
+      ],
+      "file_mtimes": {
+        "f030_putative_cell_types_ratio.html": 1777060874.9814248,
+        "f030_putative_cell_types_summary.html": 1777060874.9254076,
+        "fig30_recurrence_radius.html": 1776551020.480667
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1777060874.9814248,
+      "metadata": {
+        "x": "Time",
+        "y": "Recurrence"
+      }
+    },
+    {
+      "id": "f031",
+      "title": "Spike Phase Locking",
+      "phase": 5,
+      "baseUrl": "/figures/f031-rnn-state",
+      "entry": "fig31A_rnn_state.html",
+      "files": [
+        "fig31A_rnn_state.html",
+        "fig31B_rnn_divergence.html"
+      ],
+      "file_mtimes": {
+        "fig31A_rnn_state.html": 1776563708.3974147,
+        "fig31B_rnn_divergence.html": 1776563708.4436393
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1776563708.4436393,
+      "metadata": {
+        "x": "Phase",
+        "y": "Count"
+      }
+    },
+    {
+      "id": "f032",
+      "title": "Spike Triggered Average",
+      "phase": 5,
+      "baseUrl": "/figures/f032-spike-triggered-average",
+      "entry": "fig32_spike_triggered_average.html",
+      "files": [
+        "fig32_spike_triggered_average.html"
+      ],
+      "file_mtimes": {
+        "fig32_spike_triggered_average.html": 1776978564.1958404
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1776978564.1958404,
+      "metadata": {
+        "x": "Time",
+        "y": "LFP (uV)"
+      }
+    },
+    {
+      "id": "f033",
+      "title": "Spike Field Coherence",
+      "phase": 5,
+      "baseUrl": "/figures/f033-hierarchy-synthesis",
+      "entry": "fig33_hierarchy_synthesis.html",
+      "files": [
+        "fig33_hierarchy_synthesis.html"
+      ],
+      "file_mtimes": {
+        "fig33_hierarchy_synthesis.html": 1776563785.077
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1776563785.077,
+      "metadata": {
+        "x": "Frequency",
+        "y": "Coherence"
+      }
+    },
+    {
+      "id": "f034",
+      "title": "PEV Analysis",
+      "phase": 5,
+      "baseUrl": "/figures/f034-pev-analysis",
+      "entry": "fig34_pev_analysis.html",
+      "files": [
+        "fig34_pev_analysis.html"
+      ],
+      "file_mtimes": {
+        "fig34_pev_analysis.html": 1777322868.7602851
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1777322868.7602851,
+      "metadata": {
+        "x": "Time",
+        "y": "% Variance"
+      }
+    },
+    {
+      "id": "f035",
+      "title": "Deviance Scaling",
+      "phase": 5,
+      "baseUrl": "/figures/f035-deviance-scaling",
+      "entry": "f035_deviance_scaling.html",
+      "files": [
+        "f035_deviance_scaling.html"
+      ],
+      "file_mtimes": {
+        "f035_deviance_scaling.html": 1776875667.4827948
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1776875667.4827948,
+      "metadata": {
+        "x": "Surprise",
+        "y": "Deviance"
+      }
+    },
+    {
+      "id": "f036",
+      "title": "Interneuron Dynamics",
+      "phase": 5,
+      "baseUrl": "/figures/f036-interneuron-dynamics",
+      "entry": "f036_interneuron_dynamics.html",
+      "files": [
+        "f036_interneuron_dynamics.html"
+      ],
+      "file_mtimes": {
+        "f036_interneuron_dynamics.html": 1776996778.177971
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1776996778.177971,
+      "metadata": {
+        "x": "Time",
+        "y": "FR (Hz)"
+      }
+    },
+    {
+      "id": "f037",
+      "title": "Selectivity Index",
+      "phase": 5,
+      "baseUrl": "/figures/f037-placeholder",
+      "entry": "f037_selectivity_index.html",
+      "files": [
+        "f037_selectivity_index.html"
+      ],
+      "file_mtimes": {
+        "f037_selectivity_index.html": 1777322981.573596
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1777322981.573596,
+      "metadata": {
+        "x": "Area",
+        "y": "SI"
+      }
+    },
+    {
+      "id": "f038",
+      "title": "Layer Granger",
+      "phase": 5,
+      "baseUrl": "/figures/f038",
+      "entry": "f038_granger_flow_reversal.html",
+      "files": [
+        "f038_granger_flow_reversal.html"
+      ],
+      "file_mtimes": {
+        "f038_granger_flow_reversal.html": 1777323253.7843733
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1777323253.7843733,
+      "metadata": {
+        "x": "Frequency",
+        "y": "GC"
+      }
+    },
+    {
+      "id": "f039",
+      "title": "Spike-Field Coherence (PPC)",
+      "phase": 5,
+      "baseUrl": "/figures/f039-spike-field-coherence",
+      "entry": "f039_ppc_per_area.html",
+      "files": [
+        "f039_ppc_per_area.html",
+        "f039_spike_field_coherence.html"
+      ],
+      "file_mtimes": {
+        "f039_ppc_per_area.html": 1777321101.1231024,
+        "f039_spike_field_coherence.html": 1777321101.00765
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1777321101.1231024,
+      "metadata": {
+        "x": "Frequency",
+        "y": "PPC"
+      }
+    },
+    {
+      "id": "f040",
+      "title": "Population Sync Index",
+      "phase": 5,
+      "baseUrl": "/figures/f040-onset-latency",
+      "entry": "f040_latency_hierarchy.html",
+      "files": [
+        "f040_latency_hierarchy.html",
+        "f040_psth_onsets.html"
+      ],
+      "file_mtimes": {
+        "f040_latency_hierarchy.html": 1776974358.187063,
+        "f040_psth_onsets.html": 1776974358.1412895
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1776974358.187063,
+      "metadata": {
+        "x": "Time",
+        "y": "Sync"
+      }
+    },
+    {
+      "id": "f044",
+      "title": "Laminar PAC",
+      "phase": 5,
+      "baseUrl": "/figures/f044-laminar-pac",
+      "entry": "f044_laminar_pac.html",
+      "files": [
+        "f044_laminar_pac.html"
+      ],
+      "file_mtimes": {
+        "f044_laminar_pac.html": 1776977915.1824994
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1776977915.1824994,
+      "metadata": {
+        "x": "Phase Freq",
+        "y": "Amp Freq"
+      }
+    },
+    {
+      "id": "f045",
+      "title": "Laminar Coherence",
+      "phase": 5,
+      "baseUrl": "/figures/f045-laminar-coherence",
+      "entry": "f045_laminar_coherence.html",
+      "files": [
+        "f045_laminar_coherence.html"
+      ],
+      "file_mtimes": {
+        "f045_laminar_coherence.html": 1776977917.5898528
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1776977917.5898528,
+      "metadata": {
+        "x": "Frequency",
+        "y": "Coherence"
+      }
+    },
+    {
+      "id": "f046",
+      "title": "State-Space Trajectories",
+      "phase": 5,
+      "baseUrl": "/figures/f046-state-space-trajectories",
+      "entry": "f046_trajectory_FEF.html",
+      "files": [
+        "f046_trajectory_FEF.html",
+        "f046_trajectory_FEF.svg",
+        "f046_trajectory_FST.html",
+        "f046_trajectory_FST.svg",
+        "f046_trajectory_MST.html",
+        "f046_trajectory_MST.svg",
+        "f046_trajectory_MT.html",
+        "f046_trajectory_MT.svg",
+        "f046_trajectory_PFC.html",
+        "f046_trajectory_PFC.svg",
+        "f046_trajectory_TEO.html",
+        "f046_trajectory_TEO.svg",
+        "f046_trajectory_V1.html",
+        "f046_trajectory_V1.svg",
+        "f046_trajectory_V2.html",
+        "f046_trajectory_V2.svg",
+        "f046_trajectory_V3a.html",
+        "f046_trajectory_V3a.svg",
+        "f046_trajectory_V3d.html",
+        "f046_trajectory_V3d.svg",
+        "f046_trajectory_V4.html",
+        "f046_trajectory_V4.svg"
+      ],
+      "file_mtimes": {
+        "f046_trajectory_FEF.html": 1777171010.5182953,
+        "f046_trajectory_FEF.svg": 1777171015.849201,
+        "f046_trajectory_FST.html": 1777170999.4306767,
+        "f046_trajectory_FST.svg": 1777171004.7563236,
+        "f046_trajectory_MST.html": 1777171004.803086,
+        "f046_trajectory_MST.svg": 1777171010.4601054,
+        "f046_trajectory_MT.html": 1777170988.6168704,
+        "f046_trajectory_MT.svg": 1777170993.948638,
+        "f046_trajectory_PFC.html": 1777170977.4999712,
+        "f046_trajectory_PFC.svg": 1777170982.9827402,
+        "f046_trajectory_TEO.html": 1777170993.992657,
+        "f046_trajectory_TEO.svg": 1777170999.378795,
+        "f046_trajectory_V1.html": 1777170955.2132285,
+        "f046_trajectory_V1.svg": 1777170961.0635543,
+        "f046_trajectory_V2.html": 1777170961.1168292,
+        "f046_trajectory_V2.svg": 1777170966.6637404,
+        "f046_trajectory_V3a.html": 1777170972.0514786,
+        "f046_trajectory_V3a.svg": 1777170977.4440737,
+        "f046_trajectory_V3d.html": 1777170966.7104082,
+        "f046_trajectory_V3d.svg": 1777170971.9993913,
+        "f046_trajectory_V4.html": 1777170983.0353758,
+        "f046_trajectory_V4.svg": 1777170988.565719
+      },
+      "has_readme": false,
+      "stats": {},
+      "mtime": 1777171015.849201,
+      "metadata": {
+        "x": "PC1",
+        "y": "PC2"
+      }
+    },
+    {
       "id": "f047",
       "title": "Pipeline Stability Audit",
       "phase": 6,

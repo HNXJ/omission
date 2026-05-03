@@ -228,6 +228,216 @@
       "code": "src.f022"
     },
     {
+      "analysis": "Spectral Fingerprints",
+      "file": "script.py",
+      "date": "2026-04-23",
+      "time": "21:12",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f023"
+    },
+    {
+      "analysis": "Fano Factor",
+      "file": "script.py",
+      "date": "2026-04-18",
+      "time": "15:33",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f024"
+    },
+    {
+      "analysis": "State Decoding",
+      "file": "script.py",
+      "date": "2026-04-18",
+      "time": "15:34",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f025"
+    },
+    {
+      "analysis": "State Latency",
+      "file": "script.py",
+      "date": "2026-04-18",
+      "time": "17:21",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 2 portable assets.",
+      "code": "src.f026"
+    },
+    {
+      "analysis": "Identity Coding",
+      "file": "script.py",
+      "date": "2026-04-18",
+      "time": "17:22",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f027"
+    },
+    {
+      "analysis": "State Manifolds",
+      "file": "script.py",
+      "date": "2026-04-18",
+      "time": "17:22",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f028"
+    },
+    {
+      "analysis": "Info Bottleneck",
+      "file": "script.py",
+      "date": "2026-04-18",
+      "time": "17:23",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f029"
+    },
+    {
+      "analysis": "Recurrence Dynamics",
+      "file": "script.py",
+      "date": "2026-04-24",
+      "time": "15:01",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 3 portable assets.",
+      "code": "src.f030"
+    },
+    {
+      "analysis": "Spike Phase Locking",
+      "file": "script.py",
+      "date": "2026-04-18",
+      "time": "20:55",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 2 portable assets.",
+      "code": "src.f031"
+    },
+    {
+      "analysis": "Spike Triggered Average",
+      "file": "script.py",
+      "date": "2026-04-23",
+      "time": "16:09",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f032"
+    },
+    {
+      "analysis": "Spike Field Coherence",
+      "file": "script.py",
+      "date": "2026-04-18",
+      "time": "20:56",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f033"
+    },
+    {
+      "analysis": "PEV Analysis",
+      "file": "script.py",
+      "date": "2026-04-27",
+      "time": "15:47",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f034"
+    },
+    {
+      "analysis": "Deviance Scaling",
+      "file": "script.py",
+      "date": "2026-04-22",
+      "time": "11:34",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f035"
+    },
+    {
+      "analysis": "Interneuron Dynamics",
+      "file": "script.py",
+      "date": "2026-04-23",
+      "time": "21:12",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f036"
+    },
+    {
+      "analysis": "Selectivity Index",
+      "file": "script.py",
+      "date": "2026-04-27",
+      "time": "15:49",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f037"
+    },
+    {
+      "analysis": "Layer Granger",
+      "file": "script.py",
+      "date": "2026-04-27",
+      "time": "15:54",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f038"
+    },
+    {
+      "analysis": "Spike-Field Coherence (PPC)",
+      "file": "script.py",
+      "date": "2026-04-27",
+      "time": "15:18",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 2 portable assets.",
+      "code": "src.f039"
+    },
+    {
+      "analysis": "Population Sync Index",
+      "file": "script.py",
+      "date": "2026-04-23",
+      "time": "14:59",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 2 portable assets.",
+      "code": "src.f040"
+    },
+    {
+      "analysis": "Laminar PAC",
+      "file": "script.py",
+      "date": "2026-04-23",
+      "time": "15:58",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f044"
+    },
+    {
+      "analysis": "Laminar Coherence",
+      "file": "script.py",
+      "date": "2026-04-23",
+      "time": "15:58",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 1 portable assets.",
+      "code": "src.f045"
+    },
+    {
+      "analysis": "State-Space Trajectories",
+      "file": "script.py",
+      "date": "2026-04-25",
+      "time": "21:36",
+      "status": "pass",
+      "score": 80,
+      "notes": "Generated 22 portable assets.",
+      "code": "src.f046"
+    },
+    {
       "analysis": "Pipeline Stability Audit",
       "file": "script.py",
       "date": "2026-04-29",

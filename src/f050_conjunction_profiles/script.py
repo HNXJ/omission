@@ -94,7 +94,6 @@ def run_f050():
         'bxba_p3_over_p1': 'bxba_ratio',
         'rxrr_p3_over_p1': 'rxrr_ratio'
     })
-    })
     
     # Selectivity Score
     # Reward facilitation in A/B, penalize facilitation in R
@@ -106,7 +105,6 @@ def run_f050():
     # 3. TRIAL-LEVEL STATISTICAL HARDENING
     print(f"""[action] Running trial-level statistical hardening...""")
     
-    target_units = pivoted[pivoted['axab_ratio'] > 1.0].id.unique()
     target_units = pivoted[pivoted['axab_ratio'] > 1.0].id.unique()
     
     hardened_results = []

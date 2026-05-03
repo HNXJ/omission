@@ -1,20 +1,56 @@
 import os
-import traceback
+import sys
+import py_compile
+from pathlib import Path
 
-def check_plots():
-    for root, dirs, files in os.walk("src"):
-        for file in files:
-            if file == "plot.py" or file == "plotting.py":
-                path = os.path.join(root, file)
-                try:
-                    with open(path, "r") as f:
-                        compile(f.read(), path, "exec")
-                except SyntaxError as e:
-                    print(f"SYNTAX ERROR in {path}: {e}")
-                except Exception as e:
-                    pass
+def run_syntax_audit():
+    """
+    Performs a comprehensive, repo-wide syntax audit.
+    Enforces compile-before-run doctrine for all active control plane files.
+    """
+    root = Path(__file__).parent
+    targets = [
+        root / "src",
+        root / "dashboard" / "sync_manifest.py",
+        root / "check_syntax.py"
+    ]
+    
+    total_checked = 0
+    errors = 0
+    
+    print(f"[action] Starting Repo-Wide Syntax Audit...")
+    
+    for target in targets:
+        if not target.exists():
+            continue
+            
+        if target.is_file():
+            files = [target]
+        else:
+            files = target.rglob("*.py")
+            
+        for py_file in files:
+            if "__pycache__" in str(py_file):
+                continue
+            
+            total_checked += 1
+            try:
+                py_compile.compile(str(py_file), doraise=True)
+            except py_compile.PyCompileError as e:
+                print(f"[error] SYNTAX FAIL: {py_file.relative_to(root)}")
+                print(f"        {e.msg}")
+                errors += 1
+            except Exception as e:
+                print(f"[warning] UNEXPECTED FAIL: {py_file.relative_to(root)} - {e}")
+                errors += 1
+
+    print(f"--------------------------------------------------")
+    if errors == 0:
+        print(f"[success] Audit Complete. {total_checked} files passed.")
+        sys.exit(0)
+    else:
+        print(f"[failed] Audit Failed. {errors} errors found in {total_checked} files.")
+        sys.exit(1)
 
 if __name__ == "__main__":
-    print("Checking syntax in all plots...")
-    check_plots()
-    print("Syntax check complete.")
+    run_syntax_audit()
