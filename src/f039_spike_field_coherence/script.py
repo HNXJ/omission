@@ -11,10 +11,12 @@ import pandas as pd
 from pathlib import Path
 from src.analysis.io.loader import DataLoader
 from src.analysis.io.logger import log
+from src.analysis.lfp.sfc import (
+    compute_ppc, calculate_plv,
+)
 from src.f039_spike_field_coherence.analysis import (
     BANDS, TIMING_MAP, MIN_SPIKES,
-    compute_ppc, bandpass_filter, extract_spike_phases,
-    match_spike_counts, compute_sfc_for_pair,
+    extract_spike_phases, match_spike_counts, compute_sfc_for_pair,
 )
 from src.f039_spike_field_coherence.plot import (
     plot_ppc_band_comparison, plot_ppc_per_area,
